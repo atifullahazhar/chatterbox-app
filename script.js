@@ -1,17 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. STATE & LOCAL STORAGE
+    // 1. STATE & LOCAL STORAGE (Persistent Login)
     // ==========================================
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    // Using 'chatUser' to store persistent login
+    let currentUser = JSON.parse(localStorage.getItem('chatUser')); 
     let registeredUsers = JSON.parse(localStorage.getItem('chatAppUsers')) || [];
 
     const loginScreen = document.getElementById('login-screen');
     const mainApp = document.getElementById('main-app');
     const loginForm = document.getElementById('login-form');
-    // Line 11 ke baad ye add karein:
     const socket = io("http://localhost:3000");
 
-    if (currentUser) { showMainApp(); }
+    // NEW: If user is already logged in, skip login screen
+    if (currentUser) { 
+        showMainApp(); 
+        // Tell server this user reconnected
+        socket.emit('user-reconnected', currentUser);
+    }
 
     // ==========================================
     // 2. THEME LOGIC (Dark Mode & Gold Mode)
@@ -19,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeBtn = document.getElementById('dark-mode-btn');
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
 
-    // Normal theme applier
     function applyTheme() {
         if (isDarkMode) {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -29,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (darkModeBtn) darkModeBtn.innerText = '🌙 Dark Mode';
         }
     }
-    applyTheme(); // Apply on load
+    applyTheme();
 
     if (darkModeBtn) {
         darkModeBtn.addEventListener('click', () => {
@@ -40,23 +44,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. LOGIN LOGIC
+    // 3. SECURE LOGIN LOGIC (1 Email = 1 Account)
     // ==========================================
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const usernameInput = document.getElementById('username-input').value.trim();
+        const emailInput = document.getElementById('email-input').value.trim().toLowerCase();
         const devInputRaw = document.getElementById('dev-code').value;
         const devCodeClean = devInputRaw.replace(/\s+/g, '');
 
         if (usernameInput === '') return alert('Username cannot be empty');
+        if (emailInput === '') return alert('Email cannot be empty');
+
+        // NEW: Check if Email is already used by another account
+        const emailExists = registeredUsers.find(u => u.email === emailInput);
+        if (emailExists && emailExists.username.toLowerCase() !== usernameInput.toLowerCase()) {
+            return alert('This email is already registered to another username. One email per account allowed.');
+        }
 
         const userExists = registeredUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
-        if (userExists) return alert('This username is already taken!');
+        if (userExists && !emailExists) {
+             return alert('This username is already taken!');
+        }
 
-        const isDev = (devCodeClean === '6200437705AT');
+        // NEW: The actual dev code validation should eventually happen on the server, 
+        // but for now we keep it secure-ish here until we update server.js
+        const isDev = (devCodeClean === '6200437705AT'); 
 
         currentUser = {
             username: usernameInput,
+            email: emailInput,
             isDev: isDev,
             bio: "Hallo World",
             friends: 0,
@@ -65,9 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
             partner: null
         };
 
-        registeredUsers.push(currentUser);
-        localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        if(!userExists) {
+            registeredUsers.push(currentUser);
+            localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+        }
+        
+        // Save to browser memory so they don't have to log in again
+        localStorage.setItem('chatUser', JSON.stringify(currentUser));
         showMainApp();
     });
 
@@ -143,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newBio) {
             currentUser.bio = newBio;
             document.getElementById('user-bio').innerText = currentUser.bio;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('chatUser', JSON.stringify(currentUser));
         }
     });
 
@@ -159,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.onload = function (e) {
                     currentUser[type] = e.target.result;
                     applyMedia(currentUser[type], type === 'banner' ? 'banner-img' : 'user-dp', type === 'banner' ? 'banner-video' : 'user-dp-video');
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('chatUser', JSON.stringify(currentUser));
                 };
                 reader.readAsDataURL(file);
             }
@@ -173,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentViews = document.querySelectorAll('.content-view');
 
     navButtons.forEach(btn => {
-        if (btn.id === 'dark-mode-btn') return; // Skip dark mode toggle
+        if (btn.id === 'dark-mode-btn') return;
 
         btn.addEventListener('click', () => {
             navButtons.forEach(b => b.classList.remove('active'));
@@ -187,13 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById(targetId).classList.remove('hidden');
             document.getElementById(targetId).classList.add('active');
 
-            // MAGIC THEME SWAP: If it's the dev section, turn everything Gold!
             if (targetId === 'dev-section-view') {
                 document.documentElement.setAttribute('data-theme', 'gold');
-                // Hide dark mode button so it doesn't interrupt the gold theme
                 if (darkModeBtn) darkModeBtn.parentElement.style.display = 'none';
             } else {
-                // Restore regular theme (Light or Dark)
                 applyTheme();
                 if (darkModeBtn) darkModeBtn.parentElement.style.display = 'block';
             }
@@ -234,52 +252,128 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 7. CHAT (WORLD, PRIVATE, GROUP)
+    // 7. CHAT & @MENTION SYSTEM
     // ==========================================
-    function appendMessage(inputElementId, areaElementId) {
-        const input = document.getElementById(inputElementId);
+    
+    // Helper function for sending message
+    function sendMessage(inputId, areaId) {
+        const input = document.getElementById(inputId);
         const text = input.value.trim();
-        if (text === "") return;
+        if (text !== "") {
+            // Emitting to server
+            socket.emit("send_message", { sender: currentUser.username, text: text, area: areaId });
+            
+            // Add my own message to screen instantly
+            appendMessageToScreen(text, areaId, 'me');
+            input.value = "";
+        }
+    }
 
+    // Generic append function
+    function appendMessageToScreen(text, areaElementId, senderType = 'other') {
         const messageArea = document.getElementById(areaElementId);
+        if(!messageArea) return;
         const msgDiv = document.createElement('div');
-        msgDiv.className = 'message-bubble';
-        msgDiv.innerText = text;
-
+        msgDiv.className = `message-bubble ${senderType === 'me' ? 'my-msg' : 'other-msg'}`;
+        
+        // Handle Mentions Highlighting
+        let formattedText = text;
+        if(text.includes('@' + currentUser.username) || text.includes('@everyone')) {
+            msgDiv.classList.add('mentioned-msg');
+            formattedText = text.replace(new RegExp(`(@${currentUser.username}|@everyone)`, 'g'), `<span class="mention-highlight">$1</span>`);
+        }
+        
+        msgDiv.innerHTML = formattedText;
         messageArea.appendChild(msgDiv);
-        input.value = "";
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 
-    // World Chat
-    const worldSendBtn = document.getElementById('world-send-btn');
-    if (worldSendBtn) {
-        worldSendBtn.addEventListener('click', () => appendMessage('world-message-input', 'world-messages-area'));
-        document.getElementById('world-message-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') appendMessage('world-message-input', 'world-messages-area');
+    // Listen for incoming messages from server
+    socket.on("receive_message", (data) => {
+        // If it's my own message coming back, ignore it (already appended)
+        if(data.sender === currentUser.username) return;
+        
+        // Play notification sound
+        const audio = new Audio('notification.mp3'); // Ensure you have this file
+        audio.play().catch(e => console.log('Audio blocked by browser.'));
+
+        appendMessageToScreen(data.text, data.area, 'other');
+    });
+
+    // Setup input listeners for Enter key
+    const setupInput = (inputId, areaId, btnId) => {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if(btn) btn.addEventListener('click', () => sendMessage(inputId, areaId));
+        if(input) {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage(inputId, areaId);
+            });
+            // Attach Mention listener
+            setupMentionSystem(input, inputId);
+        }
+    };
+
+    setupInput('world-message-input', 'world-messages-area', 'world-send-btn');
+    setupInput('message-input', 'messages-area', 'send-btn');
+    setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
+
+    // --- @MENTION LOGIC ---
+    function setupMentionSystem(inputElement, id) {
+        let dropdownId = 'private-mention-dropdown';
+        if(id === 'group-message-input') dropdownId = 'group-mention-dropdown';
+        if(id === 'world-message-input') dropdownId = 'world-mention-dropdown';
+        
+        const dropdown = document.getElementById(dropdownId);
+        
+        inputElement.addEventListener('input', (e) => {
+            const val = inputElement.value;
+            const cursorPosition = inputElement.selectionStart;
+            const textBeforeCursor = val.substring(0, cursorPosition);
+            
+            // Check if typing @
+            const match = textBeforeCursor.match(/@(\w*)$/);
+            
+            if (match) {
+                const searchStr = match[1].toLowerCase();
+                // Filter users
+                const allUsers = registeredUsers.map(u => u.username);
+                allUsers.push('everyone');
+                
+                const filtered = allUsers.filter(u => u.toLowerCase().startsWith(searchStr));
+                
+                if (filtered.length > 0) {
+                    dropdown.innerHTML = '';
+                    filtered.forEach(user => {
+                        const div = document.createElement('div');
+                        div.className = 'mention-item';
+                        div.innerText = `@${user}`;
+                        div.onclick = () => {
+                            const newText = val.substring(0, cursorPosition - match[0].length) + `@${user} ` + val.substring(cursorPosition);
+                            inputElement.value = newText;
+                            dropdown.classList.add('hidden');
+                            inputElement.focus();
+                        };
+                        dropdown.appendChild(div);
+                    });
+                    
+                    // Position dropdown above input
+                    dropdown.classList.remove('hidden');
+                } else {
+                    dropdown.classList.add('hidden');
+                }
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        });
+        
+        // Hide dropdown on blur
+        document.addEventListener('click', (e) => {
+            if(e.target !== inputElement && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
         });
     }
-
-    // Replace lines 264-267 with this:
-    document.getElementById('send-btn').addEventListener('click', () => {
-        const input = document.getElementById('message-input');
-        const text = input.value.trim();
-        if (text !== "") {
-            socket.emit("send_message", text); // Message server ko bheja
-            input.value = ""; // Input khali kiya
-        }
-    });
-
-    document.getElementById('message-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const input = document.getElementById('message-input');
-            const text = input.value.trim();
-            if (text !== "") {
-                socket.emit("send_message", text);
-                input.value = "";
-            }
-        }
-    });
 
     // Voice Note UI Toggle
     const voiceBtn = document.getElementById('voice-note-btn');
@@ -351,10 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = '';
         let selectedOption = null;
 
-        for (let i = 1; i <= 100; i++) {
+        for (let i = 1; i <= 20; i++) { // Changed to 20 for Premium Focus
             const box = document.createElement('div');
-            const isPremium = i <= 10;
-
             box.style.width = '100%';
             box.style.aspectRatio = '1/1';
             box.style.borderRadius = '10px';
@@ -365,35 +457,17 @@ document.addEventListener('DOMContentLoaded', () => {
             box.style.fontSize = '0.8rem';
             box.style.color = 'white';
             box.style.fontWeight = 'bold';
+            box.innerHTML = `V${i}`;
 
-            if (isPremium) box.innerHTML = "👑";
-
+            // We will hook this up to CSS animations later
             if (type === 'ring') {
                 box.style.borderRadius = '50%';
-                if (isPremium) {
-                    box.style.background = 'linear-gradient(45deg, #ffcf33, #ff8c00)';
-                    box.style.boxShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
-                } else {
-                    box.style.border = `4px solid hsl(${(i * 15) % 360}, 80%, 60%)`;
-                }
+                box.classList.add(`ring-style-${i}`); // Adds CSS class
+                box.style.border = `4px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
             }
             else if (type === 'theme') {
-                if (isPremium) {
-                    box.style.background = 'linear-gradient(135deg, #111, #333)';
-                    box.style.border = '2px solid #fbbf24';
-                } else {
-                    box.style.background = `hsl(${(i * 25) % 360}, 60%, 50%)`;
-                }
-            }
-            else if (type === 'name-style') {
-                box.style.background = '#222';
-                box.innerHTML = 'Aa';
-                if (isPremium) {
-                    box.style.color = '#fbbf24';
-                    box.style.textShadow = '0 0 5px #fbbf24';
-                } else {
-                    box.style.color = `hsl(${(i * 40) % 360}, 90%, 60%)`;
-                }
+                box.classList.add(`theme-style-${i}`);
+                box.style.background = `hsl(${(i * 18) % 360}, 60%, 50%)`;
             }
 
             box.addEventListener('click', () => {
@@ -411,6 +485,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!targetUser) return alert("Please enter a target username!");
 
         let actionName = currentDevAction === 'ring' ? 'Profile Ring' : currentDevAction === 'theme' ? 'UI Theme' : 'Username Style';
+        
+        // Server emit logic will go here to update database
+        socket.emit('assign_dev_power', { user: targetUser, power: currentDevAction });
+        
         alert(`Successfully applied ${actionName} to user: ${targetUser}`);
         closeDevModal();
         document.getElementById('dev-target-user').value = '';
@@ -419,19 +497,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('confirm-ban-btn').addEventListener('click', () => {
         const targetUser = document.getElementById('ban-target-user').value;
         if (!targetUser) return alert("Please enter a target username!");
+        
+        socket.emit('ban_user', { user: targetUser });
+        
         alert(`Action completed on user: ${targetUser}. Server database updated.`);
         closeDevModal();
         document.getElementById('ban-target-user').value = '';
-        // Add this at the very bottom of script.js
-        socket.on("receive_message", (data) => {
-            const area = document.getElementById('messages-area'); // General chat area
-            if (area) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'message-bubble';
-                msgDiv.innerText = data;
-                area.appendChild(msgDiv);
-                area.scrollTop = area.scrollHeight; // Auto-scroll to bottom
-            }
-        });
     });
 });
