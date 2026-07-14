@@ -2,19 +2,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 1. STATE & LOCAL STORAGE (Persistent Login)
     // ==========================================
-    // Using 'chatUser' to store persistent login
     let currentUser = JSON.parse(localStorage.getItem('chatUser')); 
     let registeredUsers = JSON.parse(localStorage.getItem('chatAppUsers')) || [];
 
     const loginScreen = document.getElementById('login-screen');
     const mainApp = document.getElementById('main-app');
     const loginForm = document.getElementById('login-form');
-    const socket = io("http://localhost:3000");
+    
+    // 🔴 FIX: Automatically connect to the correct live server URL
+    const socket = io();
 
-    // NEW: If user is already logged in, skip login screen
     if (currentUser) { 
         showMainApp(); 
-        // Tell server this user reconnected
         socket.emit('user-reconnected', currentUser);
     }
 
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. SECURE LOGIN LOGIC (1 Email = 1 Account)
+    // 3. SECURE LOGIN LOGIC
     // ==========================================
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -56,41 +55,47 @@ document.addEventListener('DOMContentLoaded', () => {
         if (usernameInput === '') return alert('Username cannot be empty');
         if (emailInput === '') return alert('Email cannot be empty');
 
-        // NEW: Check if Email is already used by another account
-        const emailExists = registeredUsers.find(u => u.email === emailInput);
-        if (emailExists && emailExists.username.toLowerCase() !== usernameInput.toLowerCase()) {
-            return alert('This email is already registered to another username. One email per account allowed.');
-        }
-
         const userExists = registeredUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
-        if (userExists && !emailExists) {
-             return alert('This username is already taken!');
+        
+        if (userExists) {
+            if (!userExists.email) {
+                userExists.email = emailInput;
+                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+            } else if (userExists.email !== emailInput) {
+                return alert('This username is registered with a different email address!');
+            }
+        } else {
+            const emailExists = registeredUsers.find(u => u.email === emailInput);
+            if (emailExists) return alert('This email is already used by another account.');
         }
 
-        // NEW: The actual dev code validation should eventually happen on the server, 
-        // but for now we keep it secure-ish here until we update server.js
         const isDev = (devCodeClean === '6200437705AT'); 
 
-        currentUser = {
-            username: usernameInput,
-            email: emailInput,
-            isDev: isDev,
-            bio: "Hallo World",
-            friends: 0,
-            dp: "default-dp.png",
-            banner: "",
-            partner: null
-        };
-
-        if(!userExists) {
+        if (!userExists) {
+            currentUser = {
+                username: usernameInput,
+                email: emailInput,
+                isDev: isDev,
+                bio: "Hallo World",
+                friends: 0,
+                dp: "default-dp.png",
+                banner: "",
+                partner: null
+            };
             registeredUsers.push(currentUser);
             localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+        } else {
+            currentUser = userExists;
+            currentUser.isDev = isDev; 
         }
         
-        // Save to browser memory so they don't have to log in again
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
         showMainApp();
     });
+
+    window.connectDuoUI = function(partner) {
+        console.log("Friendship band connected with: " + partner);
+    };
 
     // ==========================================
     // 4. MEDIA HANDLER (IMAGES & VIDEOS)
@@ -143,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentUser.dp && currentUser.dp.startsWith('data:video')) {
             document.getElementById('fb-my-dp').src = 'default-dp.png';
         } else {
-            document.getElementById('fb-my-dp').src = currentUser.dp;
+            document.getElementById('fb-my-dp').src = currentUser.dp || 'default-dp.png';
         }
 
         if (currentUser.isDev) {
@@ -169,22 +174,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     ['banner', 'dp'].forEach(type => {
-        document.getElementById(`change-${type}-btn`).addEventListener('click', () => {
-            document.getElementById(`${type}-upload-input`).click();
-        });
-        document.getElementById(`${type}-upload-input`).addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                if (file.size > 5000000) return alert("File is too large! Limit is 5MB for now.");
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    currentUser[type] = e.target.result;
-                    applyMedia(currentUser[type], type === 'banner' ? 'banner-img' : 'user-dp', type === 'banner' ? 'banner-video' : 'user-dp-video');
-                    localStorage.setItem('chatUser', JSON.stringify(currentUser));
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+        const btn = document.getElementById(`change-${type}-btn`);
+        const input = document.getElementById(`${type}-upload-input`);
+        if(btn && input) {
+            btn.addEventListener('click', () => input.click());
+            input.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    if (file.size > 5000000) return alert("File is too large! Limit is 5MB for now.");
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentUser[type] = e.target.result;
+                        applyMedia(currentUser[type], type === 'banner' ? 'banner-img' : 'user-dp', type === 'banner' ? 'banner-video' : 'user-dp-video');
+                        localStorage.setItem('chatUser', JSON.stringify(currentUser));
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
     });
 
     // ==========================================
@@ -205,8 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active');
 
             const targetId = btn.getAttribute('data-target');
-            document.getElementById(targetId).classList.remove('hidden');
-            document.getElementById(targetId).classList.add('active');
+            const targetView = document.getElementById(targetId);
+            if(targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('active');
+            }
 
             if (targetId === 'dev-section-view') {
                 document.documentElement.setAttribute('data-theme', 'gold');
@@ -255,28 +265,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7. CHAT & @MENTION SYSTEM
     // ==========================================
     
-    // Helper function for sending message
     function sendMessage(inputId, areaId) {
         const input = document.getElementById(inputId);
+        if(!input) return;
         const text = input.value.trim();
         if (text !== "") {
-            // Emitting to server
             socket.emit("send_message", { sender: currentUser.username, text: text, area: areaId });
-            
-            // Add my own message to screen instantly
             appendMessageToScreen(text, areaId, 'me');
             input.value = "";
         }
     }
 
-    // Generic append function
     function appendMessageToScreen(text, areaElementId, senderType = 'other') {
         const messageArea = document.getElementById(areaElementId);
         if(!messageArea) return;
         const msgDiv = document.createElement('div');
         msgDiv.className = `message-bubble ${senderType === 'me' ? 'my-msg' : 'other-msg'}`;
         
-        // Handle Mentions Highlighting
         let formattedText = text;
         if(text.includes('@' + currentUser.username) || text.includes('@everyone')) {
             msgDiv.classList.add('mentioned-msg');
@@ -288,19 +293,16 @@ document.addEventListener('DOMContentLoaded', () => {
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 
-    // Listen for incoming messages from server
     socket.on("receive_message", (data) => {
-        // If it's my own message coming back, ignore it (already appended)
         if(data.sender === currentUser.username) return;
         
-        // Play notification sound
-        const audio = new Audio('notification.mp3'); // Ensure you have this file
-        audio.play().catch(e => console.log('Audio blocked by browser.'));
+        // Notification sound
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); 
+        audio.play().catch(e => console.log('Audio blocked.'));
 
         appendMessageToScreen(data.text, data.area, 'other');
     });
 
-    // Setup input listeners for Enter key
     const setupInput = (inputId, areaId, btnId) => {
         const input = document.getElementById(inputId);
         const btn = document.getElementById(btnId);
@@ -309,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage(inputId, areaId);
             });
-            // Attach Mention listener
             setupMentionSystem(input, inputId);
         }
     };
@@ -318,25 +319,23 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('message-input', 'messages-area', 'send-btn');
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
-    // --- @MENTION LOGIC ---
     function setupMentionSystem(inputElement, id) {
         let dropdownId = 'private-mention-dropdown';
         if(id === 'group-message-input') dropdownId = 'group-mention-dropdown';
         if(id === 'world-message-input') dropdownId = 'world-mention-dropdown';
         
         const dropdown = document.getElementById(dropdownId);
-        
+        if(!dropdown) return;
+
         inputElement.addEventListener('input', (e) => {
             const val = inputElement.value;
             const cursorPosition = inputElement.selectionStart;
             const textBeforeCursor = val.substring(0, cursorPosition);
             
-            // Check if typing @
             const match = textBeforeCursor.match(/@(\w*)$/);
             
             if (match) {
                 const searchStr = match[1].toLowerCase();
-                // Filter users
                 const allUsers = registeredUsers.map(u => u.username);
                 allUsers.push('everyone');
                 
@@ -356,8 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
                         dropdown.appendChild(div);
                     });
-                    
-                    // Position dropdown above input
                     dropdown.classList.remove('hidden');
                 } else {
                     dropdown.classList.add('hidden');
@@ -367,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Hide dropdown on blur
         document.addEventListener('click', (e) => {
             if(e.target !== inputElement && !dropdown.contains(e.target)) {
                 dropdown.classList.add('hidden');
@@ -375,13 +371,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Voice Note UI Toggle
     const voiceBtn = document.getElementById('voice-note-btn');
     const cancelVoiceBtn = document.getElementById('cancel-voice-btn');
     const msgInput = document.getElementById('message-input');
     const visualizer = document.getElementById('voice-visualizer');
 
-    if (voiceBtn && cancelVoiceBtn) {
+    if (voiceBtn && cancelVoiceBtn && msgInput && visualizer) {
         voiceBtn.addEventListener('click', () => {
             msgInput.classList.add('hidden');
             visualizer.classList.remove('hidden');
@@ -392,14 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Open Chats Functions
     window.openChat = function (name) {
         document.getElementById('chat-placeholder').classList.add('hidden');
         document.getElementById('chat-header').classList.remove('hidden');
         document.getElementById('messages-area').classList.remove('hidden');
         document.getElementById('chat-input-area').classList.remove('hidden');
         document.getElementById('current-chat-name').innerText = name;
-        document.getElementById('messages-area').innerHTML = '<div id="typing-indicator" class="hidden"><div class="typing-bubble"><span></span><span></span><span></span></div></div>';
     };
 
     window.openGroup = function (name) {
@@ -408,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('group-messages-area').classList.remove('hidden');
         document.getElementById('group-input-area').classList.remove('hidden');
         document.getElementById('current-group-name').innerText = name;
-        document.getElementById('group-messages-area').innerHTML = '';
     };
 
     // ==========================================
@@ -442,10 +434,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateOptionsGrid(type) {
         const grid = document.getElementById('dev-options-grid');
+        if(!grid) return;
         grid.innerHTML = '';
         let selectedOption = null;
 
-        for (let i = 1; i <= 20; i++) { // Changed to 20 for Premium Focus
+        for (let i = 1; i <= 20; i++) { 
             const box = document.createElement('div');
             box.style.width = '100%';
             box.style.aspectRatio = '1/1';
@@ -459,10 +452,9 @@ document.addEventListener('DOMContentLoaded', () => {
             box.style.fontWeight = 'bold';
             box.innerHTML = `V${i}`;
 
-            // We will hook this up to CSS animations later
             if (type === 'ring') {
                 box.style.borderRadius = '50%';
-                box.classList.add(`ring-style-${i}`); // Adds CSS class
+                box.classList.add(`ring-style-${i}`); 
                 box.style.border = `4px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
             }
             else if (type === 'theme') {
@@ -480,28 +472,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    document.getElementById('confirm-assign-btn').addEventListener('click', () => {
-        const targetUser = document.getElementById('dev-target-user').value;
-        if (!targetUser) return alert("Please enter a target username!");
+    const assignBtn = document.getElementById('confirm-assign-btn');
+    if(assignBtn) {
+        assignBtn.addEventListener('click', () => {
+            const targetUser = document.getElementById('dev-target-user').value;
+            if (!targetUser) return alert("Please enter a target username!");
 
-        let actionName = currentDevAction === 'ring' ? 'Profile Ring' : currentDevAction === 'theme' ? 'UI Theme' : 'Username Style';
-        
-        // Server emit logic will go here to update database
-        socket.emit('assign_dev_power', { user: targetUser, power: currentDevAction });
-        
-        alert(`Successfully applied ${actionName} to user: ${targetUser}`);
-        closeDevModal();
-        document.getElementById('dev-target-user').value = '';
-    });
+            let actionName = currentDevAction === 'ring' ? 'Profile Ring' : currentDevAction === 'theme' ? 'UI Theme' : 'Username Style';
+            
+            socket.emit('assign_dev_power', { user: targetUser, power: currentDevAction });
+            
+            alert(`Successfully applied ${actionName} to user: ${targetUser}`);
+            closeDevModal();
+            document.getElementById('dev-target-user').value = '';
+        });
+    }
 
-    document.getElementById('confirm-ban-btn').addEventListener('click', () => {
-        const targetUser = document.getElementById('ban-target-user').value;
-        if (!targetUser) return alert("Please enter a target username!");
-        
-        socket.emit('ban_user', { user: targetUser });
-        
-        alert(`Action completed on user: ${targetUser}. Server database updated.`);
-        closeDevModal();
-        document.getElementById('ban-target-user').value = '';
-    });
+    const banBtn = document.getElementById('confirm-ban-btn');
+    if(banBtn) {
+        banBtn.addEventListener('click', () => {
+            const targetUser = document.getElementById('ban-target-user').value;
+            if (!targetUser) return alert("Please enter a target username!");
+            
+            socket.emit('ban_user', { user: targetUser });
+            
+            alert(`Action completed on user: ${targetUser}. Server database updated.`);
+            closeDevModal();
+            document.getElementById('ban-target-user').value = '';
+        });
+    }
 });
