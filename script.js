@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. SAFE STATE & LOCAL STORAGE
+    // 1. SAFE STATE & LOCAL STORAGE (Database Prep)
     // ==========================================
     let currentUser = null;
     let registeredUsers = [];
@@ -30,12 +30,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (currentUser && currentUser.username) { 
+        checkDailyStreak(); // Calculate streak on auto-login
         showMainApp(); 
         socket.emit('user-reconnected', currentUser);
     }
 
     // ==========================================
-    // 2. THEME LOGIC
+    // 2. DAILY LOGIN STREAK LOGIC
+    // ==========================================
+    function checkDailyStreak() {
+        const today = new Date().toDateString();
+        if (!currentUser.lastLoginDate) {
+            currentUser.streak = 1;
+        } else if (currentUser.lastLoginDate !== today) {
+            // Check if it was exactly yesterday
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (currentUser.lastLoginDate === yesterday.toDateString()) {
+                currentUser.streak = (currentUser.streak || 0) + 1;
+            } else {
+                currentUser.streak = 1; // Streak broken
+            }
+        }
+        currentUser.lastLoginDate = today;
+        saveUserData();
+    }
+
+    function saveUserData() {
+        const index = registeredUsers.findIndex(u => u.username === currentUser.username);
+        if(index > -1) registeredUsers[index] = currentUser;
+        localStorage.setItem('chatUser', JSON.stringify(currentUser));
+        localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+    }
+
+    // ==========================================
+    // 3. THEME & MOBILE SIDEBAR LOGIC
     // ==========================================
     const darkModeBtn = document.getElementById('dark-mode-btn');
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -43,10 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyTheme() {
         if (isDarkMode) {
             document.documentElement.setAttribute('data-theme', 'dark');
-            if (darkModeBtn) darkModeBtn.innerText = '☀️ Light Mode';
+            if (darkModeBtn) darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
         } else {
             document.documentElement.removeAttribute('data-theme');
-            if (darkModeBtn) darkModeBtn.innerText = '🌙 Dark Mode';
+            if (darkModeBtn) darkModeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
         }
     }
     applyTheme();
@@ -59,27 +88,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 3. MOBILE SIDEBAR LOGIC (Hamburger Menu)
-    // ==========================================
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const sidebar = document.getElementById('sidebar');
 
     if (hamburgerBtn && sidebar) {
-        hamburgerBtn.addEventListener('click', () => {
-            sidebar.classList.add('mobile-open');
-        });
+        hamburgerBtn.addEventListener('click', () => sidebar.classList.add('mobile-open'));
     }
-
     if (closeSidebarBtn && sidebar) {
-        closeSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.remove('mobile-open');
-        });
+        closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('mobile-open'));
     }
 
     // ==========================================
-    // 4. SECURE LOGIN & RANK LOGIC
+    // 4. SECURE LOGIN & INITIALIZATION
     // ==========================================
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -115,75 +136,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     email: emailInput,
                     isDev: isDev,
                     bio: "Hallo World",
-                    friends: 0,
                     dp: "default-dp.png",
                     banner: "",
-                    partner: null,
-                    rank: "Member", // Default rank
-                    userColor: ""   // Default color
+                    rank: "Member",
+                    userColor: "",
+                    mood: "😎",
+                    zodiac: "♈ Aries",
+                    country: "🇮🇳 India",
+                    statusMsg: "Busy building the future...",
+                    streak: 1,
+                    lastLoginDate: new Date().toDateString(),
+                    visitors: Math.floor(Math.random() * 50) + 1
                 };
                 registeredUsers.push(currentUser);
-                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
             } else {
                 currentUser = userExists;
                 currentUser.isDev = isDev; 
                 if(!currentUser.rank) currentUser.rank = "Member";
+                if(!currentUser.mood) currentUser.mood = "😎";
+                if(!currentUser.visitors) currentUser.visitors = Math.floor(Math.random() * 50) + 1;
             }
             
-            localStorage.setItem('chatUser', JSON.stringify(currentUser));
+            checkDailyStreak();
             showMainApp();
         });
     }
 
     // ==========================================
-    // 5. PUBLIC PROFILE (Read-Only)
-    // ==========================================
-    window.viewPublicProfile = function(username) {
-        const user = registeredUsers.find(u => u.username === username);
-        if(!user) return alert("Profile not found in database!");
-        
-        const modal = document.getElementById('public-profile-modal');
-        const nameDisplay = document.getElementById('public-profile-name');
-        const bioDisplay = document.getElementById('public-profile-bio');
-        const dpImg = document.getElementById('public-profile-dp');
-        const rankBadge = document.getElementById('public-profile-rank');
-
-        nameDisplay.innerText = user.username;
-        bioDisplay.innerText = user.bio || "No bio available.";
-        dpImg.src = (user.dp && !user.dp.startsWith('data:video')) ? user.dp : 'default-dp.png';
-        
-        const rank = user.rank || 'Member';
-        rankBadge.innerText = rank;
-        rankBadge.className = `rank-badge rank-${rank.toLowerCase()}`;
-
-        nameDisplay.className = '';
-        nameDisplay.style.color = '';
-        nameDisplay.style.textShadow = '';
-        
-        if (rank === 'Operator' && user.userColor) {
-            nameDisplay.classList.add('shine-operator');
-            nameDisplay.style.setProperty('--user-color', user.userColor);
-            nameDisplay.style.color = user.userColor;
-        }
-
-        modal.classList.remove('hidden');
-    };
-
-    window.closePublicProfile = function() {
-        document.getElementById('public-profile-modal').classList.add('hidden');
-    };
-
-    // ==========================================
-    // 6. LOAD PROFILE & OPERATOR COLORS
+    // 5. PROFILE UI & MOOD ENGINE
     // ==========================================
     const operatorColors = [
-        "#FF0000", "#FF1493", "#FF00FF", "#8A2BE2", "#4B0082", "#483D8B", "#0000FF", "#0000CD", 
-        "#1E90FF", "#00BFFF", "#87CEFA", "#00FFFF", "#40E0D0", "#00FA9A", "#00FF7F", "#3CB371", 
-        "#2E8B57", "#008000", "#32CD32", "#ADFF2F", "#7FFF00", "#7CFC00", "#FFFF00", "#FFD700", 
-        "#FFA500", "#FF8C00", "#FF4500", "#FF6347", "#FF7F50", "#DC143C", "#B22222", "#8B0000",
-        "#FF69B4", "#C71585", "#DA70D6", "#D8BFD8", "#DDA0DD", "#E6E6FA", "#D2B48C", "#F4A460", 
-        "#CD853F", "#D2691E", "#A0522D", "#8B4513", "#800000", "#FFFFFF", "#C0C0C0", "#808080",
-        "#000000", "#333333"
+        "#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", 
+        "#00FA9A", "#32CD32", "#FFD700", "#FF8C00", "#FF4500", "#FFFFFF"
     ];
 
     function loadProfileData() {
@@ -191,33 +175,42 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const nameDisplay = document.getElementById('display-username');
         const bioDisplay = document.getElementById('user-bio');
-        const myDpDisplay = document.getElementById('fb-my-dp');
         const dpWrapper = document.getElementById('dp-wrapper');
-        const devNavItem = document.getElementById('dev-nav-item');
         const rankDisplay = document.getElementById('display-rank');
         const colorSection = document.getElementById('operator-color-section');
+        const statusDisplay = document.getElementById('custom-status-text');
+        const visitorTag = document.getElementById('visitor-count');
+        const moodEmoji = document.getElementById('mood-emoji');
+        const devNavItem = document.getElementById('dev-nav-item');
 
         if(nameDisplay) nameDisplay.innerText = currentUser.username;
         if(bioDisplay) bioDisplay.innerText = currentUser.bio;
+        if(statusDisplay) statusDisplay.innerText = `"${currentUser.statusMsg || 'Available'}"`;
+        if(moodEmoji) moodEmoji.innerText = currentUser.mood || '😎';
 
-        // Rank Display Setup
+        // Update Tags
+        const tags = document.querySelectorAll('.profile-tags .tag');
+        if(tags.length >= 2) {
+            tags[0].innerHTML = currentUser.zodiac || "♈ Aries";
+            tags[1].innerHTML = currentUser.country || "🌍 Earth";
+        }
+
         const rank = currentUser.rank || 'Member';
         if(rankDisplay) {
             rankDisplay.innerText = rank;
             rankDisplay.className = `rank-badge rank-${rank.toLowerCase()}`;
         }
 
-        // DP and Media
         applyMedia(currentUser.dp, 'user-dp', 'user-dp-video');
         applyMedia(currentUser.banner, 'banner-img', 'banner-video');
-        if (myDpDisplay) myDpDisplay.src = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : 'default-dp.png';
+        
+        const fbMyDp = document.getElementById('fb-my-dp');
+        if (fbMyDp) fbMyDp.src = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : 'default-dp.png';
 
-        // Operator Color System
         if(nameDisplay) {
             nameDisplay.className = 'username-display'; 
             nameDisplay.style.color = '';
             nameDisplay.style.textShadow = '';
-
             if (rank === 'Operator' && currentUser.userColor) {
                 nameDisplay.classList.add('shine-operator');
                 nameDisplay.style.setProperty('--user-color', currentUser.userColor);
@@ -232,15 +225,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (colorSection) colorSection.classList.add('hidden');
         }
 
-        // Supreme Developer UI
+        // Feature: Hide Visitors for Developers
         if (currentUser.isDev) {
             if(nameDisplay) nameDisplay.classList.add('dev-username-style');
             if(rankDisplay) rankDisplay.innerText = "Developer 👑";
             if(dpWrapper) dpWrapper.classList.add('dev-ring-active');
             if(devNavItem) devNavItem.classList.remove('hidden');
+            if(visitorTag) visitorTag.style.display = 'none'; // Hidden for Devs
         } else {
             if(devNavItem) devNavItem.classList.add('hidden');
             if(dpWrapper) dpWrapper.classList.remove('dev-ring-active');
+            if(visitorTag) {
+                visitorTag.style.display = 'flex';
+                visitorTag.innerHTML = `<i class="fas fa-eye"></i> ${currentUser.visitors} Views`;
+            }
         }
     }
 
@@ -252,19 +250,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className = 'color-option';
             div.style.background = color;
-            if (currentUser.userColor === color) div.style.borderColor = 'black';
+            div.style.width = '30px'; div.style.height = '30px'; div.style.borderRadius = '50%'; div.style.cursor = 'pointer';
+            if (currentUser.userColor === color) div.style.border = '2px solid white';
             
             div.onclick = () => {
                 currentUser.userColor = color;
-                // Update specific user in local storage array
-                const index = registeredUsers.findIndex(u => u.username === currentUser.username);
-                if(index > -1) registeredUsers[index].userColor = color;
-                
-                localStorage.setItem('chatUser', JSON.stringify(currentUser));
-                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
-                loadProfileData(); // Reload UI
+                saveUserData();
+                loadProfileData(); 
             };
             grid.appendChild(div);
+        });
+    }
+
+    // Interactive Profile Edits
+    const moodEmojiBtn = document.getElementById('mood-emoji');
+    if(moodEmojiBtn) {
+        moodEmojiBtn.addEventListener('click', () => {
+            const newMood = prompt("Enter an emoji for your mood (e.g. 🥳, 😡, 😭):", currentUser.mood);
+            if(newMood) {
+                currentUser.mood = newMood.substring(0, 2); // Keep it short
+                saveUserData();
+                loadProfileData();
+            }
+        });
+    }
+
+    const editBtn = document.getElementById('edit-profile-btn');
+    if(editBtn) {
+        editBtn.addEventListener('click', () => {
+            const newBio = prompt("Enter new bio:", currentUser.bio);
+            const newStatus = prompt("Enter custom status:", currentUser.statusMsg);
+            if (newBio) currentUser.bio = newBio;
+            if (newStatus) currentUser.statusMsg = newStatus;
+            saveUserData();
+            loadProfileData();
         });
     }
 
@@ -293,23 +312,11 @@ document.addEventListener('DOMContentLoaded', () => {
             mainApp.classList.add('active');
         }
         loadProfileData();
-    }
-
-    // Upload Logic
-    const editBtn = document.getElementById('edit-profile-btn');
-    if(editBtn) {
-        editBtn.addEventListener('click', () => {
-            const newBio = prompt("Enter new bio:", currentUser.bio);
-            if (newBio) {
-                currentUser.bio = newBio;
-                const index = registeredUsers.findIndex(u => u.username === currentUser.username);
-                if(index > -1) registeredUsers[index].bio = newBio;
-
-                document.getElementById('user-bio').innerText = currentUser.bio;
-                localStorage.setItem('chatUser', JSON.stringify(currentUser));
-                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
-            }
-        });
+        
+        // Automated Welcome Bot
+        setTimeout(() => {
+            appendMessageToScreen(`🤖 Welcome back to Chatterbox Global, ${currentUser.username}!`, 'world-messages-area', 'system');
+        }, 1000);
     }
 
     // Sidebar View Navigation
@@ -326,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetView = document.getElementById(targetId);
             if(targetView) { targetView.classList.remove('hidden'); targetView.classList.add('active'); }
 
-            if (window.innerWidth <= 768 && sidebar) sidebar.classList.remove('mobile-open'); // Auto close on mobile
+            if (window.innerWidth <= 768 && sidebar) sidebar.classList.remove('mobile-open');
 
             if (targetId === 'dev-section-view') {
                 document.documentElement.setAttribute('data-theme', 'gold');
@@ -339,13 +346,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 7. CHAT & MENTION SYSTEM
+    // 6. CHAT & WORLD CHAT (Mute & 3s Slow Mode)
     // ==========================================
+    let isWorldMuted = false;
+    let lastWorldMessageTime = 0;
+
+    const muteWorldBtn = document.getElementById('world-mute-btn');
+    if(muteWorldBtn) {
+        muteWorldBtn.addEventListener('click', () => {
+            isWorldMuted = !isWorldMuted;
+            muteWorldBtn.innerHTML = isWorldMuted ? '<i class="fas fa-volume-up"></i> Unmute Chat' : '<i class="fas fa-volume-mute"></i> Mute Chat';
+            muteWorldBtn.style.background = isWorldMuted ? '#10b981' : '#ef4444';
+        });
+    }
+
     function sendMessage(inputId, areaId) {
         const input = document.getElementById(inputId);
         if(!input) return;
         const text = input.value.trim();
+        
         if (text !== "") {
+            // Feature: 3s Slow Mode
+            if (areaId === 'world-messages-area') {
+                const now = Date.now();
+                if (now - lastWorldMessageTime < 3000 && !currentUser.isDev) {
+                    return alert("⏳ Global Slow Mode is active! Please wait 3 seconds.");
+                }
+                lastWorldMessageTime = now;
+            }
+
             socket.emit("send_message", { sender: currentUser.username, text: text, area: areaId });
             appendMessageToScreen(text, areaId, 'me');
             input.value = "";
@@ -355,6 +384,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function appendMessageToScreen(text, areaElementId, senderType = 'other') {
         const messageArea = document.getElementById(areaElementId);
         if(!messageArea) return;
+
+        if (senderType === 'system') {
+            const sysDiv = document.createElement('div');
+            sysDiv.className = 'message-bubble system-msg';
+            sysDiv.innerText = text;
+            messageArea.appendChild(sysDiv);
+            messageArea.scrollTop = messageArea.scrollHeight;
+            return;
+        }
+
         const msgDiv = document.createElement('div');
         msgDiv.className = `message-bubble ${senderType === 'me' ? 'my-msg' : 'other-msg'}`;
         
@@ -371,6 +410,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on("receive_message", (data) => {
         if(data.sender === currentUser.username) return;
+        
+        // Feature: World Chat Mute Logic
+        if(data.area === 'world-messages-area' && isWorldMuted) return; 
+
         appendMessageToScreen(data.text, data.area, 'other');
     });
 
@@ -387,32 +430,38 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('message-input', 'messages-area', 'send-btn');
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
+    // ==========================================
+    // 7. BUG FIX: GROUP CREATION
+    // ==========================================
+    const createGroupBtn = document.getElementById('create-group-btn');
+    if (createGroupBtn) {
+        createGroupBtn.addEventListener('click', () => {
+            const groupName = prompt("Enter a name for the new group:");
+            if (groupName && groupName.trim() !== "") {
+                const groupList = document.getElementById('group-list-container');
+                const newGroup = document.createElement('div');
+                newGroup.className = 'dummy-item';
+                newGroup.innerHTML = `<div class="contact-avatar"><span>👥</span></div><b>${groupName}</b>`;
+                newGroup.onclick = () => window.openGroup(groupName);
+                groupList.appendChild(newGroup);
+            }
+        });
+    }
+
     window.openChat = function (name) {
-        const ph = document.getElementById('chat-placeholder');
-        const header = document.getElementById('chat-header');
-        const area = document.getElementById('messages-area');
-        const inputArea = document.getElementById('chat-input-area');
-        const chatName = document.getElementById('current-chat-name');
-        
-        if(ph) ph.classList.add('hidden');
-        if(header) header.classList.remove('hidden');
-        if(area) area.classList.remove('hidden');
-        if(inputArea) inputArea.classList.remove('hidden');
-        if(chatName) chatName.innerText = name;
+        document.getElementById('chat-placeholder')?.classList.add('hidden');
+        document.getElementById('chat-header')?.classList.remove('hidden');
+        document.getElementById('messages-area')?.classList.remove('hidden');
+        document.getElementById('chat-input-area')?.classList.remove('hidden');
+        if(document.getElementById('current-chat-name')) document.getElementById('current-chat-name').innerText = name;
     };
 
     window.openGroup = function (name) {
-        const ph = document.getElementById('group-placeholder');
-        const header = document.getElementById('group-header');
-        const area = document.getElementById('group-messages-area');
-        const inputArea = document.getElementById('group-input-area');
-        const groupName = document.getElementById('current-group-name');
-
-        if(ph) ph.classList.add('hidden');
-        if(header) header.classList.remove('hidden');
-        if(area) area.classList.remove('hidden');
-        if(inputArea) inputArea.classList.remove('hidden');
-        if(groupName) groupName.innerText = name;
+        document.getElementById('group-placeholder')?.classList.add('hidden');
+        document.getElementById('group-header')?.classList.remove('hidden');
+        document.getElementById('group-messages-area')?.classList.remove('hidden');
+        document.getElementById('group-input-area')?.classList.remove('hidden');
+        if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = name;
     };
 
     // ==========================================
@@ -430,10 +479,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!assignModal || !banModal || !title) return;
 
-        if (type === 'ban' || type === 'unban') {
+        if (type === 'ban') {
             banModal.classList.remove('hidden');
-            document.getElementById('ban-modal-title').innerText = type === 'ban' ? 'Ban User' : 'Unban User';
-            document.getElementById('confirm-ban-btn').innerText = type === 'ban' ? 'Drop Hammer' : 'Restore Access';
         } else {
             assignModal.classList.remove('hidden');
             if (type === 'rank') title.innerText = "Assign Rank";
@@ -444,11 +491,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.closeDevModal = function () {
-        const assignModal = document.getElementById('dev-assign-modal');
-        const banModal = document.getElementById('dev-ban-modal');
-        if(assignModal) assignModal.classList.add('hidden');
-        if(banModal) banModal.classList.add('hidden');
+        document.getElementById('dev-assign-modal')?.classList.add('hidden');
+        document.getElementById('dev-ban-modal')?.classList.add('hidden');
+        document.getElementById('public-profile-modal')?.classList.add('hidden');
     };
+
+    window.closePublicProfile = window.closeDevModal;
 
     function generateOptionsGrid(type) {
         const grid = document.getElementById('dev-options-grid');
@@ -463,8 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.innerText = r;
                 btn.onclick = () => {
                     selectedDevOption = r;
-                    Array.from(grid.children).forEach(c => c.style.border = 'none');
-                    btn.style.border = '2px solid #fff';
+                    Array.from(grid.children).forEach(c => c.style.border = '1px solid var(--border-color)');
+                    btn.style.border = '2px solid var(--primary-color)';
                 };
                 grid.appendChild(btn);
             });
@@ -475,20 +523,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const box = document.createElement('div');
             box.style.width = '100%';
             box.style.aspectRatio = '1/1';
-            box.style.borderRadius = '10px';
+            box.style.borderRadius = '50%';
             box.style.cursor = 'pointer';
             box.style.display = 'flex';
             box.style.justifyContent = 'center';
             box.style.alignItems = 'center';
-            box.style.fontSize = '0.8rem';
             box.style.color = 'white';
-            box.style.fontWeight = 'bold';
-            box.innerHTML = `V${i}`;
+            box.innerHTML = `${i}`;
 
             if (type === 'ring') {
-                box.style.borderRadius = '50%';
                 box.classList.add(`ring-style-${i}`); 
-                box.style.border = `4px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
+                box.style.border = `2px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
             }
             else if (type === 'theme') {
                 box.classList.add(`theme-style-${i}`);
@@ -497,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             box.addEventListener('click', () => {
                 Array.from(grid.children).forEach(child => child.style.outline = 'none');
-                box.style.outline = '3px solid #fff';
+                box.style.outline = '3px solid var(--primary-color)';
                 selectedDevOption = i;
             });
             grid.appendChild(box);
@@ -509,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
         assignBtn.addEventListener('click', () => {
             const targetUser = document.getElementById('dev-target-user').value;
             if (!targetUser) return alert("Please enter a target username!");
-            if (!selectedDevOption) return alert("Please select an option from the grid!");
+            if (!selectedDevOption) return alert("Please select an option!");
 
             if (currentDevAction === 'rank') {
                 const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
@@ -519,30 +564,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
                     if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
                         currentUser.rank = selectedDevOption;
-                        localStorage.setItem('chatUser', JSON.stringify(currentUser));
+                        saveUserData();
                         loadProfileData();
                     }
                 } else {
                     alert("User not found in local database!");
                 }
-            } else {
-                socket.emit('assign_dev_power', { user: targetUser, power: currentDevAction, value: selectedDevOption });
-                alert(`Successfully applied feature to user: ${targetUser}`);
             }
             closeDevModal();
-            document.getElementById('dev-target-user').value = '';
-        });
-    }
-
-    const banBtn = document.getElementById('confirm-ban-btn');
-    if(banBtn) {
-        banBtn.addEventListener('click', () => {
-            const targetUser = document.getElementById('ban-target-user').value;
-            if (!targetUser) return alert("Please enter a target username!");
-            socket.emit('ban_user', { user: targetUser });
-            alert(`Action completed on user: ${targetUser}.`);
-            closeDevModal();
-            document.getElementById('ban-target-user').value = '';
         });
     }
 });
