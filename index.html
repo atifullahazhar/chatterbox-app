@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atif Chat App</title>
+    <title>Atif Chat App - Premium</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,7 +21,7 @@
                 
                 <div class="dev-section">
                     <label for="dev-code">Developer Code (Optional)</label>
-                    <input type="text" id="dev-code" placeholder="Enter secret key..." maxlength="14">
+                    <input type="password" id="dev-code" placeholder="Enter secret key..." maxlength="14">
                     <small>Only authorized admins</small>
                 </div>
                 <button type="submit" id="join-btn">Join Chat</button>
@@ -43,8 +43,9 @@
                 <li><button class="nav-btn" data-target="settings-section">Settings ⚙️</button></li>
                 <li><button class="nav-btn" id="dark-mode-btn">🌙 Dark Mode</button></li>
 
-                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn"
-                        data-target="dev-section-view">Developer 👑</button></li>
+                <li id="dev-nav-item" class="hidden">
+                    <button class="nav-btn dev-tab-btn" data-target="dev-section-view">Developer 👑</button>
+                </li>
             </ul>
         </nav>
 
@@ -121,7 +122,7 @@
 
                             <div id="private-mention-dropdown" class="mention-dropdown hidden"></div>
 
-                            <input type="text" placeholder="Type a message..." id="message-input">
+                            <input type="text" placeholder="Type a message..." id="message-input" autocomplete="off">
 
                             <div id="voice-visualizer" class="hidden">
                                 <div class="wave"></div>
@@ -161,7 +162,7 @@
                             
                             <div id="group-mention-dropdown" class="mention-dropdown hidden"></div>
 
-                            <input type="text" placeholder="Type a message..." id="group-message-input">
+                            <input type="text" placeholder="Type a message..." id="group-message-input" autocomplete="off">
                             <button id="group-send-btn">Send</button>
                         </div>
                     </div>
@@ -204,8 +205,10 @@
                         <div class="pending-requests-box">
                             <h3>Pending Requests</h3>
                             <div id="requests-list">
-                                <div class="request-item"><span><b>Ehtesham</b> wants to be your duo!</span><button
-                                        class="accept-btn">Accept</button></div>
+                                <div class="request-item">
+                                    <span><b>Ehtesham</b> wants to be your duo!</span>
+                                    <button class="accept-btn">Accept</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -224,7 +227,7 @@
                     <div class="chat-input-area">
                         <div id="world-mention-dropdown" class="mention-dropdown hidden"></div>
                         
-                        <input type="text" placeholder="Say hello to the world..." id="world-message-input">
+                        <input type="text" placeholder="Say hello to the world..." id="world-message-input" autocomplete="off">
                         <button id="world-send-btn">Send</button>
                     </div>
                 </div>
@@ -242,7 +245,7 @@
                     <div id="feed-container">
                         <div class="feed-post">
                             <div class="post-header">
-                                <img src="default-dp.png">
+                                <img src="default-dp.png" alt="dp">
                                 <b>Nauras Daniyal</b> <span>• 2 hrs ago</span>
                             </div>
                             <div class="post-content">Just joined the chat app! This looks awesome.</div>
@@ -322,7 +325,7 @@
         <div class="dev-modal-content golden-border">
             <h2 id="dev-modal-title">Assign Feature</h2>    
             <p>Target Username:</p>
-            <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal">
+            <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal" autocomplete="off">
 
             <div id="dev-options-grid" class="options-grid">
             </div>
@@ -338,7 +341,7 @@
         <div class="dev-modal-content danger-border">
             <h2 id="ban-modal-title">Ban User</h2>
             <p>Target Username:</p>
-            <input type="text" id="ban-target-user" class="dev-input" placeholder="Enter username...">
+            <input type="text" id="ban-target-user" class="dev-input" placeholder="Enter username..." autocomplete="off">
 
             <div class="modal-actions">
                 <button class="action-btn" onclick="closeDevModal()">Cancel</button>
@@ -347,8 +350,8 @@
         </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </body>
 
 </html>

@@ -1,18 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. STATE & LOCAL STORAGE (Persistent Login)
+    // 1. SAFE STATE & LOCAL STORAGE (Crash-Proof)
     // ==========================================
-    let currentUser = JSON.parse(localStorage.getItem('chatUser')); 
-    let registeredUsers = JSON.parse(localStorage.getItem('chatAppUsers')) || [];
+    let currentUser = null;
+    let registeredUsers = [];
+    
+    // Agar purana data corrupt hai, toh ye usko delete karke crash hone se bachayega
+    try {
+        const storedUser = localStorage.getItem('chatUser');
+        if (storedUser) currentUser = JSON.parse(storedUser);
+        
+        const storedAppUsers = localStorage.getItem('chatAppUsers');
+        if (storedAppUsers) registeredUsers = JSON.parse(storedAppUsers);
+    } catch (error) {
+        console.warn("Purana ya kharab data mila. Memory clear ki ja rahi hai.");
+        localStorage.removeItem('chatUser');
+        localStorage.removeItem('chatAppUsers');
+    }
 
     const loginScreen = document.getElementById('login-screen');
     const mainApp = document.getElementById('main-app');
     const loginForm = document.getElementById('login-form');
     
-    // 🔴 FIX: Automatically connect to the correct live server URL
-    const socket = io();
+    // SAFE SOCKET CONNECTION
+    let socket;
+    if (typeof io !== 'undefined') {
+        socket = io(); // Automatically connects to local or live server
+    } else {
+        console.error("Socket.io load nahi hua! F12 daba kar Network tab check karein.");
+        socket = { on: () => {}, emit: () => {} }; // Dummy socket to prevent crashes
+    }
 
-    if (currentUser) { 
+    if (currentUser && currentUser.username) { 
         showMainApp(); 
         socket.emit('user-reconnected', currentUser);
     }
@@ -45,53 +64,57 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 3. SECURE LOGIN LOGIC
     // ==========================================
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const usernameInput = document.getElementById('username-input').value.trim();
-        const emailInput = document.getElementById('email-input').value.trim().toLowerCase();
-        const devInputRaw = document.getElementById('dev-code').value;
-        const devCodeClean = devInputRaw.replace(/\s+/g, '');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            // YE LINE PAGE RELOAD (?) KO ROKTI HAI
+            e.preventDefault(); 
+            
+            const usernameInput = document.getElementById('username-input').value.trim();
+            const emailInput = document.getElementById('email-input').value.trim().toLowerCase();
+            const devInputRaw = document.getElementById('dev-code').value;
+            const devCodeClean = devInputRaw.replace(/\s+/g, '');
 
-        if (usernameInput === '') return alert('Username cannot be empty');
-        if (emailInput === '') return alert('Email cannot be empty');
+            if (usernameInput === '') return alert('Username cannot be empty');
+            if (emailInput === '') return alert('Email cannot be empty');
 
-        const userExists = registeredUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
-        
-        if (userExists) {
-            if (!userExists.email) {
-                userExists.email = emailInput;
-                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
-            } else if (userExists.email !== emailInput) {
-                return alert('This username is registered with a different email address!');
+            const userExists = registeredUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
+            
+            if (userExists) {
+                if (!userExists.email) {
+                    userExists.email = emailInput;
+                    localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+                } else if (userExists.email !== emailInput) {
+                    return alert('This username is registered with a different email address!');
+                }
+            } else {
+                const emailExists = registeredUsers.find(u => u.email === emailInput);
+                if (emailExists) return alert('This email is already used by another account.');
             }
-        } else {
-            const emailExists = registeredUsers.find(u => u.email === emailInput);
-            if (emailExists) return alert('This email is already used by another account.');
-        }
 
-        const isDev = (devCodeClean === '6200437705AT'); 
+            const isDev = (devCodeClean === '6200437705AT'); 
 
-        if (!userExists) {
-            currentUser = {
-                username: usernameInput,
-                email: emailInput,
-                isDev: isDev,
-                bio: "Hallo World",
-                friends: 0,
-                dp: "default-dp.png",
-                banner: "",
-                partner: null
-            };
-            registeredUsers.push(currentUser);
-            localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
-        } else {
-            currentUser = userExists;
-            currentUser.isDev = isDev; 
-        }
-        
-        localStorage.setItem('chatUser', JSON.stringify(currentUser));
-        showMainApp();
-    });
+            if (!userExists) {
+                currentUser = {
+                    username: usernameInput,
+                    email: emailInput,
+                    isDev: isDev,
+                    bio: "Hallo World",
+                    friends: 0,
+                    dp: "default-dp.png",
+                    banner: "",
+                    partner: null
+                };
+                registeredUsers.push(currentUser);
+                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+            } else {
+                currentUser = userExists;
+                currentUser.isDev = isDev; 
+            }
+            
+            localStorage.setItem('chatUser', JSON.stringify(currentUser));
+            showMainApp();
+        });
+    }
 
     window.connectDuoUI = function(partner) {
         console.log("Friendship band connected with: " + partner);
@@ -106,18 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!dataUrl || dataUrl === 'default-dp.png' || dataUrl === '') {
             if (dataUrl === 'default-dp.png') {
-                imgElement.src = 'default-dp.png';
-                imgElement.classList.remove('hidden');
+                if(imgElement) {
+                    imgElement.src = 'default-dp.png';
+                    imgElement.classList.remove('hidden');
+                }
                 if (videoElement) videoElement.classList.add('hidden');
             } else {
-                imgElement.classList.add('hidden');
+                if(imgElement) imgElement.classList.add('hidden');
                 if (videoElement) videoElement.classList.add('hidden');
             }
             return;
         }
 
         if (dataUrl.startsWith('data:video')) {
-            imgElement.classList.add('hidden');
+            if(imgElement) imgElement.classList.add('hidden');
             if (videoElement) {
                 videoElement.src = dataUrl;
                 videoElement.classList.remove('hidden');
@@ -125,53 +150,70 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             if (videoElement) videoElement.classList.add('hidden');
-            imgElement.src = dataUrl;
-            imgElement.classList.remove('hidden');
+            if(imgElement) {
+                imgElement.src = dataUrl;
+                imgElement.classList.remove('hidden');
+            }
         }
     }
 
     function showMainApp() {
-        loginScreen.classList.remove('active');
-        loginScreen.classList.add('hidden');
-        mainApp.classList.remove('hidden');
-        mainApp.classList.add('active');
+        if(loginScreen && mainApp) {
+            loginScreen.classList.remove('active');
+            loginScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            mainApp.classList.add('active');
+        }
         loadProfileData();
     }
 
     function loadProfileData() {
-        document.getElementById('display-username').innerText = currentUser.username;
-        document.getElementById('user-bio').innerText = currentUser.bio;
+        if(!currentUser) return;
+        
+        const nameDisplay = document.getElementById('display-username');
+        const bioDisplay = document.getElementById('user-bio');
+        const myDpDisplay = document.getElementById('fb-my-dp');
+        const dpWrapper = document.getElementById('dp-wrapper');
+        const devNavItem = document.getElementById('dev-nav-item');
+
+        if(nameDisplay) nameDisplay.innerText = currentUser.username;
+        if(bioDisplay) bioDisplay.innerText = currentUser.bio;
 
         applyMedia(currentUser.dp, 'user-dp', 'user-dp-video');
         applyMedia(currentUser.banner, 'banner-img', 'banner-video');
 
-        if (currentUser.dp && currentUser.dp.startsWith('data:video')) {
-            document.getElementById('fb-my-dp').src = 'default-dp.png';
-        } else {
-            document.getElementById('fb-my-dp').src = currentUser.dp || 'default-dp.png';
+        if (myDpDisplay) {
+            if (currentUser.dp && currentUser.dp.startsWith('data:video')) {
+                myDpDisplay.src = 'default-dp.png';
+            } else {
+                myDpDisplay.src = currentUser.dp || 'default-dp.png';
+            }
         }
 
         if (currentUser.isDev) {
-            document.getElementById('display-username').classList.add('dev-username-style');
-            document.getElementById('dp-wrapper').classList.add('dev-ring-active');
-            document.getElementById('dev-nav-item').classList.remove('hidden');
+            if(nameDisplay) nameDisplay.classList.add('dev-username-style');
+            if(dpWrapper) dpWrapper.classList.add('dev-ring-active');
+            if(devNavItem) devNavItem.classList.remove('hidden');
         } else {
-            document.getElementById('dev-nav-item').classList.add('hidden');
-            document.getElementById('dp-wrapper').classList.remove('dev-ring-active');
+            if(devNavItem) devNavItem.classList.add('hidden');
+            if(dpWrapper) dpWrapper.classList.remove('dev-ring-active');
         }
 
         if (currentUser.partner) connectDuoUI(currentUser.partner);
     }
 
     // Upload Logic
-    document.getElementById('edit-profile-btn').addEventListener('click', () => {
-        const newBio = prompt("Enter new description:", currentUser.bio);
-        if (newBio) {
-            currentUser.bio = newBio;
-            document.getElementById('user-bio').innerText = currentUser.bio;
-            localStorage.setItem('chatUser', JSON.stringify(currentUser));
-        }
-    });
+    const editBtn = document.getElementById('edit-profile-btn');
+    if(editBtn) {
+        editBtn.addEventListener('click', () => {
+            const newBio = prompt("Enter new description:", currentUser.bio);
+            if (newBio) {
+                currentUser.bio = newBio;
+                document.getElementById('user-bio').innerText = currentUser.bio;
+                localStorage.setItem('chatUser', JSON.stringify(currentUser));
+            }
+        });
+    }
 
     ['banner', 'dp'].forEach(type => {
         const btn = document.getElementById(`change-${type}-btn`);
@@ -220,10 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (targetId === 'dev-section-view') {
                 document.documentElement.setAttribute('data-theme', 'gold');
-                if (darkModeBtn) darkModeBtn.parentElement.style.display = 'none';
+                if (darkModeBtn && darkModeBtn.parentElement) darkModeBtn.parentElement.style.display = 'none';
             } else {
                 applyTheme();
-                if (darkModeBtn) darkModeBtn.parentElement.style.display = 'block';
+                if (darkModeBtn && darkModeBtn.parentElement) darkModeBtn.parentElement.style.display = 'block';
             }
         });
     });
@@ -234,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitPostBtn = document.getElementById('submit-post-btn');
     const feedContainer = document.getElementById('feed-container');
 
-    if (submitPostBtn) {
+    if (submitPostBtn && feedContainer) {
         submitPostBtn.addEventListener('click', () => {
             const text = document.getElementById('post-input').value;
             if (!text.trim()) return;
@@ -388,19 +430,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.openChat = function (name) {
-        document.getElementById('chat-placeholder').classList.add('hidden');
-        document.getElementById('chat-header').classList.remove('hidden');
-        document.getElementById('messages-area').classList.remove('hidden');
-        document.getElementById('chat-input-area').classList.remove('hidden');
-        document.getElementById('current-chat-name').innerText = name;
+        const ph = document.getElementById('chat-placeholder');
+        const header = document.getElementById('chat-header');
+        const area = document.getElementById('messages-area');
+        const inputArea = document.getElementById('chat-input-area');
+        const chatName = document.getElementById('current-chat-name');
+        
+        if(ph) ph.classList.add('hidden');
+        if(header) header.classList.remove('hidden');
+        if(area) area.classList.remove('hidden');
+        if(inputArea) inputArea.classList.remove('hidden');
+        if(chatName) chatName.innerText = name;
     };
 
     window.openGroup = function (name) {
-        document.getElementById('group-placeholder').classList.add('hidden');
-        document.getElementById('group-header').classList.remove('hidden');
-        document.getElementById('group-messages-area').classList.remove('hidden');
-        document.getElementById('group-input-area').classList.remove('hidden');
-        document.getElementById('current-group-name').innerText = name;
+        const ph = document.getElementById('group-placeholder');
+        const header = document.getElementById('group-header');
+        const area = document.getElementById('group-messages-area');
+        const inputArea = document.getElementById('group-input-area');
+        const groupName = document.getElementById('current-group-name');
+
+        if(ph) ph.classList.add('hidden');
+        if(header) header.classList.remove('hidden');
+        if(area) area.classList.remove('hidden');
+        if(inputArea) inputArea.classList.remove('hidden');
+        if(groupName) groupName.innerText = name;
     };
 
     // ==========================================
@@ -413,6 +467,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const assignModal = document.getElementById('dev-assign-modal');
         const banModal = document.getElementById('dev-ban-modal');
         const title = document.getElementById('dev-modal-title');
+
+        if(!assignModal || !banModal || !title) return;
 
         if (type === 'ban' || type === 'unban') {
             banModal.classList.remove('hidden');
@@ -428,8 +484,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.closeDevModal = function () {
-        document.getElementById('dev-assign-modal').classList.add('hidden');
-        document.getElementById('dev-ban-modal').classList.add('hidden');
+        const assignModal = document.getElementById('dev-assign-modal');
+        const banModal = document.getElementById('dev-ban-modal');
+        if(assignModal) assignModal.classList.add('hidden');
+        if(banModal) banModal.classList.add('hidden');
     };
 
     function generateOptionsGrid(type) {
