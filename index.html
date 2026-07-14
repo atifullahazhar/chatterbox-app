@@ -13,9 +13,12 @@
     <div id="login-screen" class="screen active">
         <div class="login-container">
             <h1>Welcome</h1>
-            <p>Enter a unique username to continue</p>
+            <p>Enter your details to continue</p>
             <form id="login-form">
                 <input type="text" id="username-input" placeholder="Enter Username" required>
+                
+                <input type="email" id="email-input" placeholder="Enter Email Address" required>
+                
                 <div class="dev-section">
                     <label for="dev-code">Developer Code (Optional)</label>
                     <input type="text" id="dev-code" placeholder="Enter secret key..." maxlength="14">
@@ -116,6 +119,8 @@
                             <button id="attach-btn" title="Attach File">+</button>
                             <button id="emoji-btn" title="Emojis">😀</button>
 
+                            <div id="private-mention-dropdown" class="mention-dropdown hidden"></div>
+
                             <input type="text" placeholder="Type a message..." id="message-input">
 
                             <div id="voice-visualizer" class="hidden">
@@ -153,6 +158,9 @@
                         <div class="messages-container hidden" id="group-messages-area"></div>
                         <div class="chat-input-area hidden" id="group-input-area">
                             <button id="group-attach-btn">+</button>
+                            
+                            <div id="group-mention-dropdown" class="mention-dropdown hidden"></div>
+
                             <input type="text" placeholder="Type a message..." id="group-message-input">
                             <button id="group-send-btn">Send</button>
                         </div>
@@ -214,6 +222,8 @@
                         <div class="message-bubble system-msg">Welcome to the global chat! Be respectful.</div>
                     </div>
                     <div class="chat-input-area">
+                        <div id="world-mention-dropdown" class="mention-dropdown hidden"></div>
+                        
                         <input type="text" placeholder="Say hello to the world..." id="world-message-input">
                         <button id="world-send-btn">Send</button>
                     </div>
@@ -275,13 +285,13 @@
                         <div class="dev-card golden-card" onclick="openDevModal('ring')">
                             <div class="card-icon">⭕</div>
                             <h3>Assign Profile Ring</h3>
-                            <p>Unlock 100+ standard & 10 premium animated rings for any user.</p>
+                            <p>Unlock 20 premium animated rings for any user.</p>
                         </div>
 
                         <div class="dev-card golden-card" onclick="openDevModal('theme')">
                             <div class="card-icon">🎨</div>
                             <h3>Assign UI Theme</h3>
-                            <p>Change app colors for specific users (100+ themes, 10 premium).</p>
+                            <p>Change app colors for specific users (20 premium themes).</p>
                         </div>
 
                         <div class="dev-card golden-card" onclick="openDevModal('name-style')">

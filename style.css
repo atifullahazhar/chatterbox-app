@@ -42,6 +42,30 @@
     --border-color: #b45309;
 }
 
+/* ========================================== */
+/* 🎨 20 PREMIUM APP THEMES                   */
+/* ========================================== */
+[data-theme="premium-1"] { /* Cyberpunk */ --bg-main: #0d0e15; --bg-panel: #1a1c29; --sidebar-bg: #13141f; --primary-color: #ff007c; --primary-hover: #e60070; --text-main: #e2e8f0; --text-muted: #94a3b8; --border-color: #00f0ff; }
+[data-theme="premium-2"] { /* Matrix */ --bg-main: #050a05; --bg-panel: #0a140a; --sidebar-bg: #030803; --primary-color: #00ff41; --primary-hover: #00cc33; --text-main: #ccffcc; --text-muted: #008f11; --border-color: #003b00; }
+[data-theme="premium-3"] { /* Synthwave */ --bg-main: #2b0e4a; --bg-panel: #3a1c61; --sidebar-bg: #1f0836; --primary-color: #ff8b00; --primary-hover: #e67d00; --text-main: #f8e5ff; --text-muted: #c48be0; --border-color: #e02f85; }
+[data-theme="premium-4"] { /* Sakura */ --bg-main: #fff0f5; --bg-panel: #ffffff; --sidebar-bg: #ffe4e1; --primary-color: #ff69b4; --primary-hover: #ff1493; --text-main: #4a4a4a; --text-muted: #a0a0a0; --border-color: #ffb6c1; }
+[data-theme="premium-5"] { /* Deep Ocean */ --bg-main: #001220; --bg-panel: #001f3f; --sidebar-bg: #000a12; --primary-color: #00a8ff; --primary-hover: #0097e6; --text-main: #dff9ff; --text-muted: #7f8fa6; --border-color: #005f99; }
+[data-theme="premium-6"] { /* Crimson */ --bg-main: #1a0505; --bg-panel: #2d0a0a; --sidebar-bg: #120303; --primary-color: #ff3333; --primary-hover: #e60000; --text-main: #ffcccc; --text-muted: #b36666; --border-color: #800000; }
+[data-theme="premium-7"] { /* Forest */ --bg-main: #0c1a10; --bg-panel: #142e1b; --sidebar-bg: #07120a; --primary-color: #4cd137; --primary-hover: #44bd32; --text-main: #d1f2d6; --text-muted: #78a883; --border-color: #276b35; }
+[data-theme="premium-8"] { /* Desert */ --bg-main: #2b1d14; --bg-panel: #3d291c; --sidebar-bg: #1f140e; --primary-color: #e1b12c; --primary-hover: #e1b12c; --text-main: #fde8d7; --text-muted: #a68b75; --border-color: #c23616; }
+[data-theme="premium-9"] { /* Lavender */ --bg-main: #2c2541; --bg-panel: #3a3153; --sidebar-bg: #211c30; --primary-color: #9c88ff; --primary-hover: #8c7ae6; --text-main: #ebe6ff; --text-muted: #958ba8; --border-color: #5c4d8c; }
+[data-theme="premium-10"] { /* Volcano */ --bg-main: #1e0900; --bg-panel: #301000; --sidebar-bg: #140500; --primary-color: #ff5e57; --primary-hover: #ff3f34; --text-main: #ffebd6; --text-muted: #a86e58; --border-color: #d12b00; }
+[data-theme="premium-11"] { /* Neon Mint */ --bg-main: #0b1a1c; --bg-panel: #122c2f; --sidebar-bg: #061112; --primary-color: #00d8d6; --primary-hover: #00b8b6; --text-main: #e0fcfc; --text-muted: #6b9e9e; --border-color: #05c46b; }
+[data-theme="premium-12"] { /* Royal Gold */ --bg-main: #1f1a00; --bg-panel: #332b00; --sidebar-bg: #141100; --primary-color: #ffd32a; --primary-hover: #ffc048; --text-main: #fff6cc; --text-muted: #b3a14d; --border-color: #997a00; }
+[data-theme="premium-13"] { /* Galaxy */ --bg-main: #09031a; --bg-panel: #130a2e; --sidebar-bg: #050112; --primary-color: #a55eea; --primary-hover: #8854d0; --text-main: #ebd9ff; --text-muted: #7d6b9e; --border-color: #fc5c65; }
+[data-theme="premium-14"] { /* Sunset */ --bg-main: #261118; --bg-panel: #3a1a24; --sidebar-bg: #1a0b10; --primary-color: #fd9644; --primary-hover: #fa8231; --text-main: #ffe2d1; --text-muted: #a87e8b; --border-color: #eb3b5a; }
+[data-theme="premium-15"] { /* Arctic */ --bg-main: #f0f8ff; --bg-panel: #ffffff; --sidebar-bg: #e0f2fe; --primary-color: #4bcffa; --primary-hover: #0fb9b1; --text-main: #1e272e; --text-muted: #808e9b; --border-color: #c7ecee; }
+[data-theme="premium-16"] { /* Amethyst */ --bg-main: #180924; --bg-panel: #251036; --sidebar-bg: #10051a; --primary-color: #d980fa; --primary-hover: #c44569; --text-main: #f1e0ff; --text-muted: #9e7fba; --border-color: #574b90; }
+[data-theme="premium-17"] { /* Eclipse */ --bg-main: #000000; --bg-panel: #111111; --sidebar-bg: #0a0a0a; --primary-color: #f1f2f6; --primary-hover: #dfe4ea; --text-main: #ffffff; --text-muted: #747d8c; --border-color: #2f3542; }
+[data-theme="premium-18"] { /* Radioactive */ --bg-main: #111a0f; --bg-panel: #1b2e17; --sidebar-bg: #0a1109; --primary-color: #badc58; --primary-hover: #6ab04c; --text-main: #e8f5e1; --text-muted: #859e7a; --border-color: #f6e58d; }
+[data-theme="premium-19"] { /* Plasma */ --bg-main: #1a001a; --bg-panel: #2b002b; --sidebar-bg: #110011; --primary-color: #ef5777; --primary-hover: #f53b57; --text-main: #ffccff; --text-muted: #b366b3; --border-color: #575fcf; }
+[data-theme="premium-20"] { /* Diamond */ --bg-main: #f1f2f6; --bg-panel: #ffffff; --sidebar-bg: #dfe4ea; --primary-color: #48dbfb; --primary-hover: #0abde3; --text-main: #2f3640; --text-muted: #7f8fa6; --border-color: #c8d6e5; }
+
 /* Make general buttons readable in Gold Theme, EXCLUDING the nav buttons */
 [data-theme="gold"] button:not(.nav-btn) {
     color: #000000;
@@ -588,6 +612,51 @@ button:hover {
     color: black;
 }
 
+/* @MENTION HIGHLIGHTS */
+.mentioned-msg {
+    animation: pulseMention 2s ease;
+    border: 2px solid #fbbf24;
+}
+
+@keyframes pulseMention {
+    0%, 100% { background: var(--primary-color); }
+    50% { background: #fbbf24; color: black; }
+}
+
+.mention-highlight {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #ffeb3b;
+}
+
+.mention-dropdown {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    width: 250px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.mention-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 1px solid var(--bg-main);
+}
+
+.mention-item:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
 .system-msg {
     background: var(--bg-panel);
     color: var(--text-muted);
@@ -625,13 +694,11 @@ button:hover {
 }
 
 @keyframes bounce {
-
     0%,
     80%,
     100% {
         transform: scale(0);
     }
-
     40% {
         transform: scale(1);
     }
@@ -645,6 +712,7 @@ button:hover {
     display: flex;
     gap: 10px;
     align-items: center;
+    position: relative;
 }
 
 .chat-input-area input {
@@ -703,7 +771,6 @@ button:hover {
     0% {
         height: 5px;
     }
-
     100% {
         height: 25px;
     }
@@ -871,31 +938,7 @@ button:hover {
 }
 
 @keyframes shine {
-    to {
-        background-position: 200% center;
-    }
-}
-
-.dev-ring-active {
-    background: linear-gradient(45deg, #ffcf33, #ff8c00, #ffcf33, #ffeba6) !important;
-    background-size: 300% 300% !important;
-    animation: goldGlow 3s ease infinite !important;
-    box-shadow: 0 0 25px rgba(255, 165, 0, 0.6) !important;
-    padding: 6px !important;
-}
-
-@keyframes goldGlow {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-        box-shadow: var(--gold-glow);
-    }
-
-    50% {
-        background-position: 100% 50%;
-        box-shadow: 0 0 35px rgba(255, 140, 0, 0.9);
-    }
+    to { background-position: 200% center; }
 }
 
 #dev-dashboard-wrapper {
@@ -1173,3 +1216,49 @@ button:hover {
 .accept-btn {
     background: #10b981;
 }
+
+/* ========================================== */
+/* 🌟 20 PREMIUM ANIMATED PROFILE RINGS       */
+/* ========================================== */
+
+/* Core Ring Animations */
+@keyframes spinRing { 100% { transform: rotate(360deg); } }
+@keyframes pulseRing { 0%, 100% { box-shadow: 0 0 10px currentColor; } 50% { box-shadow: 0 0 30px currentColor; } }
+@keyframes dashSpin { to { stroke-dashoffset: -100; } }
+@keyframes goldGlow { 0%, 100% { background-position: 0% 50%; box-shadow: var(--gold-glow); } 50% { background-position: 100% 50%; box-shadow: 0 0 35px rgba(255, 140, 0, 0.9); } }
+
+.dev-ring-active {
+    background: linear-gradient(45deg, #ffcf33, #ff8c00, #ffcf33, #ffeba6) !important;
+    background-size: 300% 300% !important;
+    animation: goldGlow 3s ease infinite !important;
+    box-shadow: 0 0 25px rgba(255, 165, 0, 0.6) !important;
+    padding: 6px !important;
+}
+
+/* Premium Rings 1-5: Neon Glows */
+.ring-style-1 { background: linear-gradient(45deg, #ff0055, #00eeff); animation: pulseRing 2s infinite alternate; padding: 6px; }
+.ring-style-2 { background: linear-gradient(135deg, #00ff41, #008f11); padding: 5px; box-shadow: 0 0 20px #00ff41; }
+.ring-style-3 { background: linear-gradient(90deg, #ff8b00, #ff007c); animation: spinRing 4s linear infinite; padding: 6px; }
+.ring-style-4 { background: linear-gradient(to right, #4bcffa, #0abde3); box-shadow: 0 0 15px #4bcffa; padding: 5px; }
+.ring-style-5 { background: linear-gradient(45deg, #a55eea, #fd9644); padding: 7px; animation: pulseRing 1.5s infinite; }
+
+/* Premium Rings 6-10: Dashed & Dotted Spinners */
+.ring-style-6 { border: 4px dashed #ff3333; animation: spinRing 6s linear infinite; background: transparent; }
+.ring-style-7 { border: 5px dotted #4cd137; animation: spinRing 4s reverse infinite; background: transparent; }
+.ring-style-8 { border: 4px dashed #e1b12c; animation: spinRing 5s linear infinite; box-shadow: inset 0 0 10px #e1b12c; }
+.ring-style-9 { border: 4px double #9c88ff; animation: pulseRing 2s infinite; background: transparent; }
+.ring-style-10 { border: 6px dashed #ff5e57; animation: spinRing 3s linear infinite; background: transparent; }
+
+/* Premium Rings 11-15: Dual Tones */
+.ring-style-11 { background: conic-gradient(#00d8d6 0%, transparent 50%, #00d8d6 100%); animation: spinRing 2s linear infinite; padding: 6px; }
+.ring-style-12 { background: conic-gradient(#ffd32a 25%, #1f1a00 50%, #ffd32a 75%, #1f1a00 100%); animation: spinRing 3s linear infinite; padding: 5px; }
+.ring-style-13 { background: conic-gradient(#fc5c65, #a55eea, #fc5c65); animation: spinRing 4s linear infinite; padding: 6px; }
+.ring-style-14 { background: conic-gradient(from 180deg, #fd9644, #eb3b5a); box-shadow: 0 0 20px #fd9644; padding: 5px; }
+.ring-style-15 { background: conic-gradient(#4bcffa, transparent, #4bcffa); animation: spinRing 1.5s linear infinite; padding: 6px; }
+
+/* Premium Rings 16-20: Epic / Legendary */
+.ring-style-16 { background: linear-gradient(45deg, #d980fa, #574b90); box-shadow: 0 0 30px #d980fa; padding: 7px; animation: pulseRing 1s infinite; }
+.ring-style-17 { background: repeating-conic-gradient(#000 0% 10%, #fff 10% 20%); animation: spinRing 10s linear infinite; padding: 6px; }
+.ring-style-18 { background: linear-gradient(to right, #badc58, #6ab04c); box-shadow: 0 0 20px #badc58, inset 0 0 10px #6ab04c; padding: 5px; }
+.ring-style-19 { background: conic-gradient(#ef5777, #575fcf, #ef5777); animation: spinRing 2s ease-in-out infinite; padding: 7px; }
+.ring-style-20 { background: linear-gradient(135deg, #48dbfb, #ffffff, #48dbfb); box-shadow: 0 0 25px #48dbfb, 0 0 50px #ffffff; padding: 8px; animation: pulseRing 3s infinite; }
