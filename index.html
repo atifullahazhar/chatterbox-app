@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atif Chat App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <h1>Welcome</h1>
+            <p>Enter a unique username to continue</p>
+            <form id="login-form">
+                <input type="text" id="username-input" placeholder="Enter Username" required>
+                <div class="dev-section">
+                    <label for="dev-code">Developer Code (Optional)</label>
+                    <input type="text" id="dev-code" placeholder="Enter secret key..." maxlength="14">
+                    <small>Only authorized admins</small>
+                </div>
+                <button type="submit" id="join-btn">Join Chat</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="main-app" class="screen hidden">
+
+        <nav id="sidebar">
+            <div class="nav-logo">Chatterbox</div>
+            <ul class="nav-links">
+                <li><button class="nav-btn active" data-target="profile-section">Profile</button></li>
+                <li><button class="nav-btn" data-target="chat-section">Chat</button></li>
+                <li><button class="nav-btn" data-target="group-chat-section">Group Chat</button></li>
+                <li><button class="nav-btn" data-target="friendship-section">Friendship Band</button></li>
+                <li><button class="nav-btn" data-target="world-chat-section">World Chat 🌍</button></li>
+                <li><button class="nav-btn" data-target="post-section">Post Feed (+)</button></li>
+                <li><button class="nav-btn" data-target="settings-section">Settings ⚙️</button></li>
+                <li><button class="nav-btn" id="dark-mode-btn">🌙 Dark Mode</button></li>
+
+                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn"
+                        data-target="dev-section-view">Developer 👑</button></li>
+            </ul>
+        </nav>
+
+        <main id="content-area">
+
+            <section id="profile-section" class="content-view active">
+                <div class="profile-banner-wrapper">
+                    <div class="profile-banner" id="user-banner-container">
+                        <img src="" id="banner-img" class="hidden" alt="">
+                        <video id="banner-video" class="hidden" autoplay loop muted playsinline></video>
+                    </div>
+                    <input type="file" id="banner-upload-input" accept="image/*,video/*" class="hidden">
+                    <button id="change-banner-btn" title="Change Background">📷</button>
+                </div>
+
+                <div class="profile-info-container">
+                    <div class="dp-wrapper-main">
+                        <div class="dp-container" id="dp-wrapper">
+                            <img src="default-dp.png" alt="Profile Picture" id="user-dp">
+                            <video id="user-dp-video" class="hidden" autoplay loop muted playsinline></video>
+                        </div>
+                        <input type="file" id="dp-upload-input" accept="image/*,video/*" class="hidden">
+                        <button id="change-dp-btn" title="Upload new DP">✏️</button>
+                    </div>
+
+                    <h2 id="display-username" class="username-display">Username</h2>
+                    <div class="stats"><span id="friend-count">0 friends</span></div>
+                    <p id="user-bio">Hallo World</p>
+                    <button id="edit-profile-btn">Edit Profile</button>
+                </div>
+            </section>
+
+            <section id="chat-section" class="content-view hidden">
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div class="chat-tabs">
+                            <button class="tab-btn active" data-tab="favorite">Favorite</button>
+                            <button class="tab-btn" data-tab="general">General</button>
+                            <button class="tab-btn" data-tab="requests">Requests</button>
+                        </div>
+                        <div class="search-bar"><input type="text" placeholder="Search..."></div>
+                        <div class="contact-list" id="contact-list-container">
+                            <div class="dummy-item" onclick="openChat('Nauras Daniyal')">
+                                <div class="contact-avatar">
+                                    <span>👤</span>
+                                    <div class="status-dot online"></div>
+                                </div>
+                                <b>Nauras Daniyal</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="active-chat-window">
+                        <div id="chat-placeholder" class="empty-state">
+                            <p>Select a chat to start messaging</p>
+                        </div>
+
+                        <div class="chat-header hidden" id="chat-header">
+                            <img src="default-dp.png" alt="Chat User">
+                            <h3 id="current-chat-name">User</h3>
+                            <span class="status-text">Online</span>
+                            <button id="block-user-btn" class="danger-btn">Block</button>
+                        </div>
+
+                        <div class="messages-container hidden" id="messages-area">
+                            <div id="typing-indicator" class="hidden">
+                                <div class="typing-bubble"><span></span><span></span><span></span></div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-area hidden" id="chat-input-area">
+                            <button id="attach-btn" title="Attach File">+</button>
+                            <button id="emoji-btn" title="Emojis">😀</button>
+
+                            <input type="text" placeholder="Type a message..." id="message-input">
+
+                            <div id="voice-visualizer" class="hidden">
+                                <div class="wave"></div>
+                                <div class="wave"></div>
+                                <div class="wave"></div>
+                                <span>00:00</span>
+                                <button id="cancel-voice-btn" class="danger-btn">X</button>
+                            </div>
+
+                            <button id="voice-note-btn" title="Hold to record">🎤</button>
+                            <button id="send-btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="group-chat-section" class="content-view hidden">
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div class="sidebar-header">
+                            <h2>Groups <button id="create-group-btn" class="add-icon-btn">+</button></h2>
+                        </div>
+                        <div class="group-list" id="group-list-container"></div>
+                    </div>
+                    <div class="active-chat-window">
+                        <div id="group-placeholder" class="empty-state">
+                            <p>Select a group to start messaging</p>
+                        </div>
+                        <div class="chat-header hidden" id="group-header">
+                            <img src="group-default.png" alt="Group Icon">
+                            <h3 id="current-group-name">Group</h3>
+                            <button id="group-settings-btn" class="action-btn">⚙️ Settings</button>
+                        </div>
+                        <div class="messages-container hidden" id="group-messages-area"></div>
+                        <div class="chat-input-area hidden" id="group-input-area">
+                            <button id="group-attach-btn">+</button>
+                            <input type="text" placeholder="Type a message..." id="group-message-input">
+                            <button id="group-send-btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="friendship-section" class="content-view hidden">
+                <div class="friendship-wrapper">
+                    <div class="friendship-header">
+                        <h2>Dynamic Duo</h2>
+                        <p>Link your accounts to level up your Friendship Band.</p>
+                    </div>
+                    <div class="band-status-card">
+                        <div class="duo-display">
+                            <div class="duo-member">
+                                <img src="default-dp.png" alt="Me" id="fb-my-dp">
+                                <span>Me</span>
+                            </div>
+                            <div class="band-connection">
+                                <span id="band-level">Level 0</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="band-progress"></div>
+                                </div>
+                                <span id="time-remaining">Not connected yet</span>
+                            </div>
+                            <div class="duo-member">
+                                <div class="empty-duo-slot" id="fb-partner-dp-slot">?</div>
+                                <span id="fb-partner-name">Partner</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="band-actions-container">
+                        <div class="send-request-box">
+                            <h3>Invite a Friend</h3>
+                            <div class="input-group">
+                                <input type="text" id="band-request-input" placeholder="Enter username...">
+                                <button id="send-band-req-btn">Send Request</button>
+                            </div>
+                        </div>
+                        <div class="pending-requests-box">
+                            <h3>Pending Requests</h3>
+                            <div id="requests-list">
+                                <div class="request-item"><span><b>Ehtesham</b> wants to be your duo!</span><button
+                                        class="accept-btn">Accept</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="world-chat-section" class="content-view hidden">
+                <div class="active-chat-window global-chat">
+                    <div class="chat-header">
+                        <h2>🌍 World Chat</h2>
+                        <p>Chat with everyone on the website instantly!</p>
+                    </div>
+                    <div class="messages-container" id="world-messages-area">
+                        <div class="message-bubble system-msg">Welcome to the global chat! Be respectful.</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" placeholder="Say hello to the world..." id="world-message-input">
+                        <button id="world-send-btn">Send</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="post-section" class="content-view hidden">
+                <div class="feed-wrapper">
+                    <div class="create-post-card">
+                        <textarea id="post-input" placeholder="What's on your mind?"></textarea>
+                        <div class="post-actions">
+                            <button id="post-image-btn">📷 Add Image</button>
+                            <button id="submit-post-btn">Post</button>
+                        </div>
+                    </div>
+                    <div id="feed-container">
+                        <div class="feed-post">
+                            <div class="post-header">
+                                <img src="default-dp.png">
+                                <b>Nauras Daniyal</b> <span>• 2 hrs ago</span>
+                            </div>
+                            <div class="post-content">Just joined the chat app! This looks awesome.</div>
+                            <div class="post-footer">
+                                <button class="like-btn">❤️ Like (5)</button>
+                                <button class="comment-btn">💬 Comment</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings-section" class="content-view hidden">
+                <div class="settings-wrapper">
+                    <h2>Settings</h2>
+                    <div class="settings-card">
+                        <h3>Notifications</h3>
+                        <label class="toggle-switch"> <input type="checkbox" checked> <span class="slider"></span>
+                            Message Alerts </label>
+                        <label class="toggle-switch"> <input type="checkbox" checked> <span class="slider"></span>
+                            Sounds </label>
+
+                        <h3 style="margin-top:20px;">Privacy</h3>
+                        <label class="toggle-switch"> <input type="checkbox" checked> <span class="slider"></span> Show
+                            Online Status </label>
+                        <label class="toggle-switch"> <input type="checkbox" checked> <span class="slider"></span> Allow
+                            Friend Requests </label>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dev-section-view" class="content-view hidden">
+                <div id="dev-dashboard-wrapper">
+                    <div class="dev-header">
+                        <h1>Supreme Admin Panel</h1>
+                        <p>With great power comes great responsibility.</p>
+                    </div>
+
+                    <div class="dev-cards-grid">
+                        <div class="dev-card golden-card" onclick="openDevModal('ring')">
+                            <div class="card-icon">⭕</div>
+                            <h3>Assign Profile Ring</h3>
+                            <p>Unlock 100+ standard & 10 premium animated rings for any user.</p>
+                        </div>
+
+                        <div class="dev-card golden-card" onclick="openDevModal('theme')">
+                            <div class="card-icon">🎨</div>
+                            <h3>Assign UI Theme</h3>
+                            <p>Change app colors for specific users (100+ themes, 10 premium).</p>
+                        </div>
+
+                        <div class="dev-card golden-card" onclick="openDevModal('name-style')">
+                            <div class="card-icon">✨</div>
+                            <h3>Username Style</h3>
+                            <p>Assign glowing, gradient, or animated username colors.</p>
+                        </div>
+
+                        <div class="dev-card red-card" onclick="openDevModal('ban')">
+                            <div class="card-icon">🔨</div>
+                            <h3>Ban User</h3>
+                            <p>Instantly revoke access to the application.</p>
+                        </div>
+
+                        <div class="dev-card green-card" onclick="openDevModal('unban')">
+                            <div class="card-icon">🕊️</div>
+                            <h3>Unban User</h3>
+                            <p>Restore access for a previously banned user.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="dev-assign-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content golden-border">
+            <h2 id="dev-modal-title">Assign Feature</h2>
+            <p>Target Username:</p>
+            <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal">
+
+            <div id="dev-options-grid" class="options-grid">
+            </div>
+
+            <div class="modal-actions">
+                <button class="action-btn" onclick="closeDevModal()">Cancel</button>
+                <button class="gold-btn" id="confirm-assign-btn">Apply Power</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dev-ban-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content danger-border">
+            <h2 id="ban-modal-title">Ban User</h2>
+            <p>Target Username:</p>
+            <input type="text" id="ban-target-user" class="dev-input" placeholder="Enter username...">
+
+            <div class="modal-actions">
+                <button class="action-btn" onclick="closeDevModal()">Cancel</button>
+                <button class="danger-btn" id="confirm-ban-btn">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</body>
+
+</html>
