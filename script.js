@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. SAFE STATE & LOCAL STORAGE (Crash-Proof)
+    // 1. SAFE STATE & LOCAL STORAGE
     // ==========================================
     let currentUser = null;
     let registeredUsers = [];
     
-    // Agar purana data corrupt hai, toh ye usko delete karke crash hone se bachayega
     try {
         const storedUser = localStorage.getItem('chatUser');
         if (storedUser) currentUser = JSON.parse(storedUser);
@@ -13,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const storedAppUsers = localStorage.getItem('chatAppUsers');
         if (storedAppUsers) registeredUsers = JSON.parse(storedAppUsers);
     } catch (error) {
-        console.warn("Purana ya kharab data mila. Memory clear ki ja rahi hai.");
+        console.warn("Clearing corrupted local storage.");
         localStorage.removeItem('chatUser');
         localStorage.removeItem('chatAppUsers');
     }
@@ -25,10 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAFE SOCKET CONNECTION
     let socket;
     if (typeof io !== 'undefined') {
-        socket = io(); // Automatically connects to local or live server
+        socket = io();
     } else {
-        console.error("Socket.io load nahi hua! F12 daba kar Network tab check karein.");
-        socket = { on: () => {}, emit: () => {} }; // Dummy socket to prevent crashes
+        socket = { on: () => {}, emit: () => {} };
     }
 
     if (currentUser && currentUser.username) { 
@@ -37,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. THEME LOGIC (Dark Mode & Gold Mode)
+    // 2. THEME LOGIC
     // ==========================================
     const darkModeBtn = document.getElementById('dark-mode-btn');
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -62,11 +60,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. SECURE LOGIN LOGIC
+    // 3. MOBILE SIDEBAR LOGIC (Hamburger Menu)
+    // ==========================================
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+    const sidebar = document.getElementById('sidebar');
+
+    if (hamburgerBtn && sidebar) {
+        hamburgerBtn.addEventListener('click', () => {
+            sidebar.classList.add('mobile-open');
+        });
+    }
+
+    if (closeSidebarBtn && sidebar) {
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+        });
+    }
+
+    // ==========================================
+    // 4. SECURE LOGIN & RANK LOGIC
     // ==========================================
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
-            // YE LINE PAGE RELOAD (?) KO ROKTI HAI
             e.preventDefault(); 
             
             const usernameInput = document.getElementById('username-input').value.trim();
@@ -102,13 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     friends: 0,
                     dp: "default-dp.png",
                     banner: "",
-                    partner: null
+                    partner: null,
+                    rank: "Member", // Default rank
+                    userColor: ""   // Default color
                 };
                 registeredUsers.push(currentUser);
                 localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
             } else {
                 currentUser = userExists;
                 currentUser.isDev = isDev; 
+                if(!currentUser.rank) currentUser.rank = "Member";
             }
             
             localStorage.setItem('chatUser', JSON.stringify(currentUser));
@@ -116,44 +135,153 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.connectDuoUI = function(partner) {
-        console.log("Friendship band connected with: " + partner);
+    // ==========================================
+    // 5. PUBLIC PROFILE (Read-Only)
+    // ==========================================
+    window.viewPublicProfile = function(username) {
+        const user = registeredUsers.find(u => u.username === username);
+        if(!user) return alert("Profile not found in database!");
+        
+        const modal = document.getElementById('public-profile-modal');
+        const nameDisplay = document.getElementById('public-profile-name');
+        const bioDisplay = document.getElementById('public-profile-bio');
+        const dpImg = document.getElementById('public-profile-dp');
+        const rankBadge = document.getElementById('public-profile-rank');
+
+        nameDisplay.innerText = user.username;
+        bioDisplay.innerText = user.bio || "No bio available.";
+        dpImg.src = (user.dp && !user.dp.startsWith('data:video')) ? user.dp : 'default-dp.png';
+        
+        const rank = user.rank || 'Member';
+        rankBadge.innerText = rank;
+        rankBadge.className = `rank-badge rank-${rank.toLowerCase()}`;
+
+        nameDisplay.className = '';
+        nameDisplay.style.color = '';
+        nameDisplay.style.textShadow = '';
+        
+        if (rank === 'Operator' && user.userColor) {
+            nameDisplay.classList.add('shine-operator');
+            nameDisplay.style.setProperty('--user-color', user.userColor);
+            nameDisplay.style.color = user.userColor;
+        }
+
+        modal.classList.remove('hidden');
+    };
+
+    window.closePublicProfile = function() {
+        document.getElementById('public-profile-modal').classList.add('hidden');
     };
 
     // ==========================================
-    // 4. MEDIA HANDLER (IMAGES & VIDEOS)
+    // 6. LOAD PROFILE & OPERATOR COLORS
     // ==========================================
+    const operatorColors = [
+        "#FF0000", "#FF1493", "#FF00FF", "#8A2BE2", "#4B0082", "#483D8B", "#0000FF", "#0000CD", 
+        "#1E90FF", "#00BFFF", "#87CEFA", "#00FFFF", "#40E0D0", "#00FA9A", "#00FF7F", "#3CB371", 
+        "#2E8B57", "#008000", "#32CD32", "#ADFF2F", "#7FFF00", "#7CFC00", "#FFFF00", "#FFD700", 
+        "#FFA500", "#FF8C00", "#FF4500", "#FF6347", "#FF7F50", "#DC143C", "#B22222", "#8B0000",
+        "#FF69B4", "#C71585", "#DA70D6", "#D8BFD8", "#DDA0DD", "#E6E6FA", "#D2B48C", "#F4A460", 
+        "#CD853F", "#D2691E", "#A0522D", "#8B4513", "#800000", "#FFFFFF", "#C0C0C0", "#808080",
+        "#000000", "#333333"
+    ];
+
+    function loadProfileData() {
+        if(!currentUser) return;
+        
+        const nameDisplay = document.getElementById('display-username');
+        const bioDisplay = document.getElementById('user-bio');
+        const myDpDisplay = document.getElementById('fb-my-dp');
+        const dpWrapper = document.getElementById('dp-wrapper');
+        const devNavItem = document.getElementById('dev-nav-item');
+        const rankDisplay = document.getElementById('display-rank');
+        const colorSection = document.getElementById('operator-color-section');
+
+        if(nameDisplay) nameDisplay.innerText = currentUser.username;
+        if(bioDisplay) bioDisplay.innerText = currentUser.bio;
+
+        // Rank Display Setup
+        const rank = currentUser.rank || 'Member';
+        if(rankDisplay) {
+            rankDisplay.innerText = rank;
+            rankDisplay.className = `rank-badge rank-${rank.toLowerCase()}`;
+        }
+
+        // DP and Media
+        applyMedia(currentUser.dp, 'user-dp', 'user-dp-video');
+        applyMedia(currentUser.banner, 'banner-img', 'banner-video');
+        if (myDpDisplay) myDpDisplay.src = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : 'default-dp.png';
+
+        // Operator Color System
+        if(nameDisplay) {
+            nameDisplay.className = 'username-display'; 
+            nameDisplay.style.color = '';
+            nameDisplay.style.textShadow = '';
+
+            if (rank === 'Operator' && currentUser.userColor) {
+                nameDisplay.classList.add('shine-operator');
+                nameDisplay.style.setProperty('--user-color', currentUser.userColor);
+                nameDisplay.style.color = currentUser.userColor;
+            }
+        }
+
+        if (rank === 'Operator') {
+            if (colorSection) colorSection.classList.remove('hidden');
+            setupColorGrid();
+        } else {
+            if (colorSection) colorSection.classList.add('hidden');
+        }
+
+        // Supreme Developer UI
+        if (currentUser.isDev) {
+            if(nameDisplay) nameDisplay.classList.add('dev-username-style');
+            if(rankDisplay) rankDisplay.innerText = "Developer 👑";
+            if(dpWrapper) dpWrapper.classList.add('dev-ring-active');
+            if(devNavItem) devNavItem.classList.remove('hidden');
+        } else {
+            if(devNavItem) devNavItem.classList.add('hidden');
+            if(dpWrapper) dpWrapper.classList.remove('dev-ring-active');
+        }
+    }
+
+    function setupColorGrid() {
+        const grid = document.getElementById('operator-color-grid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        operatorColors.forEach(color => {
+            const div = document.createElement('div');
+            div.className = 'color-option';
+            div.style.background = color;
+            if (currentUser.userColor === color) div.style.borderColor = 'black';
+            
+            div.onclick = () => {
+                currentUser.userColor = color;
+                // Update specific user in local storage array
+                const index = registeredUsers.findIndex(u => u.username === currentUser.username);
+                if(index > -1) registeredUsers[index].userColor = color;
+                
+                localStorage.setItem('chatUser', JSON.stringify(currentUser));
+                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+                loadProfileData(); // Reload UI
+            };
+            grid.appendChild(div);
+        });
+    }
+
     function applyMedia(dataUrl, imgId, videoId) {
         const imgElement = document.getElementById(imgId);
         const videoElement = document.getElementById(videoId);
-
         if (!dataUrl || dataUrl === 'default-dp.png' || dataUrl === '') {
-            if (dataUrl === 'default-dp.png') {
-                if(imgElement) {
-                    imgElement.src = 'default-dp.png';
-                    imgElement.classList.remove('hidden');
-                }
-                if (videoElement) videoElement.classList.add('hidden');
-            } else {
-                if(imgElement) imgElement.classList.add('hidden');
-                if (videoElement) videoElement.classList.add('hidden');
-            }
+            if (imgElement) { imgElement.src = 'default-dp.png'; imgElement.classList.remove('hidden'); }
+            if (videoElement) videoElement.classList.add('hidden');
             return;
         }
-
         if (dataUrl.startsWith('data:video')) {
-            if(imgElement) imgElement.classList.add('hidden');
-            if (videoElement) {
-                videoElement.src = dataUrl;
-                videoElement.classList.remove('hidden');
-                videoElement.play();
-            }
+            if (imgElement) imgElement.classList.add('hidden');
+            if (videoElement) { videoElement.src = dataUrl; videoElement.classList.remove('hidden'); videoElement.play(); }
         } else {
             if (videoElement) videoElement.classList.add('hidden');
-            if(imgElement) {
-                imgElement.src = dataUrl;
-                imgElement.classList.remove('hidden');
-            }
+            if (imgElement) { imgElement.src = dataUrl; imgElement.classList.remove('hidden'); }
         }
     }
 
@@ -167,98 +295,38 @@ document.addEventListener('DOMContentLoaded', () => {
         loadProfileData();
     }
 
-    function loadProfileData() {
-        if(!currentUser) return;
-        
-        const nameDisplay = document.getElementById('display-username');
-        const bioDisplay = document.getElementById('user-bio');
-        const myDpDisplay = document.getElementById('fb-my-dp');
-        const dpWrapper = document.getElementById('dp-wrapper');
-        const devNavItem = document.getElementById('dev-nav-item');
-
-        if(nameDisplay) nameDisplay.innerText = currentUser.username;
-        if(bioDisplay) bioDisplay.innerText = currentUser.bio;
-
-        applyMedia(currentUser.dp, 'user-dp', 'user-dp-video');
-        applyMedia(currentUser.banner, 'banner-img', 'banner-video');
-
-        if (myDpDisplay) {
-            if (currentUser.dp && currentUser.dp.startsWith('data:video')) {
-                myDpDisplay.src = 'default-dp.png';
-            } else {
-                myDpDisplay.src = currentUser.dp || 'default-dp.png';
-            }
-        }
-
-        if (currentUser.isDev) {
-            if(nameDisplay) nameDisplay.classList.add('dev-username-style');
-            if(dpWrapper) dpWrapper.classList.add('dev-ring-active');
-            if(devNavItem) devNavItem.classList.remove('hidden');
-        } else {
-            if(devNavItem) devNavItem.classList.add('hidden');
-            if(dpWrapper) dpWrapper.classList.remove('dev-ring-active');
-        }
-
-        if (currentUser.partner) connectDuoUI(currentUser.partner);
-    }
-
     // Upload Logic
     const editBtn = document.getElementById('edit-profile-btn');
     if(editBtn) {
         editBtn.addEventListener('click', () => {
-            const newBio = prompt("Enter new description:", currentUser.bio);
+            const newBio = prompt("Enter new bio:", currentUser.bio);
             if (newBio) {
                 currentUser.bio = newBio;
+                const index = registeredUsers.findIndex(u => u.username === currentUser.username);
+                if(index > -1) registeredUsers[index].bio = newBio;
+
                 document.getElementById('user-bio').innerText = currentUser.bio;
                 localStorage.setItem('chatUser', JSON.stringify(currentUser));
+                localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
             }
         });
     }
 
-    ['banner', 'dp'].forEach(type => {
-        const btn = document.getElementById(`change-${type}-btn`);
-        const input = document.getElementById(`${type}-upload-input`);
-        if(btn && input) {
-            btn.addEventListener('click', () => input.click());
-            input.addEventListener('change', function () {
-                const file = this.files[0];
-                if (file) {
-                    if (file.size > 5000000) return alert("File is too large! Limit is 5MB for now.");
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        currentUser[type] = e.target.result;
-                        applyMedia(currentUser[type], type === 'banner' ? 'banner-img' : 'user-dp', type === 'banner' ? 'banner-video' : 'user-dp-video');
-                        localStorage.setItem('chatUser', JSON.stringify(currentUser));
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-    });
-
-    // ==========================================
-    // 5. SIDEBAR NAVIGATION & GOLD THEME TOGGLE
-    // ==========================================
+    // Sidebar View Navigation
     const navButtons = document.querySelectorAll('.nav-btn');
     const contentViews = document.querySelectorAll('.content-view');
-
     navButtons.forEach(btn => {
         if (btn.id === 'dark-mode-btn') return;
-
         btn.addEventListener('click', () => {
             navButtons.forEach(b => b.classList.remove('active'));
-            contentViews.forEach(c => {
-                c.classList.remove('active');
-                c.classList.add('hidden');
-            });
+            contentViews.forEach(c => { c.classList.remove('active'); c.classList.add('hidden'); });
             btn.classList.add('active');
 
             const targetId = btn.getAttribute('data-target');
             const targetView = document.getElementById(targetId);
-            if(targetView) {
-                targetView.classList.remove('hidden');
-                targetView.classList.add('active');
-            }
+            if(targetView) { targetView.classList.remove('hidden'); targetView.classList.add('active'); }
+
+            if (window.innerWidth <= 768 && sidebar) sidebar.classList.remove('mobile-open'); // Auto close on mobile
 
             if (targetId === 'dev-section-view') {
                 document.documentElement.setAttribute('data-theme', 'gold');
@@ -271,42 +339,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 6. POST FEED LOGIC
+    // 7. CHAT & MENTION SYSTEM
     // ==========================================
-    const submitPostBtn = document.getElementById('submit-post-btn');
-    const feedContainer = document.getElementById('feed-container');
-
-    if (submitPostBtn && feedContainer) {
-        submitPostBtn.addEventListener('click', () => {
-            const text = document.getElementById('post-input').value;
-            if (!text.trim()) return;
-
-            const post = document.createElement('div');
-            post.className = 'feed-post';
-            const nameClass = currentUser.isDev ? 'dev-username-style' : '';
-            const safeDpUrl = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : 'default-dp.png';
-
-            post.innerHTML = `
-                <div class="post-header">
-                    <img src="${safeDpUrl}" style="object-fit:cover;">
-                    <b class="${nameClass}" style="font-size:1.1rem; margin-left:10px;">${currentUser.username}</b> 
-                    <span style="margin-left:10px;">• Just now</span>
-                </div>
-                <div class="post-content">${text}</div>
-                <div class="post-footer">
-                    <button class="like-btn" onclick="this.innerHTML='❤️ Liked'">🤍 Like</button>
-                    <button class="comment-btn">💬 Comment</button>
-                </div>
-            `;
-            feedContainer.prepend(post);
-            document.getElementById('post-input').value = '';
-        });
-    }
-
-    // ==========================================
-    // 7. CHAT & @MENTION SYSTEM
-    // ==========================================
-    
     function sendMessage(inputId, areaId) {
         const input = document.getElementById(inputId);
         if(!input) return;
@@ -337,11 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on("receive_message", (data) => {
         if(data.sender === currentUser.username) return;
-        
-        // Notification sound
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); 
-        audio.play().catch(e => console.log('Audio blocked.'));
-
         appendMessageToScreen(data.text, data.area, 'other');
     });
 
@@ -350,84 +379,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById(btnId);
         if(btn) btn.addEventListener('click', () => sendMessage(inputId, areaId));
         if(input) {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage(inputId, areaId);
-            });
-            setupMentionSystem(input, inputId);
+            input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(inputId, areaId); });
         }
     };
 
     setupInput('world-message-input', 'world-messages-area', 'world-send-btn');
     setupInput('message-input', 'messages-area', 'send-btn');
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
-
-    function setupMentionSystem(inputElement, id) {
-        let dropdownId = 'private-mention-dropdown';
-        if(id === 'group-message-input') dropdownId = 'group-mention-dropdown';
-        if(id === 'world-message-input') dropdownId = 'world-mention-dropdown';
-        
-        const dropdown = document.getElementById(dropdownId);
-        if(!dropdown) return;
-
-        inputElement.addEventListener('input', (e) => {
-            const val = inputElement.value;
-            const cursorPosition = inputElement.selectionStart;
-            const textBeforeCursor = val.substring(0, cursorPosition);
-            
-            const match = textBeforeCursor.match(/@(\w*)$/);
-            
-            if (match) {
-                const searchStr = match[1].toLowerCase();
-                const allUsers = registeredUsers.map(u => u.username);
-                allUsers.push('everyone');
-                
-                const filtered = allUsers.filter(u => u.toLowerCase().startsWith(searchStr));
-                
-                if (filtered.length > 0) {
-                    dropdown.innerHTML = '';
-                    filtered.forEach(user => {
-                        const div = document.createElement('div');
-                        div.className = 'mention-item';
-                        div.innerText = `@${user}`;
-                        div.onclick = () => {
-                            const newText = val.substring(0, cursorPosition - match[0].length) + `@${user} ` + val.substring(cursorPosition);
-                            inputElement.value = newText;
-                            dropdown.classList.add('hidden');
-                            inputElement.focus();
-                        };
-                        dropdown.appendChild(div);
-                    });
-                    dropdown.classList.remove('hidden');
-                } else {
-                    dropdown.classList.add('hidden');
-                }
-            } else {
-                dropdown.classList.add('hidden');
-            }
-        });
-        
-        document.addEventListener('click', (e) => {
-            if(e.target !== inputElement && !dropdown.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-    }
-
-    const voiceBtn = document.getElementById('voice-note-btn');
-    const cancelVoiceBtn = document.getElementById('cancel-voice-btn');
-    const msgInput = document.getElementById('message-input');
-    const visualizer = document.getElementById('voice-visualizer');
-
-    if (voiceBtn && cancelVoiceBtn && msgInput && visualizer) {
-        voiceBtn.addEventListener('click', () => {
-            msgInput.classList.add('hidden');
-            visualizer.classList.remove('hidden');
-        });
-        cancelVoiceBtn.addEventListener('click', () => {
-            visualizer.classList.add('hidden');
-            msgInput.classList.remove('hidden');
-        });
-    }
 
     window.openChat = function (name) {
         const ph = document.getElementById('chat-placeholder');
@@ -458,17 +416,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 8. SUPREME DEVELOPER DASHBOARD LOGIC
+    // 8. DEVELOPER DASHBOARD LOGIC
     // ==========================================
     let currentDevAction = "";
+    let selectedDevOption = null;
 
     window.openDevModal = function (type) {
         currentDevAction = type;
         const assignModal = document.getElementById('dev-assign-modal');
         const banModal = document.getElementById('dev-ban-modal');
         const title = document.getElementById('dev-modal-title');
+        selectedDevOption = null;
 
-        if(!assignModal || !banModal || !title) return;
+        if (!assignModal || !banModal || !title) return;
 
         if (type === 'ban' || type === 'unban') {
             banModal.classList.remove('hidden');
@@ -476,9 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('confirm-ban-btn').innerText = type === 'ban' ? 'Drop Hammer' : 'Restore Access';
         } else {
             assignModal.classList.remove('hidden');
+            if (type === 'rank') title.innerText = "Assign Rank";
             if (type === 'ring') title.innerText = "Assign Premium Profile Ring";
             if (type === 'theme') title.innerText = "Assign Custom UI Theme";
-            if (type === 'name-style') title.innerText = "Assign Username Style";
             generateOptionsGrid(type);
         }
     };
@@ -494,7 +454,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('dev-options-grid');
         if(!grid) return;
         grid.innerHTML = '';
-        let selectedOption = null;
+        
+        if(type === 'rank') {
+            ['Operator', 'Elite', 'Legend', 'Pro', 'Member'].forEach(r => {
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                btn.style.width = '100%';
+                btn.innerText = r;
+                btn.onclick = () => {
+                    selectedDevOption = r;
+                    Array.from(grid.children).forEach(c => c.style.border = 'none');
+                    btn.style.border = '2px solid #fff';
+                };
+                grid.appendChild(btn);
+            });
+            return;
+        }
 
         for (let i = 1; i <= 20; i++) { 
             const box = document.createElement('div');
@@ -523,9 +498,8 @@ document.addEventListener('DOMContentLoaded', () => {
             box.addEventListener('click', () => {
                 Array.from(grid.children).forEach(child => child.style.outline = 'none');
                 box.style.outline = '3px solid #fff';
-                selectedOption = i;
+                selectedDevOption = i;
             });
-
             grid.appendChild(box);
         }
     }
@@ -535,12 +509,26 @@ document.addEventListener('DOMContentLoaded', () => {
         assignBtn.addEventListener('click', () => {
             const targetUser = document.getElementById('dev-target-user').value;
             if (!targetUser) return alert("Please enter a target username!");
+            if (!selectedDevOption) return alert("Please select an option from the grid!");
 
-            let actionName = currentDevAction === 'ring' ? 'Profile Ring' : currentDevAction === 'theme' ? 'UI Theme' : 'Username Style';
-            
-            socket.emit('assign_dev_power', { user: targetUser, power: currentDevAction });
-            
-            alert(`Successfully applied ${actionName} to user: ${targetUser}`);
+            if (currentDevAction === 'rank') {
+                const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
+                if(targetObj) {
+                    targetObj.rank = selectedDevOption;
+                    localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+                    alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
+                    if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
+                        currentUser.rank = selectedDevOption;
+                        localStorage.setItem('chatUser', JSON.stringify(currentUser));
+                        loadProfileData();
+                    }
+                } else {
+                    alert("User not found in local database!");
+                }
+            } else {
+                socket.emit('assign_dev_power', { user: targetUser, power: currentDevAction, value: selectedDevOption });
+                alert(`Successfully applied feature to user: ${targetUser}`);
+            }
             closeDevModal();
             document.getElementById('dev-target-user').value = '';
         });
@@ -551,10 +539,8 @@ document.addEventListener('DOMContentLoaded', () => {
         banBtn.addEventListener('click', () => {
             const targetUser = document.getElementById('ban-target-user').value;
             if (!targetUser) return alert("Please enter a target username!");
-            
             socket.emit('ban_user', { user: targetUser });
-            
-            alert(`Action completed on user: ${targetUser}. Server database updated.`);
+            alert(`Action completed on user: ${targetUser}.`);
             closeDevModal();
             document.getElementById('ban-target-user').value = '';
         });

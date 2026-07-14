@@ -4,21 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atif Chat App - Premium</title>
+    <title>Atif Chat App - Premium Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+    <!-- 1. LOGIN SCREEN -->
     <div id="login-screen" class="screen active">
         <div class="login-container">
             <h1>Welcome</h1>
             <p>Enter your details to continue</p>
             <form id="login-form">
-                <input type="text" id="username-input" placeholder="Enter Username" required>
-                
-                <input type="email" id="email-input" placeholder="Enter Email Address" required>
-                
+                <input type="text" id="username-input" placeholder="Enter Username" required autocomplete="off">
+                <input type="email" id="email-input" placeholder="Enter Email Address" required autocomplete="off">
                 <div class="dev-section">
                     <label for="dev-code">Developer Code (Optional)</label>
                     <input type="password" id="dev-code" placeholder="Enter secret key..." maxlength="14">
@@ -29,10 +28,20 @@
         </div>
     </div>
 
+    <!-- 2. MAIN APPLICATION -->
     <div id="main-app" class="screen hidden">
 
+        <!-- MOBILE NAVBAR (New for Mobile Responsiveness) -->
+        <div id="mobile-top-bar" class="hidden">
+            <button id="hamburger-btn" class="action-btn">☰</button>
+            <span class="mobile-title">Chatterbox</span>
+        </div>
+
+        <!-- SIDEBAR -->
         <nav id="sidebar">
             <div class="nav-logo">Chatterbox</div>
+            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn">X Close</button>
+            
             <ul class="nav-links">
                 <li><button class="nav-btn active" data-target="profile-section">Profile</button></li>
                 <li><button class="nav-btn" data-target="chat-section">Chat</button></li>
@@ -51,6 +60,7 @@
 
         <main id="content-area">
 
+            <!-- PROFILE SECTION -->
             <section id="profile-section" class="content-view active">
                 <div class="profile-banner-wrapper">
                     <div class="profile-banner" id="user-banner-container">
@@ -72,12 +82,26 @@
                     </div>
 
                     <h2 id="display-username" class="username-display">Username</h2>
+                    
+                    <!-- NEW: Rank Display -->
+                    <div id="display-rank" class="rank-badge rank-member">Member</div>
+
                     <div class="stats"><span id="friend-count">0 friends</span></div>
                     <p id="user-bio">Hallo World</p>
                     <button id="edit-profile-btn">Edit Profile</button>
+
+                    <!-- NEW: Operator Color Picker (Hidden for normal users) -->
+                    <div id="operator-color-section" class="settings-card hidden" style="margin-top:20px; width:100%;">
+                        <h3>Operator Animation Color</h3>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">Choose your custom glowing username color:</p>
+                        <div id="operator-color-grid" class="options-grid" style="grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));">
+                            <!-- JS will inject 50 colors here -->
+                        </div>
+                    </div>
                 </div>
             </section>
 
+            <!-- PRIVATE CHAT SECTION -->
             <section id="chat-section" class="content-view hidden">
                 <div class="chat-layout">
                     <div class="chat-sidebar">
@@ -88,12 +112,13 @@
                         </div>
                         <div class="search-bar"><input type="text" placeholder="Search..."></div>
                         <div class="contact-list" id="contact-list-container">
-                            <div class="dummy-item" onclick="openChat('Nauras Daniyal')">
+                            <div class="dummy-item">
                                 <div class="contact-avatar">
                                     <span>👤</span>
                                     <div class="status-dot online"></div>
                                 </div>
-                                <b>Nauras Daniyal</b>
+                                <b onclick="openChat('Nauras Daniyal')">Nauras Daniyal</b>
+                                <button class="action-btn view-profile-btn" onclick="viewPublicProfile('Nauras Daniyal')" style="margin-left:auto; padding:5px 10px; font-size:0.7rem;">View</button>
                             </div>
                         </div>
                     </div>
@@ -104,8 +129,8 @@
                         </div>
 
                         <div class="chat-header hidden" id="chat-header">
-                            <img src="default-dp.png" alt="Chat User">
-                            <h3 id="current-chat-name">User</h3>
+                            <img src="default-dp.png" alt="Chat User" id="current-chat-dp" onclick="viewPublicProfile(document.getElementById('current-chat-name').innerText)" style="cursor:pointer;">
+                            <h3 id="current-chat-name" onclick="viewPublicProfile(this.innerText)" style="cursor:pointer;">User</h3>
                             <span class="status-text">Online</span>
                             <button id="block-user-btn" class="danger-btn">Block</button>
                         </div>
@@ -139,6 +164,7 @@
                 </div>
             </section>
 
+            <!-- GROUP CHAT SECTION -->
             <section id="group-chat-section" class="content-view hidden">
                 <div class="chat-layout">
                     <div class="chat-sidebar">
@@ -169,6 +195,7 @@
                 </div>
             </section>
 
+            <!-- FRIENDSHIP BAND SECTION -->
             <section id="friendship-section" class="content-view hidden">
                 <div class="friendship-wrapper">
                     <div class="friendship-header">
@@ -215,6 +242,7 @@
                 </div>
             </section>
 
+            <!-- WORLD CHAT SECTION -->
             <section id="world-chat-section" class="content-view hidden">
                 <div class="active-chat-window global-chat">
                     <div class="chat-header">
@@ -222,7 +250,7 @@
                         <p>Chat with everyone on the website instantly!</p>
                     </div>
                     <div class="messages-container" id="world-messages-area">
-                        <div class="message-bubble system-msg">Welcome to the global chat! Be respectful.</div>
+                        <div class="message-bubble system-msg">Welcome to the global chat! Click on a username to view their profile.</div>
                     </div>
                     <div class="chat-input-area">
                         <div id="world-mention-dropdown" class="mention-dropdown hidden"></div>
@@ -233,6 +261,7 @@
                 </div>
             </section>
 
+            <!-- POST FEED SECTION -->
             <section id="post-section" class="content-view hidden">
                 <div class="feed-wrapper">
                     <div class="create-post-card">
@@ -243,21 +272,12 @@
                         </div>
                     </div>
                     <div id="feed-container">
-                        <div class="feed-post">
-                            <div class="post-header">
-                                <img src="default-dp.png" alt="dp">
-                                <b>Nauras Daniyal</b> <span>• 2 hrs ago</span>
-                            </div>
-                            <div class="post-content">Just joined the chat app! This looks awesome.</div>
-                            <div class="post-footer">
-                                <button class="like-btn">❤️ Like (5)</button>
-                                <button class="comment-btn">💬 Comment</button>
-                            </div>
-                        </div>
+                        <!-- Posts go here -->
                     </div>
                 </div>
             </section>
 
+            <!-- SETTINGS SECTION -->
             <section id="settings-section" class="content-view hidden">
                 <div class="settings-wrapper">
                     <h2>Settings</h2>
@@ -277,6 +297,7 @@
                 </div>
             </section>
 
+            <!-- DEVELOPER PANEL SECTION -->
             <section id="dev-section-view" class="content-view hidden">
                 <div id="dev-dashboard-wrapper">
                     <div class="dev-header">
@@ -285,6 +306,14 @@
                     </div>
 
                     <div class="dev-cards-grid">
+                        
+                        <!-- NEW: Assign Rank Card -->
+                        <div class="dev-card golden-card" onclick="openDevModal('rank')">
+                            <div class="card-icon">🎖️</div>
+                            <h3>Assign Rank</h3>
+                            <p>Give users Operator, Elite, Legend, Pro, or Member rank.</p>
+                        </div>
+
                         <div class="dev-card golden-card" onclick="openDevModal('ring')">
                             <div class="card-icon">⭕</div>
                             <h3>Assign Profile Ring</h3>
@@ -295,12 +324,6 @@
                             <div class="card-icon">🎨</div>
                             <h3>Assign UI Theme</h3>
                             <p>Change app colors for specific users (20 premium themes).</p>
-                        </div>
-
-                        <div class="dev-card golden-card" onclick="openDevModal('name-style')">
-                            <div class="card-icon">✨</div>
-                            <h3>Username Style</h3>
-                            <p>Assign glowing, gradient, or animated username colors.</p>
                         </div>
 
                         <div class="dev-card red-card" onclick="openDevModal('ban')">
@@ -321,6 +344,7 @@
         </main>
     </div>
 
+    <!-- DEVELOPER MODALS -->
     <div id="dev-assign-modal" class="modal-overlay hidden">
         <div class="dev-modal-content golden-border">
             <h2 id="dev-modal-title">Assign Feature</h2>    
@@ -350,6 +374,24 @@
         </div>
     </div>
 
+    <!-- NEW: PUBLIC READ-ONLY PROFILE MODAL -->
+    <div id="public-profile-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" style="border: 2px solid var(--border-color); text-align:center;">
+            <button class="danger-btn" onclick="closePublicProfile()" style="float:right; padding:5px 10px; border-radius:5px;">X</button>
+            <div style="clear:both;"></div>
+            
+            <div class="dp-container" style="width:120px; height:120px; margin: 0 auto 15px auto;">
+                <img id="public-profile-dp" src="default-dp.png" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+            </div>
+            
+            <h2 id="public-profile-name" style="font-size:2rem; margin-bottom:5px;">Username</h2>
+            <div id="public-profile-rank" class="rank-badge" style="margin-bottom:15px; display:inline-block;">Member</div>
+            
+            <p id="public-profile-bio" style="color:var(--text-muted); font-size:1.1rem;">Hallo World</p>
+        </div>
+    </div>
+
+    <!-- SOCKET.IO AND SCRIPT JS -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
