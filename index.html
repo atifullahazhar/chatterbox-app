@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Atif Chat App - Ultimate Premium Edition</title>
+    <title>Chatterbox VIP - The Ultimate Premium Ecosystem</title>
     <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name=C&background=8b5cf6&color=fff">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,17 +16,36 @@
 
     <div id="login-screen" class="screen active">
         <div class="login-container">
-            <h1>Welcome</h1>
-            <p>Enter your details to continue to Chatterbox</p>
+            <h1>Chatterbox VIP</h1>
+            <p>Access the Distributed Realtime Communication Grid Matrix</p>
+            
             <div id="login-form">
-                <input type="text" id="username-input" placeholder="Enter Username" required autocomplete="off">
-                <input type="email" id="email-input" placeholder="Enter Email Address" required autocomplete="off">
-                <div class="dev-section">
-                    <label for="dev-code">Developer Code (Optional)</label>
-                    <input type="password" id="dev-code" placeholder="Enter secret key..." maxlength="14">
-                    <small>Only authorized administrators can access developer tabs</small>
+                <input type="text" id="username-input" placeholder="Enter Unique Account Handle Name..." required autocomplete="off">
+                <input type="email" id="email-input" placeholder="Enter Registered Email Address..." required autocomplete="off">
+                
+                <div id="otp-login-verification-block" class="hidden" style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="otp-code-input" placeholder="Enter 6-Digit OTP Secure Verification Code..." maxlength="6" style="flex: 1; margin: 0; text-align: center; letter-spacing: 5px;">
+                        <button type="button" id="action-trigger-request-otp-resend" class="action-btn" style="padding: 0 15px; border-radius: 12px; font-size: 0.85rem;">Resend OTP</button>
+                    </div>
                 </div>
-                <button type="button" id="join-btn">Join Chat Room</button>
+                
+                <div style="text-align: left; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; border: 1px dashed var(--border-color);">
+                    <input type="checkbox" id="tos-checkbox-matrix" style="width: auto; margin-top: 3px; cursor: pointer;">
+                    <label for="tos-checkbox-matrix" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; cursor: pointer;">
+                        I here by explicitly read, understand, and commit to the structural bindings of the 
+                        <span id="trigger-view-tos-modal" style="color: var(--primary-color); font-weight: bold; text-decoration: underline;">Terms of Service Agreement</span> 
+                        and system parameters infrastructure privacy guidelines.
+                    </label>
+                </div>
+
+                <div class="dev-section">
+                    <label for="dev-code">Supreme Admin Authorization Code Entry Port</label>
+                    <input type="password" id="dev-code" placeholder="Input secret keys structure..." maxlength="14">
+                    <small>Unauthorized access validation attempts trigger immutable security event logging metrics blocks.</small>
+                </div>
+                <button type="button" id="join-btn">Initialize Connection Matrix Portal</button>
+                <button type="button" id="action-switch-to-otp-mode-btn" class="action-btn" style="margin-top: 8px; font-size: 0.9rem; border-radius: 12px;">Verify via Secure Mobile SMS OTP Channel Port</button>
             </div>
         </div>
     </div>
@@ -35,23 +54,28 @@
         
         <div id="mobile-top-bar" class="hidden">
             <button id="hamburger-btn" class="action-btn"><i class="fas fa-bars"></i></button>
-            <span class="mobile-title">Chatterbox VIP</span>
+            <span class="mobile-title">Chatterbox Ecosystem VIP</span>
         </div>
 
         <nav id="sidebar">
-            <div class="nav-logo">Chatterbox</div>
-            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn"><i class="fas fa-times"></i> Close Menu</button>
+            <div class="nav-logo">Chatterbox VIP</div>
+            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn"><i class="fas fa-times"></i> Close Grid Window Menus</button>
+            
             <ul class="nav-links">
-                <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user"></i> <span class="nav-text">Profile Workspace</span></button></li>
-                <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comment-dots"></i> <span class="nav-text">Chat Workspace</span></button></li>
-                <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-users"></i> <span class="nav-text">Group Chat</span></button></li>
-                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-handshake"></i> <span class="nav-text">Friendship Band</span></button></li>
-                <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe-americas"></i> <span class="nav-text">World Chat Room</span></button></li>
-                <li><button class="nav-btn" data-target="post-section"><i class="fas fa-images"></i> <span class="nav-text">Post Feed Hub</span></button></li>
-                <li><button class="nav-btn" data-target="games-section"><i class="fas fa-gamepad"></i> <span class="nav-text">Mini Game Zone</span></button></li>
-                <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-cog"></i> <span class="nav-text">App Settings</span></button></li>
-                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn" data-target="dev-section-view"><i class="fas fa-crown"></i> <span class="nav-text">Developer Control</span></button></li>
+                <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user-shield"></i> <span class="nav-text">Account Profile</span></button></li>
+                <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comments"></i> <span class="nav-text">Direct Streams</span></button></li>
+                <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-network-wired"></i> <span class="nav-text">Multiplex Channels</span></button></li>
+                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-link"></i> <span class="nav-text">Duo Sync Band</span></button></li>
+                <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe"></i> <span class="nav-text">Global Broadcast</span></button></li>
+                <li><button class="nav-btn" data-target="post-section"><i class="fas fa-photo-video"></i> <span class="nav-text">Content Hub Feed</span></button></li>
+                <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-sliders-h"></i> <span class="nav-text">Configurations</span></button></li>
+                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn" data-target="dev-section-view"><i class="fas fa-shield-alt"></i> <span class="nav-text">Root Core Admin</span></button></li>
             </ul>
+            
+            <div style="padding: 15px 5px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
+                <button class="action-btn" id="sidebar-quick-report-bug-btn" style="color: #ef4444; border-color: rgba(239,68,68,0.3); display: flex; align-items: center; gap: 10px; justify-content: center; font-size: 0.95rem; border-radius: 10px; padding: 10px;"><i class="fas fa-bug"></i> <span class="nav-text">Log System Bug</span></button>
+                <button class="danger-btn" id="sidebar-quick-logout-btn" style="display: flex; align-items: center; gap: 10px; justify-content: center; font-size: 0.95rem; border-radius: 10px; padding: 10px;"><i class="fas fa-power-off"></i> <span class="nav-text">Terminate System Session</span></button>
+            </div>
         </nav>
 
         <main id="content-area">
@@ -59,34 +83,53 @@
             <section id="profile-section" class="content-view active">
                 <div class="profile-banner-wrapper">
                     <div class="profile-banner" id="user-banner-container">
-                        <img src="" id="banner-img" class="hidden" alt="User Customized Profile Banner">
+                        <img src="" id="banner-img" class="hidden" alt="Account Profile Header Banner Backdrop Graphic View Frame">
                     </div>
                 </div>
                 <div class="profile-info-container">
-                    <div class="dp-wrapper-main">
+                    
+                    <div class="dp-wrapper-main" id="profile-picture-avatar-border-frame-container" style="position: relative;">
                         <div class="dp-container" id="dp-wrapper">
-                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Profile View Avatar" id="user-dp">
+                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Identity Logo Vector Avatar Image" id="user-dp">
                         </div>
                     </div>
-                    <div class="username-wrapper">
-                        <span id="mood-emoji" title="Set Current Mood">😎</span>
-                        <h2 id="display-username" class="username-display">Username Container</h2>
-                    </div>
-                    <div id="display-rank" class="rank-badge rank-member">Member Status</div>
                     
-                    <button id="view-friends-list-btn" class="action-btn" style="margin: 12px 0; border-radius: 20px; font-size: 0.95rem; padding: 10px 25px;">
-                        <i class="fas fa-user-friends"></i> Friends Total: <span id="total-friends-count">0</span>
-                    </button>
+                    <div class="username-wrapper">
+                        <span id="mood-emoji" title="Re-Index Presentation Mood State Indicator Parameter Emoji Asset View">😎</span>
+                        <h2 id="display-username" class="username-display">Identity Target Storage Row Name</h2>
+                    </div>
+                    <div id="display-rank" class="rank-badge rank-member">Verification Clearance Level Matrix Row Status</div>
+                    
+                    <div style="display: flex; gap: 15px; margin: 10px 0; justify-content: center; align-items: center; width: 100%; max-width: 400px;">
+                        <button id="view-friends-list-btn" class="action-btn" style="flex: 1; border-radius: 15px; font-size: 0.9rem; padding: 10px;">
+                            <i class="fas fa-users-cog"></i> Mapped Connections: <span id="total-friends-count">0</span>
+                        </button>
+                        <div class="action-btn" style="flex: 1; border-radius: 15px; font-size: 0.9rem; padding: 10px; cursor: default; text-align: center;">
+                            <i class="fas fa-eye"></i> Profile Queries Total: <span id="profile-visitor-numerical-counter-view">0</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px; color: var(--text-muted); font-size: 0.9rem; font-weight: bold;">
+                        <span>Followers Metrics Block Row Stack: <span id="profile-followers-metrics-counter-value" style="color: var(--primary-color);">0</span></span>
+                        <span>|</span>
+                        <span>Following Metrics Block Row Stack: <span id="profile-following-metrics-counter-value" style="color: var(--primary-color);">0</span></span>
+                    </div>
 
                     <div class="profile-badges">
-                        <span title="Early Verified Adopter Asset">🌟</span>
-                        <span title="Chatterbox System Pro Asset">💎</span>
-                        <span title="Friendly Strategic Neighbor Asset">🤝</span>
+                        <span title="Early Matrix Generation Core Node Verified User Adopter Asset">🌟</span>
+                        <span title="Distributed Ecosystem Pro Verification Token Framework Node">💎</span>
+                        <span title="High Metrics Communication Packet Relay Network Vector Entity Asset">🤝</span>
                     </div>
-                    <p id="user-bio">Your biographical description will appear inside this text block container element.</p>
-                    <div class="social-links-bar"><i class="fab fa-instagram"></i><i class="fab fa-github"></i><i class="fab fa-youtube"></i></div>
                     
-                    <button id="edit-profile-btn" class="primary-btn"><i class="fas fa-user-edit"></i> Edit Core Profile</button>
+                    <p id="user-bio">Metadata descriptive block field context character values details index text row element target.</p>
+                    
+                    <div class="social-links-bar" id="profile-integrated-social-handles-icons-stack-row">
+                        <i class="fab fa-instagram" id="social-link-instagram-node-btn" title="Synchronize Instagram Data Stream Hook Channel Parameter"></i>
+                        <i class="fab fa-github" id="social-link-github-node-btn" title="Synchronize GitHub Data Stream Hook Channel Parameter"></i>
+                        <i class="fab fa-youtube" id="social-link-youtube-node-btn" title="Synchronize YouTube Data Stream Hook Channel Parameter"></i>
+                    </div>
+                    
+                    <button id="edit-profile-btn" class="primary-btn"><i class="fas fa-sliders-h"></i> Modify Profile Presentation Layer Variables</button>
                 </div>
             </section>
 
@@ -95,19 +138,19 @@
                     
                     <div class="chat-sidebar">
                         <div class="chat-tabs">
-                            <button class="tab-btn active" data-tab="general">General Chat</button>
-                            <button class="tab-btn" data-tab="favorite">Favorite List</button>
-                            <button class="tab-btn" data-tab="requests">Request Hub</button>
+                            <button class="tab-btn active" data-tab="general">General</button>
+                            <button class="tab-btn" data-tab="favorite">Favorites Matrix</button>
+                            <button class="tab-btn" data-tab="requests">Request Interface Engine</button>
                         </div>
 
                         <div id="request-sub-tabs-container" class="hidden" style="display: flex; background: var(--bg-main); padding: 8px; gap: 5px; border-bottom: 1px solid var(--border-color);">
-                            <button id="sub-tab-accept-btn" class="action-btn active-sub-tab" style="flex: 1; padding: 6px; font-size: 0.85rem; border-radius: 8px;">Accept Requests</button>
-                            <button id="sub-tab-send-btn" class="action-btn" style="flex: 1; padding: 6px; font-size: 0.85rem; border-radius: 8px;">Send Request Box</button>
+                            <button id="sub-tab-accept-btn" class="action-btn active-sub-tab" style="flex: 1; padding: 6px; font-size: 0.85rem; border-radius: 8px;"><i class="fas fa-envelope-open-text"></i> Accept Requests Pipeline</button>
+                            <button id="sub-tab-send-btn" class="action-btn" style="flex: 1; padding: 6px; font-size: 0.85rem; border-radius: 8px;"><i class="fas fa-search-plus"></i> Send Request Box</button>
                         </div>
                         
                         <div id="search-friend-field-block" style="padding: 12px; border-bottom: 1px solid var(--border-color);">
                             <div style="display: flex; gap: 8px;">
-                                <input type="text" id="chat-sidebar-search-input" placeholder="Search operational profiles..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); outline: none;">
+                                <input type="text" id="chat-sidebar-search-input" placeholder="Query data rows directory text keys parameters..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); outline: none;">
                                 <button id="sidebar-action-search-trigger" class="primary-btn" style="padding: 10px 14px; border-radius: 10px;"><i class="fas fa-search"></i></button>
                             </div>
                         </div>
@@ -115,45 +158,68 @@
                         <div class="contact-list" id="contact-list-container"></div>
                     </div>
 
-                    <div class="active-chat-window" id="main-chat-workspace-pane">
+                    <div class="active-chat-window" id="main-chat-workspace-pane" style="display: flex; flex-direction: column; height: 100%; position: relative; overflow: hidden;">
                         
                         <div id="chat-placeholder" class="empty-state">
-                            <i class="fas fa-comments" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 15px;"></i>
-                            <p>Select a verified contact or navigate to the request engine tab to initiate operational streaming workflows.</p>
+                            <i class="fas fa-shield-alt" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 15px;"></i>
+                            <p>Direct communication signal channels are dormant. Instantiate a handshake link matrix vector or query indexed handle registries names rows slots values to begin.</p>
                         </div>
 
-                        <div id="request-profile-preview-pane" class="hidden" style="padding: 40px; text-align: center; height: 100%; overflow-y: auto; background: var(--bg-panel);">
-                            <div style="max-width: 400px; margin: 0 auto; background: var(--bg-main); padding: 30px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-                                <div class="dp-wrapper-main" style="margin: 0 auto 20px auto; width: 120px; height: 120px;">
-                                    <div class="dp-container">
+                        <div id="request-profile-preview-pane" class="hidden" style="padding: 30px; text-align: center; width: 100%; height: 100%; overflow-y: auto; background: var(--bg-panel); display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div style="width: 100%; max-width: 420px; background: var(--bg-main); padding: 35px 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
+                                <div class="dp-wrapper-main" style="margin: 0 auto 20px auto; width: 130px; height: 130px;">
+                                    <div class="dp-container" style="border: 3px solid var(--primary-color); padding: 4px;">
                                         <img src="" id="preview-search-user-dp" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                                     </div>
                                 </div>
-                                <h3 id="preview-search-user-name" style="font-size: 1.8rem; margin-bottom: 8px;">Username Text</h3>
-                                <div id="preview-search-user-rank" class="rank-badge" style="display: inline-block; margin-bottom: 15px;">Member</div>
-                                <p id="preview-search-user-bio" style="color: var(--text-muted); margin-bottom: 25px;">Bio container element content textual description inside.</p>
-                                <button id="action-dispatch-friend-request-btn" class="primary-btn" style="width: 100%; padding: 14px; font-size: 1.05rem; border-radius: 12px;">
-                                    <i class="fas fa-user-plus"></i> Send Friend Request
-                                </button>
+                                <h3 id="preview-search-user-name" style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 5px; letter-spacing: -0.5px;">Query Profile Target Node Display Handle Name String</h3>
+                                <div id="preview-search-user-rank" class="rank-badge" style="display: inline-block; margin-bottom: 20px;">Class Category Attribute Class</div>
+                                <p id="preview-search-user-bio" style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.5; margin-bottom: 30px; background: var(--bg-panel); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">Descriptive matrix record context row details values strings.</p>
+                                <button id="action-dispatch-friend-request-btn" class="primary-btn" style="width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 10px;"><i class="fas fa-user-plus"></i> Securely Dispatch Handshake Request Packets Payload Array</button>
                             </div>
                         </div>
 
-                        <div class="chat-header hidden" id="chat-header">
-                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Active Chat Node Avatar Image" id="current-chat-dp" style="cursor: pointer;">
+                        <div class="chat-header hidden" id="chat-header" style="flex-shrink: 0;">
+                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Target Destination Channel Identity Node Avatar Frame Thumbnail" id="current-chat-dp" style="cursor: pointer;">
                             <div class="chat-header-info">
-                                <h3 id="current-chat-name" style="cursor: pointer;">Active Destination Target Node Name</h3>
-                                <span class="status-text"><i class="fas fa-circle" style="font-size: 0.65rem; vertical-align: middle;"></i> Transmission Stream Active</span>
+                                <h3 id="current-chat-name" style="cursor: pointer;">Target Active Processing Destination Buffer Matrix Handle Row</h3>
+                                
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <span id="current-chat-user-live-activity-status-dot" style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+                                    <span class="status-text" id="current-chat-user-live-activity-status-text-string" style="font-size: 0.85rem; color: #10b981; font-weight: bold;">Active Data Sync Stream Vector Pipe Online</span>
+                                </div>
                             </div>
-                            <button id="favorite-user-btn" class="action-btn" title="Toggle Favorite Repository Assignment"><i class="far fa-star"></i></button>
-                            <button id="block-user-btn" class="danger-btn" title="Terminate Signal Stream Matrix"><i class="fas fa-ban"></i></button>
+                            
+                            <div style="display: flex; gap: 8px; margin-right: 10px;" id="multimedia-voice-video-streaming-ports-triggers-row-layout">
+                                <button id="chat-multimedia-trigger-voice-call-port-btn" class="action-btn" style="width: 40px; height: 40px; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center;" title="Initialize Realtime Audio Transmission Protocol Handshake Interconnect Pipeline"><i class="fas fa-phone-alt" style="font-size: 0.95rem;"></i></button>
+                                <button id="chat-multimedia-trigger-video-call-port-btn" class="action-btn" style="width: 40px; height: 40px; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center;" title="Initialize Realtime Dual Stream Video Bitrate Synthesis Pipeline Frame Connection Layer"><i class="fas fa-video" style="font-size: 0.95rem;"></i></button>
+                            </div>
+
+                            <button id="favorite-user-btn" class="action-btn" title="Toggle Favorite Data Allocation Array Target Mapped String"><i class="far fa-star"></i></button>
+                            <button id="block-user-btn" class="danger-btn" style="width: 42px; height: 42px; padding: 0; display: flex; justify-content: center; align-items: center; border-radius: 50%;" title="Isolate Address Space Vector Route Blocks Requests Filters Entries"><i class="fas fa-user-slash"></i></button>
                         </div>
                         
-                        <div class="messages-container hidden" id="messages-area"></div>
+                        <div id="chat-pinned-messages-announcement-strip-bar" class="hidden" style="background: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); padding: 8px 25px; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold; color: var(--primary-color); flex-shrink: 0;">
+                            <span style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-thumbtack" style="transform: rotate(45deg);"></i> <span id="chat-pinned-msg-context-string-preview-outlet">Pinned Transmission Matrix Packets Records Value Box String Logs...</span></span>
+                            <button id="action-unpin-current-active-chat-pinned-node-btn" style="background: transparent; color: var(--text-muted); border: none; padding: 0; font-size: 0.85rem; cursor: pointer; box-shadow: none;"><i class="fas fa-times"></i></button>
+                        </div>
+
+                        <div id="ai-smart-replies-proposals-floating-container-tray" class="hidden" style="position: absolute; bottom: 95px; left: 30px; right: 30px; display: flex; gap: 10px; overflow-x: auto; padding: 10px 5px; background: transparent; pointer-events: none; z-index: 1500; scrollbar-width: none;">
+                            </div>
+
+                        <div class="messages-container hidden" id="messages-area" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+                            </div>
                         
-                        <div class="chat-input-area hidden" id="chat-input-area">
-                            <button id="attach-btn" class="action-btn" title="Inject Static Assets Files Payload"><i class="fas fa-paperclip"></i></button>
-                            <input type="text" placeholder="Type encrypted packets transmission message string..." id="message-input" autocomplete="off">
-                            <button id="send-btn" class="primary-btn" title="Dispatch Stream Packets Payload Buffer"><i class="fas fa-paper-plane"></i></button>
+                        <div class="chat-input-area hidden" id="chat-input-area" style="flex-shrink: 0; background: var(--bg-panel); border-top: 1px solid var(--border-color);">
+                            
+                            <button id="attach-btn" class="action-btn" title="Inject Binary Payloads/Documents/Assets Frame Allocation Arrays Blocks Packets Targets Pipelines Ports Elements"><i class="fas fa-paperclip"></i></button>
+                            <button id="chat-input-toggle-secret-disappearing-messages-mode-btn" class="action-btn" title="Toggle Volatile Ephemeral Temporal Disappearing Transmission Packet Storage Flag Mode Constraints Matrix Block"><i class="far fa-clock"></i></button>
+                            
+                            <input type="text" placeholder="Transmit cryptographically validated communication token packet messages data sequence line strings..." id="message-input" autocomplete="off" style="flex: 1;">
+                            
+                            <button id="chat-input-audio-voice-message-record-hold-trigger-btn" class="action-btn" title="Hold/Click to register voice note payload block tracking statistics binary acoustic stream pipeline audio recording metrics"><i class="fas fa-microphone"></i></button>
+                            
+                            <button id="send-btn" class="primary-btn" title="Dispatch Encrypted Stream Packets Frame Buffer Sequence Line Values Rows Stack Vector Outbound Port Channel"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
@@ -167,17 +233,22 @@
                         </div>
                         <div class="group-list" id="group-list-container"></div>
                     </div>
-                    <div class="active-chat-window">
+                    <div class="active-chat-window" style="display: flex; flex-direction: column; height: 100%; overflow: hidden;">
                         <div id="group-placeholder" class="empty-state"><p>Select active array system network channel to execute streaming operations workflow.</p></div>
-                        <div class="chat-header hidden" id="group-header">
+                        <div class="chat-header hidden" id="group-header" style="flex-shrink: 0;">
                             <img src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" id="group-header-img" alt="Channel Identity Vector Asset Logo">
                             <div class="chat-header-info">
                                 <h3 id="current-group-name">Channel Architecture Network Node Display</h3>
                             </div>
+                            
+                            <button id="group-channel-trigger-instantiate-poll-creation-modal-btn" class="action-btn" style="margin-right: 8px; border-radius: 10px; font-size: 0.85rem;" title="Deploy Consensus Voting Poll Component Framework System Parameters Data Fields"><i class="fas fa-poll-h"></i> Launch Group Poll Engine</button>
+                            
                             <button id="group-settings-btn" class="action-btn" title="Modify Operational Matrix Values"><i class="fas fa-cog"></i> Adjust Channel</button>
                         </div>
-                        <div class="messages-container hidden" id="group-messages-area"></div>
-                        <div class="chat-input-area hidden" id="group-input-area">
+                        
+                        <div class="messages-container hidden" id="group-messages-area" style="flex: 1; overflow-y: auto;"></div>
+                        
+                        <div class="chat-input-area hidden" id="group-input-area" style="flex-shrink: 0;">
                             <button id="group-attach-btn" class="action-btn"><i class="fas fa-plus"></i></button>
                             <input type="text" placeholder="Transmit packet blocks to channel network grid array matrix..." id="group-message-input" autocomplete="off">
                             <button id="group-send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
@@ -203,6 +274,10 @@
                                 <div class="duo-streak" title="Temporal Active Synchronization Streak System Framework">🔥 0 Synchronized Days Counter Value</div>
                                 <div class="progress-bar-container"><div class="progress-bar" id="band-progress"></div></div>
                                 <span id="time-remaining">Synchronization Signal Line Unlinked</span>
+                                
+                                <button id="break-band-btn" class="danger-btn hidden" style="margin-top: 15px; font-size: 0.9rem; padding: 8px 20px; border-radius: 20px; font-weight: bold; box-shadow: 0 4px 10px rgba(239,68,68,0.25); width: auto; max-width: 220px;">
+                                    <i class="fas fa-link-slash"></i> Sever Connection Coordinates Matrix
+                                </button>
                             </div>
                             <div class="duo-member">
                                 <div class="empty-duo-slot" id="fb-partner-dp-slot">?</div>
@@ -224,7 +299,7 @@
                         <div class="receive-request-box" style="background: var(--bg-panel); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color);">
                             <h3>Pending Inbound Synchronization Handshake Request Packets Verification Array</h3>
                             <div id="band-incoming-requests" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
-                                <p style="text-align: center; color: var(--text-muted); padding: 10px;">No inbound synchronization requests pipeline values queue active buffer line area storage room stack.</p>
+                                <p style="text-align: center; color: var(--text-muted); padding: 10px;" id="band-incoming-requests-empty-placeholder-string-element">No inbound synchronization requests pipeline values queue active buffer line area storage room stack.</p>
                             </div>
                         </div>
 
@@ -253,6 +328,14 @@
 
             <section id="post-section" class="content-view hidden">
                 <div class="feed-wrapper">
+                    
+                    <div id="profile-voice-stories-status-horizontal-strip-carousel-container" style="display: flex; gap: 15px; background: var(--bg-panel); padding: 15px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow-x: auto; margin-bottom: 25px; scrollbar-width: none;">
+                        <div id="action-trigger-upload-new-voice-story-status-node-btn" style="display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex-shrink: 0; min-width: 75px;">
+                            <div style="width: 55px; height: 55px; border-radius: 50%; background: var(--sidebar-bg); display: flex; justify-content: center; align-items: center; border: 2px dashed var(--primary-color); color: var(--primary-color); font-size: 1.2rem;"><i class="fas fa-microphone-alt"></i></div>
+                            <span style="font-size: 0.75rem; font-weight: bold; color: var(--text-main);">Add Voice Status</span>
+                        </div>
+                        </div>
+
                     <div class="create-post-card">
                         <textarea id="post-input" placeholder="Broadcast textual event block packet asset elements description or metadata information loop array logs stream updates..."></textarea>
                         
@@ -267,6 +350,15 @@
                                 <button id="post-gif-btn" title="Inject Static Graphic GIF Payload Buffer Container Asset Data Target Elements Data Switch"><i class="fas fa-icons"></i></button>
                                 <button id="post-meme-btn" title="Execute Meme Engine Template Synthesis Injection Layer Controls Matrix Box Panel Layout Item"><i class="fas fa-grin-squint-tears"></i></button>
                             </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 8px; margin-right: 10px;">
+                                <label for="post-privacy-scope-configuration-level-toggle-select" style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Scope Matrix:</label>
+                                <select id="post-privacy-scope-configuration-level-toggle-select" style="padding: 8px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-weight: bold; outline: none; font-size: 0.85rem;">
+                                    <option value="public" selected>🌐 Public Broadcast Network</option>
+                                    <option value="private">🔒 Synchronized Connections Only</option>
+                                </select>
+                            </div>
+
                             <button id="submit-post-btn" class="primary-btn">Publish Feed Block Post</button>
                         </div>
                         <input type="file" id="post-image-upload-input" accept="image/*" class="hidden">
@@ -276,56 +368,75 @@
                 </div>
             </section>
 
-            <section id="games-section" class="content-view hidden">
-                <div class="games-wrapper">
-                    <h2 style="text-align: center; margin: 30px 0; font-size: 2.2rem; font-weight: 800; color: var(--primary-color);">🎮 Game Engine Core Interactive Play Zone Grid Panel</h2>
-                    <div class="games-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 25px;">
-                        <div class="game-card" style="background: var(--bg-panel); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02); text-align: center;">
-                            <div style="font-size: 3rem; margin-bottom: 15px;">❌ ⭕</div>
-                            <h3>Matrix Tic-Tac-Toe Grid Systems</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Execute spatial algorithmic game grid turns parameters tracking matrix data elements constraints rules against linked node profiles parameters array.</p>
-                            <button class="action-btn" id="tictactoe-btn" style="width: 100%;">Instantiate Play Engine Grid Array</button>
-                        </div>
-                        <div class="game-card" style="background: var(--bg-panel); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.02); text-align: center;">
-                            <div style="font-size: 3rem; margin-bottom: 15px;">🪙</div>
-                            <h3>Binary Quantum Coin Flip System Plugin</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Generate pseudo-random discrete probabilistic numerical returns outputs for tracking distribution statistics outcomes allocations configurations.</p>
-                            <button class="action-btn" id="coinflip-btn" style="width: 100%;">Execute Stochastic Return Trigger Flip</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <section id="settings-section" class="content-view hidden">
                 <div class="settings-wrapper">
                     <h2 class="settings-title" style="font-size: 2.2rem; font-weight: 800; color: var(--primary-color); margin-bottom: 30px;">App Configurations Management Center</h2>
                     
                     <div class="settings-group">
-                        <h3><i class="fas fa-paint-brush"></i> UI Appearance Render Matrix System Layout Design Styling</h3>
-                        <div class="setting-item">
+                        <h3><i class="fas fa-paint-brush"></i> UI Appearance Render Theme Spectrum Controls Engine</h3>
+                        
+                        <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
                             <div>
-                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Dark Spectrum Environment Render Framework Layout Modes Switch</span>
-                                <small style="color: var(--text-muted); font-weight: normal; font-size: 0.85rem;">Modify global application elements display layout styles parameters variables values overrides options.</small>
+                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Ecosystem Environment Display Color Space Override Palettes</span>
+                                <small style="color: var(--text-muted); font-size: 0.85rem;">Select discrete targeted interface stylesheets properties configurations matrices blocks layers parameters values variables definitions.</small>
+                            </div>
+                            <select id="settings-theme-palette-spectrum-engine-selector-dropdown-field" style="width: 100%; max-width: 350px; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); font-size: 1rem; font-weight: bold; outline: none;">
+                                <option value="default" selected>Standard Spectrum Default Mode</option>
+                                <option value="dark">Dark Spectrum Crypt Layer Mode</option>
+                                <option value="grand-golden">🌟 Supreme Grand Golden Black VIP Theme Mode 🌟</option>
+                                <option value="matrix-neon">⚡ Cyberpunk Matrix Neon Toxic Emerald Override</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item" style="margin-top: 15px; display: none;">
+                            <div>
+                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Legacy Dark Spectrum Toggle Element</span>
                             </div>
                             <label class="toggle-switch"><input type="checkbox" id="settings-dark-mode-toggle"><span class="slider"></span></label>
                         </div>
                     </div>
 
                     <div class="settings-group">
-                        <h3><i class="fas fa-bell"></i> Realtime Internal Signal System Notifications Pipelines Alerters Parameters</h3>
+                        <h3><i class="fas fa-user-lock"></i> Security Clearance & Metadata Sync Pipeline Rules Overrides</h3>
+                        
                         <div class="setting-item">
                             <div>
-                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Incoming Transmission Signal Alerts Display Popups Hooks</span>
-                                <small style="color: var(--text-muted); font-weight: normal; font-size: 0.85rem;">Toggle layout configurations items flags rules templates notifications displays arrays variables.</small>
+                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Anonymize Communication Vector Presence Flag Indicator (Hide Last Seen)</span>
+                                <small style="color: var(--text-muted); font-size: 0.85rem;">Block discrete connection nodes metrics parameters discovery indexing for timestamp variables tracking statistics values strings rows.</small>
                             </div>
-                            <label class="toggle-switch"><input type="checkbox" id="settings-notifications-alert-toggle" checked><span class="slider"></span></label>
+                            <label class="toggle-switch"><input type="checkbox" id="settings-hide-last-seen-anonymize-presence-vector-toggle" checked><span class="slider"></span></label>
                         </div>
+
                         <div class="setting-item">
                             <div>
-                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Binary Acoustic Notification Auditory Sound Packets Playback Loop Trigger</span>
-                                <small style="color: var(--text-muted); font-weight: normal; font-size: 0.85rem;">Execute internal frequency playback cues notifications sound layers templates logic items flags rules arrays.</small>
+                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Dispatch Packet Delivery Receipts Token Handshake (Read Receipts)</span>
+                                <small style="color: var(--text-muted); font-size: 0.85rem;">Transmit verification indicators values properties strings tracking counters indicators nodes blocks when parsing streams channels pipelines frames.</small>
                             </div>
-                            <label class="toggle-switch"><input type="checkbox" id="settings-sound-effects-audio-toggle" checked><span class="slider"></span></label>
+                            <label class="toggle-switch"><input type="checkbox" id="settings-dispatch-read-receipts-packet-handshake-toggle" checked><span class="slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3><i class="fas fa-database"></i> Storage Cache Clear, Localization Options Framework Utilities</h3>
+                        
+                        <div class="setting-item" style="justify-content: space-between; gap: 20px;">
+                            <div>
+                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">System Localization Language Encoding Mappings</span>
+                                <small style="color: var(--text-muted); font-size: 0.85rem;">Reconfigure international textual localization dictionaries string tokens maps overrides lists references tables index lines values layers keys parameters.</small>
+                            </div>
+                            <select id="settings-localization-language-encoding-mapping-select" style="padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); font-weight: bold; outline: none;">
+                                <option value="en" selected>English Protocol Standard</option>
+                                <option value="hi-latin">Hindi Latin Translation Framework (Hinglish)</option>
+                                <option value="es">Spanish Castellano Spectrum Dictionary</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 15px;">
+                            <div>
+                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Purge Transient Application Cache Storage Block Node Buffers (Clear Cache Utility Tool)</span>
+                                <small style="color: var(--text-muted); font-size: 0.85rem;">Free up memory storage structures segments slots bounds tables maps rows variables by instantly deleting non-committed temporary graphic assets frames pipelines binary arrays data cache lines objects.</small>
+                            </div>
+                            <button class="danger-btn" id="action-clear-cache-btn" style="padding: 12px 30px; font-weight: bold; font-family: monospace; border-radius: 12px; box-shadow: 0 4px 12px rgba(239,68,68,0.2);"><i class="fas fa-broom"></i> Initialize Cache Deallocation Protocol Engine</button>
                         </div>
                     </div>
                 </div>
@@ -335,88 +446,133 @@
                 <div id="dev-dashboard-wrapper">
                     <div class="dev-header" style="background: linear-gradient(135deg, #2a2a2a 0%, #000000 100%); padding: 35px; border-radius: 24px; border: 2px solid #fbbf24; box-shadow: 0 10px 30px rgba(251,191,36,0.15); margin-bottom: 30px;">
                         <h1 style="color: #fbbf24; font-size: 2.6rem; font-weight: 800; letter-spacing: -1px; text-transform: uppercase;">Supreme Core System Admin Panel Control Node Architecture Dashboard</h1>
-                        <p style="color: #fef3c7; font-size: 1.1rem; margin-top: 10px; font-weight: bold; font-family: monospace;">SYSTEM STATUS: ACTIVE // ARCHITECTURE LAYER INTEGRITY SECURED // PRIVILEGES: SUPREME ROOT OWNER OVERRIDE CONFIGURATIONS EXECUTION MATRIX LINE</p>
+                        <p style="color: #fef3c7; font-size: 1.1rem; margin-top: 10px; font-weight: bold; font-family: monospace;">SYSTEM STATUS: ACTIVE // PRIVILEGES: SUPREME ROOT OWNER OVERRIDE CONFIGURATIONS EXECUTION MATRIX LINE</p>
                     </div>
                     
                     <div class="dev-cards-grid grid-4-cols">
+                        
                         <div class="dev-card golden-card" id="dev-assign-rank-btn" style="border: 2px solid #fbbf24; background: #141414;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #fbbf24;">🎖️</div>
                             <h3 style="color: #ffd700; font-weight: 800;">Modify User Rank</h3>
                             <p style="color: #b8860b; font-size: 0.85rem; margin-top: 5px;">Reconfigure permission structures ranks hierarchies matrix categories overrides items hooks.</p>
                         </div>
+
                         <div class="dev-card golden-card" id="dev-assign-ring-btn" style="border: 2px solid #fbbf24; background: #141414;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #fbbf24;">⭕</div>
+                            <div id="profile-picture-avatar-border-customization-ring-selector-anchor" class="hidden"></div>
                             <h3 style="color: #ffd700; font-weight: 800;">Modify Visual Profile Ring</h3>
                             <p style="color: #b8860b; font-size: 0.85rem; margin-top: 5px;">Inject dynamic particle canvas profile perimeter geometry graphics borders assets filters colors tracking.</p>
                         </div>
+
                         <div class="dev-card golden-card" id="dev-assign-theme-btn" style="border: 2px solid #fbbf24; background: #141414;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #fbbf24;">🎨</div>
                             <h3 style="color: #ffd700; font-weight: 800;">Modify Application Style Theme</h3>
                             <p style="color: #b8860b; font-size: 0.85rem; margin-top: 5px;">Force-override document client style parameters configuration assets palettes elements hooks classes variables.</p>
                         </div>
+
                         <div class="dev-card purple-card" id="dev-shadowban-toggle-btn" style="border: 2px solid #a855f7; background: #1a0f2e;">
                             <div class="card-icon" id="dev-shadowban-icon-display" style="text-shadow: 0 0 15px #a855f7;">👻</div>
                             <h3 style="color: #c084fc; font-weight: 800;" id="dev-shadowban-headline-display">Toggle Shadowban Mode System</h3>
-                            <p style="color: #a855f7; font-size: 0.85rem; margin-top: 5px;" id="dev-shadowban-desc-display">CURRENT: SYSTEM NORMAL MONITORING RUNNING // Execute silent transmission routing filter isolation layer over target username parameters nodes pipelines vectors rules.</p>
+                            <p style="color: #a855f7; font-size: 0.85rem; margin-top: 5px;" id="dev-shadowban-desc-display">CURRENT STATUS MODE: RUNNING MONITORING SAFE SYSTEM NORMAL // Execute silent transmission routing filter isolation layer over target username parameters nodes pipelines vectors rules.</p>
                         </div>
+
                         <div class="dev-card purple-card" id="dev-global-mute-toggle-btn" style="border: 2px solid #a855f7; background: #1a0f2e;">
                             <div class="card-icon" id="dev-global-mute-icon-display" style="text-shadow: 0 0 15px #a855f7;">🤐</div>
                             <h3 style="color: #c084fc; font-weight: 800;" id="dev-global-mute-headline-display">Toggle Global Mute Restrictions</h3>
-                            <p style="color: #a855f7; font-size: 0.85rem; margin-top: 5px;" id="dev-global-mute-desc-display">CURRENT: TRANSMISSIONS OPEN UNRESTRICTED // Freeze or activate packet line parsing pipelines processes across all client transmission data systems slots buffers.</p>
+                            <p style="color: #a855f7; font-size: 0.85rem; margin-top: 5px;" id="dev-global-mute-desc-display">CURRENT STATUS MODE: TRANSMISSIONS OPEN UNRESTRICTED // Freeze or activate packet line parsing pipelines processes across all client transmission data systems slots buffers.</p>
                         </div>
+
                         <div class="dev-card red-card" id="dev-ban-user-execution-btn" style="border: 2px solid #ef4444; background: #2d1212;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #ef4444;">🔨</div>
                             <h3 style="color: #fca5a5; font-weight: 800;">Execute Target Permanent Ban</h3>
                             <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">Invalidate permission authorization tokens arrays profiles for specific targeted accounts systems nodes indices vectors entries.</p>
                         </div>
+
                         <div class="dev-card green-card" id="dev-unban-user-execution-btn" style="border: 2px solid #10b981; background: #0f2d1e;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #10b981;">✅</div>
                             <h3 style="color: #6ee7b7; font-weight: 800;">Execute Target Profile Unban</h3>
                             <p style="color: #10b981; font-size: 0.85rem; margin-top: 5px;">Restore suspended authentication clearance vectors indices entries across banned tables lists directories blocks repositories databases.</p>
                         </div>
+
                         <div class="dev-card dark-red-card" id="dev-wipe-server-data-btn" style="border: 2px solid #991b1b; background: #1e0a0a;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #991b1b;">☢️</div>
                             <h3 style="color: #f87171; font-weight: 800;">Purge Local Storage Data Wipe</h3>
                             <p style="color: #991b1b; font-size: 0.85rem; margin-top: 5px;">CRITICAL SYSTEM CLEARANCE TRIGGER OPERATION // Destroy local application workspace memory pools caches files maps arrays states parameters tracking blocks entirely.</p>
                         </div>
+
                         <div class="dev-card orange-card" id="dev-maintenance-toggle-mode-btn" style="border: 2px solid #f97316; background: #2d1910;">
                             <div class="card-icon" id="dev-maintenance-icon-display" style="text-shadow: 0 0 15px #f97316;">🚧</div>
                             <h3 style="color: #fed7aa; font-weight: 800;" id="dev-maintenance-headline-display">Toggle Maintenance Architecture Mode</h3>
-                            <p style="color: #f97316; font-size: 0.85rem; margin-top: 5px;" id="dev-maintenance-desc-display">CURRENT: SYSTEM LIVE OPERATIONAL // Shut down client view screens pipelines displays layers and redirect target incoming traffic to architecture error grids blocks layouts windows items fields framework.</p>
+                            <p style="color: #f97316; font-size: 0.85rem; margin-top: 5px;" id="dev-maintenance-desc-display">CURRENT STATUS MODE: SYSTEM LIVE OPERATIONAL // Shut down client view screens pipelines displays layers and redirect traffic to architecture error grids blocks.</p>
+                        </div>
+
+                    </div>
+
+                    <div id="developer-dashboard-user-submitted-bug-reports-aggregation-module-container" style="margin-top: 40px; background: #141414; border: 2px solid #3b82f6; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(59,130,246,0.1);">
+                        <h2 style="color: #60a5fa; font-size: 1.6rem; font-weight: 800; border-bottom: 1px solid #1e293b; padding-bottom: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;"><i class="fas fa-bug"></i> Terminal Realtime Centralized Aggregation Vector Bug Reports Stream</h2>
+                        
+                        <div id="dev-bug-reports-list-target-outlet-wrapper" style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                            <p style="text-align: center; color: #64748b; font-family: monospace; padding: 20px;">[ROUTING TRACE STATUS LOGS: QUEUE BUFFER EMPTY // NO ACTIVE SYSTEM DEFECT PACKETS DISPATCHED IN STACK]</p>
                         </div>
                     </div>
+
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="friend-requests-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content" style="max-height: 85vh; display: flex; flex-direction: column; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 24px; padding: 30px;">
-            <h2>Friend Interaction Request Routing Matrix</h2>
-            <div style="background: var(--bg-main); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: left; border: 1px solid var(--border-color);">
-                <label style="font-size: 0.9rem; color: var(--text-main); font-weight: 800; display: block; margin-bottom: 5px;">Query Profile Target Vector Registry Identity Name (Send Request)</label>
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <input type="text" id="add-friend-input" class="dev-input" placeholder="Input specific target username query text line..." style="margin: 0; padding: 12px; border-radius: 10px; flex: 1; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); outline: none;">
-                    <button id="send-friend-req-btn" class="primary-btn" style="padding: 0 25px; border-radius: 10px;"><i class="fas fa-search-plus"></i> Search Entity</button>
+    <div id="friend-list-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" style="max-height: 80vh; display: flex; flex-direction: column; border-radius: 24px; padding: 30px;">
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary-color); display: flex; align-items: center; gap: 10px;"><i class="fas fa-address-book"></i> Authenticated Synchronized Accounts Index Registry</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem; text-align: left;">Index directory record map containing active authorized peer connection nodes synchronized to your account profile state context parameters allocation structures array rows.</p>
+            
+            <div id="modal-friend-list-container" style="margin-top: 10px; flex: 1; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;">
                 </div>
-            </div>
-            <div style="text-align: left; margin-top: 25px; flex: 1; overflow-y: auto;">
-                <h3 style="font-size: 1.1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; font-weight: 800;">Pending Incoming Verification Action Request Buffers Queue (Accept Request)</h3>
-                <div id="incoming-requests-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
-            </div>
-            <div class="modal-actions" style="margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border-color);">
-                <button class="danger-btn close-modal-btn" data-modal="friend-requests-modal" style="width: 100%;">Terminate Window Control</button>
+            
+            <div class="modal-actions" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <button class="danger-btn close-modal-btn" data-modal="friend-list-modal" style="width: 100%;">Close Index Workspace View</button>
             </div>
         </div>
     </div>
 
-    <div id="friend-list-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content" style="max-height: 80vh; display: flex; flex-direction: column; border-radius: 24px; padding: 30px;">
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary-color);"><i class="fas fa-address-book"></i> Authenticated Synchronized Accounts Index Registry</h2>
-            <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.85rem;">Index catalog listing of active communication channel terminal nodes mapped parameters.</p>
-            <div id="modal-friend-list-container" style="margin-top: 10px; flex: 1; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;"></div>
-            <div class="modal-actions" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <button class="danger-btn close-modal-btn" data-modal="friend-list-modal" style="width: 100%;">Close Index Workspace</button>
+    <div id="bug-report-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" style="border-radius: 24px; padding: 35px; text-align: left;">
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: #ef4444; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-bug"></i> Dispatch Trace Defect Packet Logs To Developer Control Dashboard Panel</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px;">Provide detailed context information string descriptions logs regarding the identified algorithmic aberration or UI element misalignment constraints anomalies encountered during app context state usage execution processing routes loops.</p>
+            
+            <label style="font-weight: bold; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 5px;">Trace Summary Context Narrative Log Field String Input Area</label>
+            <textarea id="bug-report-text-input" class="dev-input" placeholder="Input explicit systematic step-by-step documentation strings describing the system anomalies or click failure anomalies behaviors variables lines tracking logs..." style="height: 130px; resize: none; margin: 0 0 20px 0; padding: 12px; border-radius: 12px; font-family: inherit; width: 100%;"></textarea>
+            
+            <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <button class="action-btn close-modal-btn" data-modal="bug-report-modal" style="flex: 1;">Abort Trace Submission</button>
+                <button class="danger-btn" id="submit-bug-report-btn" style="flex: 1; font-weight: bold; font-family: monospace;">COMPILE & INJECT REPORT PACKET</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="group-channel-poll-creation-modal-framework-overlay-window" class="modal-overlay hidden">
+        <div class="dev-modal-content" style="border-radius: 24px; padding: 35px; text-align: left;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 8px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-poll"></i> Deploy Automated Voting Consensus Matrix Poll</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Instantiate discrete statistical tracking arrays rows entries in channel stream to gather user voting returns properties outputs records sets mappings values frames nodes.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">Consensus Query Question Question Target String</label>
+                    <input type="text" id="group-poll-input-question-string-field" class="dev-input" placeholder="What is the objective target verification parameters line question..." style="margin:0; padding:12px; border-radius:10px; width:100%;">
+                </div>
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">Array Row Option Target Value 1</label>
+                    <input type="text" id="group-poll-input-option-string-field-1" class="dev-input" placeholder="Input target choice response attribute value index 1..." style="margin:0; padding:12px; border-radius:10px; width:100%;">
+                </div>
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">Array Row Option Target Value 2</label>
+                    <input type="text" id="group-poll-input-option-string-field-2" class="dev-input" placeholder="Input target choice response attribute value index 2..." style="margin:0; padding:12px; border-radius:10px; width:100%;">
+                </div>
+            </div>
+            
+            <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 25px;">
+                <button class="action-btn close-modal-btn" data-modal="group-channel-poll-creation-modal-framework-overlay-window">Cancel Instantiation</button>
+                <button class="primary-btn" id="action-trigger-commit-publish-group-poll-to-channel-stream-btn">Deploy Consensus Poll Block</button>
             </div>
         </div>
     </div>
@@ -430,10 +586,12 @@
             </div>
             <h2 id="view-user-name" style="margin-top: 20px; font-size: 2rem; font-weight: 800;" class="username-display">Target Entity Node Name</h2>
             <div id="view-user-rank" class="rank-badge" style="display: inline-block; margin-top: 5px; text-transform: uppercase;">Member Allocation Class</div>
+            
             <div style="background: var(--bg-main); padding: 20px; border-radius: 16px; margin-top: 20px; border: 1px solid var(--border-color); text-align: left;">
                 <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; font-weight: bold;">User Bio Metadata</h4>
                 <p id="view-user-bio" style="color: var(--text-main); font-size: 1rem; line-height: 1.4;">Biographical summary fields container element text lines block elements.</p>
             </div>
+            
             <div class="modal-actions" style="margin-top: 30px;">
                 <button id="view-user-chat-btn" class="primary-btn" style="padding: 14px;"><i class="fas fa-paper-plane"></i> Initiate Stream Channel</button>
                 <button class="danger-btn close-modal-btn" data-modal="view-user-modal" style="padding: 14px;">Terminate Review Canvas</button>
@@ -442,94 +600,10 @@
     </div>
 
     <div id="edit-profile-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content" style="border-radius: 24px; padding: 35px;">
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary-color); margin-bottom: 10px;"><i class="fas fa-user-cog"></i> Adjust Local Node Metadata</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Reconfigure local presentation parameters fields variables values mapping elements.</p>
+        <div class="dev-modal-content" style="border-radius: 24px; padding: 35px; text-align: left;">
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary-color); margin-bottom: 10px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-user-cog"></i> Adjust Local Node Profile Presentation Parameters</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Modify profile avatar icons assets graphic banners layouts descriptions fields values variables indices parameters overrides records updates lists lines maps loops targets.</p>
             
-            <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; background: var(--bg-main); padding: 15px; border-radius: 12px; border: 1px dashed var(--border-color);">
-                <button class="action-btn" id="trigger-dp-upload" style="font-size: 0.9rem; padding: 10px 15px;"><i class="fas fa-camera"></i> Re-Upload Logo DP</button>
-                <button class="action-btn" id="trigger-banner-upload" style="font-size: 0.9rem; padding: 10px 15px;"><i class="fas fa-image"></i> Re-Upload Banner Graphic</button>
-            </div>
-            
-            <input type="file" id="edit-dp-input" accept="image/*" class="hidden">
-            <input type="file" id="edit-banner-input" accept="image/*" class="hidden">
-            
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 6px;">Client Handle Identifier Username String</label>
-                <input type="text" id="edit-username-input" class="dev-input" placeholder="Input string identifier text data values..." style="margin: 0; padding: 12px; border-radius: 10px;">
-            </div>
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 6px;">Client Biographical Summary Logs Array Block</label>
-                <textarea id="edit-bio-input" class="dev-input" placeholder="Input details configurations values lines descriptions updates..." style="height: 90px; resize: none; margin: 0; padding: 12px; border-radius: 10px; font-family: inherit;"></textarea>
-            </div>
-            
-            <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <button class="danger-btn close-modal-btn" data-modal="edit-profile-modal">Cancel Reconfiguration</button>
-                <button class="primary-btn" id="save-profile-btn">Commit Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="create-group-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content" style="border-radius: 24px; padding: 35px;">
-            <h2>Synthesize New Transmission Channel Group</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Deploy isolated multiplexed communication channel blocks variables data frames array entries grids rows panels loops setup.</p>
-            
-            <div class="dp-container profile-modal-dp" style="margin: 0 auto 15px auto; width: 100px; height: 100px; border: 3px solid var(--primary-color);">
-                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-            </div>
-            <button class="action-btn" id="trigger-group-icon-upload" style="margin-bottom: 20px; font-size: 0.85rem; padding: 8px 15px;"><i class="fas fa-camera"></i> Upload Channel Image Logo Icon Asset</button>
-            <input type="file" id="new-group-icon-input" accept="image/*" class="hidden">
-            
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 6px;">Channel Identifier Display Title Name Vector</label>
-                <input type="text" id="new-group-name" class="dev-input" placeholder="Input context channel structural name parameter label string..." style="margin: 0; padding: 12px; border-radius: 10px;">
-            </div>
-            
-            <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <button class="danger-btn close-modal-btn" data-modal="create-group-modal">Abort Instantiation</button>
-                <button class="primary-btn" id="confirm-create-group-btn">Build Array Channel Block</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="dev-assign-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content golden-border" style="border: 2px solid #fbbf24; background: #141414; border-radius: 24px; padding: 35px;">
-            <h2 id="dev-modal-title" style="color: #ffd700; font-weight: 800; font-size: 1.6rem;">Modify Security Privileges Vector Framework</h2>
-            <p style="color: #b8860b; font-size: 0.85rem; margin-bottom: 15px;">Select context target structure overrides values index fields array entries parameters keys configurations settings variables entries grids mapping loops fields.</p>
-            
-            <div style="text-align: left; margin-bottom: 12px;">
-                <label style="color: #ffd700; font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; font-family: monospace;">TARGET USERNAME VALUE VECTOR INPUT IDENTIFIER PORT</label>
-                <input type="text" id="dev-target-user" class="dev-input" placeholder="Input targeted active user identity identifier string..." autocomplete="off" style="margin: 0; padding: 12px; border-radius: 10px; border: 1px solid #b45309; background: #000; color: #fef3c7; font-family: monospace;">
-            </div>
-            
-            <div id="dev-options-grid" class="options-grid" style="border: 1px inset #daa520; background: #050505; border-radius: 12px; padding: 12px; margin: 15px 0;"></div>
-            
-            <div class="modal-actions" style="margin-top: 20px;">
-                <button class="action-btn close-modal-btn" data-modal="dev-assign-modal" style="background: #2a2a2a; color: #fff; border: 1px solid #333;">Cancel Overrides Protocol</button>
-                <button class="gold-btn" id="confirm-assign-btn" style="background: linear-gradient(135deg, #ffd700, #daa520); color: #000; padding: 12px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 0 15px rgba(255,215,0,0.4);">Execute Parameter Allocation Injection Array</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="dev-action-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content" id="dev-action-box" style="background: #141414; border: 2px solid #ef4444; border-radius: 24px; padding: 35px;">
-            <h2 id="action-modal-title" style="color: #fca5a5; font-weight: 800; font-size: 1.6rem;">Execute Destructive Restrictions Command Pipeline</h2>
-            <p style="color: #ef4444; font-size: 0.85rem; margin-bottom: 15px;">Target user classification table allocation constraint configuration matrix manipulation system module execution processing core switch block.</p>
-            
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="color: #fca5a5; font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; font-family: monospace;">TARGET MATRIX ENTITY IDENTIFICATION VECTOR OVERRIDE PORT KEY TEXT</label>
-                <input type="text" id="action-target-user" class="dev-input" placeholder="Input target client identification parameters context handle username identifier data..." autocomplete="off" style="margin: 0; padding: 12px; border-radius: 10px; border: 1px solid #ef4444; background: #000; color: #fff; font-family: monospace;">
-            </div>
-            
-            <div class="modal-actions" style="margin-top: 25px;">
-                <button class="action-btn close-modal-btn" data-modal="dev-action-modal" style="background: #2a2a2a; color: #fff; border: 1px solid #333;">Abort Target Protocol Vector</button>
-                <button class="danger-btn" id="confirm-action-btn" style="background: #ef4444; color: #fff; font-weight: bold; border-radius: 12px;">Deploy Restriction Override Payload Action</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js?v=11"></script>
-</body>
-</html>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; background: var(--bg-main); padding: 15px; border-radius: 12px; border: 1px dashed var(--border-color); width: 100%;">
+                <button class="action-btn" id="trigger-dp-upload" style="font-size: 0.9rem; padding: 10px 15px; flex: 1;"><i class="fas fa-camera"></i> Change Avatar DP Logo</button>
+                <button class="action-btn" id="trigger-banner-upload" style="font-size: 0.9rem; padding: 10px 1
