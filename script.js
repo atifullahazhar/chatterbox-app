@@ -57,15 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
 
     function applyTheme() {
-        // Grand Golden override
+        // 🔥 VIP Grand Golden Override
         if (currentUser && currentUser.theme === 'grand-golden') {
             document.documentElement.setAttribute('data-theme', 'grand-golden');
             if (settingsDarkModeToggle) { 
                 settingsDarkModeToggle.checked = true; 
-                settingsDarkModeToggle.disabled = true; // Lock switch for VIP
+                settingsDarkModeToggle.disabled = true; // VIPs can't disable dark mode
             }
         } 
-        // Normal Premium Themes
+        // Premium Themes
         else if (currentUser && currentUser.theme && currentUser.theme !== 'default') {
             document.documentElement.setAttribute('data-theme', currentUser.theme);
             if (settingsDarkModeToggle) settingsDarkModeToggle.disabled = false;
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. PROFILE UI & RING ASSIGNMENT
+    // 5. PROFILE UI & RING LOGIC
     // ==========================================
     const operatorColors = ["#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", "#00FA9A", "#32CD32", "#FFD700", "#FF8C00", "#FF4500", "#FFFFFF"];
 
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rank === 'Operator') { if (colorSection) colorSection.classList.remove('hidden'); setupColorGrid(); } 
         else { if (colorSection) colorSection.classList.add('hidden'); }
 
-        // Dynamic Ring Application
+        // Dynamic Ring System
         if (dpWrapper) {
             dpWrapper.className = 'dp-container'; // reset
             if (currentUser.ring && currentUser.ring !== 'default') {
@@ -300,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetView = document.getElementById(targetId);
             if(targetView) { targetView.classList.remove('hidden'); targetView.classList.add('active'); }
             
+            // Developer Theme Sync
             if (targetId === 'dev-section-view') {
                 document.body.classList.add('dev-theme-active');
             } else {
@@ -406,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
     // ==========================================
-    // 7. DEVELOPER ACTION LOGIC & GRAND GOLDEN
+    // 7. DEVELOPER ACTION LOGIC & VIP THEMES
     // ==========================================
     let currentDevAction = "";
     let selectedDevOption = null;
@@ -446,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 🔥 THE GRAND GOLDEN THEME OPTIONS
+        // 🔥 VIP THEME OPTIONS
         if (type === 'theme') {
             const grandBtn = document.createElement('button');
             grandBtn.className = 'action-btn theme-style-grand'; 
@@ -471,7 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(removeBtn);
         }
 
-        // Theme and Rings Generator
         for (let i = 1; i <= 20; i++) { 
             const box = document.createElement('div');
             box.style.width = '100%'; box.style.aspectRatio = '1/1'; box.style.borderRadius = '50%';
@@ -489,7 +489,6 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(box);
         }
 
-        // Add Ring Revoke Button
         if (type === 'ring') {
             const removeRingBtn = document.createElement('button');
             removeRingBtn.className = 'danger-btn'; 
@@ -529,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
             
-            // Check if assigning to self
+            // Reload UI if modified user is me
             if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
                 currentUser = targetObj; saveUserData(); loadProfileData();
                 if(currentDevAction === 'theme') applyTheme();
@@ -539,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Dev Action System
     window.openDevAction = function(actionType) {
         currentDevAction = actionType;
         const modal = document.getElementById('dev-action-modal');
@@ -549,9 +549,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!modal) return;
         modal.classList.remove('hidden'); document.getElementById('action-target-user').value = ""; 
         box.className = 'dev-modal-content'; 
-        if(actionType === 'ban') { title.innerText = "Ban User"; btn.innerText = "Ban"; btn.className = "danger-btn"; box.classList.add('danger-border'); } 
-        else if(actionType === 'unban') { title.innerText = "Unban User"; btn.innerText = "Unban"; btn.className = "primary-btn"; box.style.border = "2px solid #10b981"; } 
-        else if(actionType === 'shadowban') { title.innerText = "Shadowban User"; btn.innerText = "Shadowban"; btn.className = "gold-btn"; box.style.border = "2px solid #a855f7"; }
+        if(actionType === 'ban') { title.innerText = "Ban User"; btn.innerText = "Ban"; btn.className = "danger-btn"; box.classList.add('danger-border'); box.style.border = ''; } 
+        else if(actionType === 'unban') { title.innerText = "Unban User"; btn.innerText = "Unban"; btn.className = "primary-btn"; box.style.border = "2px solid #10b981"; box.classList.remove('danger-border'); } 
+        else if(actionType === 'shadowban') { title.innerText = "Shadowban User"; btn.innerText = "Shadowban"; btn.className = "gold-btn"; box.style.border = "2px solid #a855f7"; box.classList.remove('danger-border');}
     };
 
     const actionBtn = document.getElementById('confirm-action-btn');
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.executeDevDirect = function(action) {
-        if(action === 'global_mute') alert('🔇 Global Mute activated!');
+        if(action === 'global_mute') alert('🔇 Global Mute activated! Nobody can text except Devs.');
         else if(action === 'wipe') { if(confirm('☢️ WARNING: Wipe all server messages?')) { document.querySelectorAll('.messages-container').forEach(c => c.innerHTML = ''); alert('Server Wiped Clean!'); } } 
         else if(action === 'maintenance') alert('🚧 Maintenance Mode Toggled!');
     }
@@ -574,4 +574,63 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('dev-assign-modal')?.classList.add('hidden');
         document.getElementById('dev-action-modal')?.classList.add('hidden');
     };
+
+    // Stories Logic
+    const addStatusBtn = document.getElementById('add-status-btn');
+    if (addStatusBtn) {
+        addStatusBtn.addEventListener('click', () => {
+            const statusText = prompt("Enter your text status:");
+            if (statusText) {
+                const newStory = document.createElement('div');
+                newStory.className = 'story-item';
+                newStory.innerHTML = `<div class="story-avatar" style="border-color: #10b981;"><img src="${currentUser.dp || DEFAULT_DP}" alt="DP"></div><span>You</span>`;
+                newStory.onclick = () => alert(`Status:\n\n${statusText}`);
+                addStatusBtn.insertAdjacentElement('afterend', newStory);
+            }
+        });
+    }
+
+    // Groups logic
+    const createGroupBtn = document.getElementById('create-group-btn');
+    const createGroupModal = document.getElementById('create-group-modal');
+    const confirmCreateGroupBtn = document.getElementById('confirm-create-group-btn');
+    let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
+
+    if (createGroupBtn) createGroupBtn.addEventListener('click', () => createGroupModal.classList.remove('hidden'));
+
+    document.getElementById('new-group-icon-input')?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { tempGroupIcon = e.target.result; document.getElementById('new-group-icon-preview').src = tempGroupIcon; };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    if (confirmCreateGroupBtn) {
+        confirmCreateGroupBtn.addEventListener('click', () => {
+            const name = document.getElementById('new-group-name').value.trim();
+            if(name) {
+                const groupList = document.getElementById('group-list-container');
+                const newGroup = document.createElement('div');
+                newGroup.className = 'dummy-item';
+                newGroup.innerHTML = `<img src="${tempGroupIcon}" class="contact-avatar" style="border-radius:50%; width:40px; height:40px; border: 2px solid var(--primary-color);"><b>${name}</b>`;
+                newGroup.onclick = () => {
+                    document.getElementById('group-placeholder')?.classList.add('hidden');
+                    document.getElementById('group-header')?.classList.remove('hidden');
+                    document.getElementById('group-messages-area')?.classList.remove('hidden');
+                    document.getElementById('group-input-area')?.classList.remove('hidden');
+                    if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = name;
+                    document.getElementById('group-header-img').src = tempGroupIcon;
+                };
+                groupList.appendChild(newGroup);
+                createGroupModal.classList.add('hidden');
+            } else { alert("Group name is required!"); }
+        });
+    }
+
+    const ticTacToeBtn = document.getElementById('tictactoe-btn');
+    const coinFlipBtn = document.getElementById('coinflip-btn');
+    if (ticTacToeBtn) ticTacToeBtn.addEventListener('click', () => alert("🎮 Tic-Tac-Toe requires a connected Duo partner."));
+    if (coinFlipBtn) coinFlipBtn.addEventListener('click', () => alert(`Flipping coin... \n\nResult: ${Math.random() > 0.5 ? "🪙 Heads!" : "🪙 Tails!"}`));
 });
