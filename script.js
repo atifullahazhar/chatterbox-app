@@ -3,19 +3,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // 1. STATE MANAGEMENT, LOCAL STORAGE & CORE VARIABLES
     // =========================================================================
-    let currentUser = JSON.parse(localStorage.getItem('chatUser')) || null;
-    let friends = JSON.parse(localStorage.getItem('chatFriends')) || [];
-    
-    // Default mock requests to show in the incoming request tabs
-    let friendRequests = JSON.parse(localStorage.getItem('chatRequests')) || [
-        { username: "Nauras Daniyal", dp: "https://ui-avatars.com/api/?name=Nauras&background=eaddff&color=8b5cf6", bio: "Always ready to code." },
-        { username: "Rahul Sharma", dp: "https://ui-avatars.com/api/?name=Rahul&background=ffedd5&color=f97316", bio: "Gamer and Developer." }
-    ];
-    let bandRequests = JSON.parse(localStorage.getItem('bandRequests')) || [
-        { username: "Sneha_007", dp: "https://ui-avatars.com/api/?name=Sneha&background=fce7f3&color=ec4899" }
-    ];
-    let posts = JSON.parse(localStorage.getItem('chatPosts')) || [];
-    let groups = JSON.parse(localStorage.getItem('chatGroups')) || [];
+    let currentUser = null;
+    let friends = [];
+    let friendRequests = [];
+    let bandRequests = [];
+    let posts = [];
+    let groups = [];
+
+    // Safely load from local storage
+    try {
+        currentUser = JSON.parse(localStorage.getItem('chatUser')) || null;
+        friends = JSON.parse(localStorage.getItem('chatFriends')) || [];
+        friendRequests = JSON.parse(localStorage.getItem('chatRequests')) || [
+            { username: "Nauras Daniyal", dp: "https://ui-avatars.com/api/?name=Nauras&background=eaddff&color=8b5cf6", bio: "Always ready to code." },
+            { username: "Rahul Sharma", dp: "https://ui-avatars.com/api/?name=Rahul&background=ffedd5&color=f97316", bio: "Gamer and Developer." }
+        ];
+        bandRequests = JSON.parse(localStorage.getItem('bandRequests')) || [
+            { username: "Sneha_007", dp: "https://ui-avatars.com/api/?name=Sneha&background=fce7f3&color=ec4899" }
+        ];
+        posts = JSON.parse(localStorage.getItem('chatPosts')) || [];
+        groups = JSON.parse(localStorage.getItem('chatGroups')) || [];
+    } catch (e) {
+        console.error("Local storage parsing error:", e);
+    }
     
     let activeChatUser = null;
     let currentChatTab = 'general'; // 'general', 'favorite', 'requests'
@@ -34,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
 
     // App Initialization Logic
-    if (currentUser) {
+    if (currentUser && currentUser.username) {
         document.getElementById('login-screen').classList.replace('active', 'hidden');
         document.getElementById('main-app').classList.replace('hidden', 'active');
         applyTheme();
@@ -81,23 +91,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================================
-    // 2. 🔥 THE ULTIMATE GLOBAL CLICK EVENT DELEGATION LISTENER 🔥
+    // 2. 🔥 LOGIN FORM LISTENER (SPECIFIC FIX FOR LOGIN BUG) 🔥
     // =========================================================================
-    document.addEventListener('click', (e) => {
-        const target = e.target;
-
-        // ---------------------------------------------------------
-        // A. AUTHENTICATION & LOGIN PROCESS
-        // ---------------------------------------------------------
-        if (target.closest('#join-btn')) {
-            e.preventDefault();
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // VERY IMPORTANT: Stops page refresh
+            
             const username = document.getElementById('username-input').value.trim();
             const devCode = document.getElementById('dev-code').value.trim();
 
             if (username) {
                 currentUser = { 
-                    username: username, dp: DEFAULT_DP, banner: null, 
-                    rank: 'Member', isDev: false, bio: "Operational systems online. Ready to chat.", 
+                    username: username, 
+                    dp: DEFAULT_DP, 
+                    banner: null, 
+                    rank: 'Member', 
+                    isDev: false, 
+                    bio: "Operational systems online. Ready to chat.", 
                     theme: "default" 
                 };
                 
@@ -109,16 +120,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 saveData();
-                document.getElementById('login-screen').classList.replace('active', 'hidden');
-                document.getElementById('main-app').classList.replace('hidden', 'active');
                 
+                // Hide login, show main app
+                document.getElementById('login-screen').classList.remove('active');
+                document.getElementById('login-screen').classList.add('hidden');
+                
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('active');
+                
+                // Initialize UI
                 applyTheme();
                 updateProfileUI();
                 renderContacts();
+                updateBadgesAndCounts();
+                renderPosts();
+                renderGroups();
+                renderBandRequests();
             } else {
                 alert("CRITICAL: Username verification failed. Please enter a valid identifier.");
             }
-        }
+        });
+    }
+
+    // =========================================================================
+    // 3. 🔥 THE ULTIMATE GLOBAL CLICK EVENT DELEGATION LISTENER 🔥
+    // =========================================================================
+    document.addEventListener('click', (e) => {
+        const target = e.target;
 
         // ---------------------------------------------------------
         // B. PRIMARY NAVIGATION TABS (SIDEBAR)
@@ -126,10 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const navBtn = target.closest('.nav-btn');
         if (navBtn) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.content-view').forEach(c => c.classList.replace('active', 'hidden'));
+            document.querySelectorAll('.content-view').forEach(c => {
+                c.classList.remove('active');
+                c.classList.add('hidden');
+            });
             navBtn.classList.add('active');
             const targetId = navBtn.getAttribute('data-target');
-            document.getElementById(targetId).classList.replace('hidden', 'active');
+            document.getElementById(targetId).classList.remove('hidden');
+            document.getElementById(targetId).classList.add('active');
         }
 
         // ---------------------------------------------------------
@@ -149,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 document.getElementById('request-sub-tabs-container').classList.add('hidden');
                 document.getElementById('search-friend-field-block').classList.remove('hidden');
-                // Ensure placeholder is visible instead of profile preview when leaving requests
                 resetRightWorkspacePane();
                 renderContacts();
             }
@@ -170,11 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.closest('#sidebar-action-search-trigger') && currentChatTab === 'requests' && currentRequestSubTab === 'send') {
             const searchVal = document.getElementById('chat-sidebar-search-input').value.trim();
             if (searchVal !== "") {
-                // Mock search logic: Generates a dummy profile context to show in right pane
                 searchedUserContext = {
                     username: searchVal,
                     dp: `https://ui-avatars.com/api/?name=${searchVal}&background=random&color=fff`,
-                    bio: `This is a generated profile metadata for ${searchVal}. Waiting for interaction.`
+                    bio: `This is generated profile metadata for ${searchVal}. Waiting for interaction.`
                 };
                 openRightProfilePreviewPane(searchedUserContext);
             } else {
@@ -187,19 +217,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (searchedUserContext) {
                 alert(`Friend Request Payload dispatched securely to [${searchedUserContext.username}]!`);
                 document.getElementById('chat-sidebar-search-input').value = '';
-                resetRightWorkspacePane(); // Close the preview after sending
+                resetRightWorkspacePane();
             }
         }
-
 
         // ---------------------------------------------------------
         // D. FRIEND REQUESTS (ACCEPT / REJECT IN LEFT SIDEBAR)
         // ---------------------------------------------------------
         if (target.closest('.btn-accept-friend')) {
             const username = target.closest('.dummy-item').getAttribute('data-user');
-            // Remove from requests
             friendRequests = friendRequests.filter(req => req.username !== username);
-            // Add to friends
             friends.push({ 
                 username: username, 
                 dp: `https://ui-avatars.com/api/?name=${username}&background=random&color=fff`, 
@@ -208,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             saveData();
             renderRequestSubTabUI();
-            alert(`SUCCESS: Network connection established with ${username}. Node added to General Chat.`);
+            alert(`SUCCESS: Network connection established with ${username}.`);
         }
 
         if (target.closest('.btn-reject-friend')) {
@@ -218,19 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
             renderRequestSubTabUI();
         }
 
-
         // ---------------------------------------------------------
         // E. MODAL WINDOWS (OPEN & CLOSE ROUTING)
         // ---------------------------------------------------------
         if (target.closest('.close-modal-btn')) {
             const modalId = target.closest('.close-modal-btn').getAttribute('data-modal');
             document.getElementById(modalId).classList.add('hidden');
-        }
-
-        if (target.closest('#open-requests-modal-btn')) {
-            // Deprecated logic, now we use the main Requests tab. But keeping logic alive just in case.
-            renderOldIncomingRequestsModal();
-            document.getElementById('friend-requests-modal').classList.remove('hidden');
         }
 
         if (target.closest('#view-friends-list-btn')) {
@@ -253,11 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activeChatUser) {
                 document.getElementById('view-user-dp').src = activeChatUser.dp;
                 document.getElementById('view-user-name').innerText = activeChatUser.username;
-                document.getElementById('view-user-bio').innerText = activeChatUser.bio || "No biographical metadata available for this node.";
+                document.getElementById('view-user-bio').innerText = activeChatUser.bio || "No biographical metadata available.";
                 document.getElementById('view-user-modal').classList.remove('hidden');
             }
         }
-
 
         // ---------------------------------------------------------
         // F. DIRECT CHAT OPERATIONS & FAVORITE TOGGLE
@@ -274,8 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     friends[friendIndex].isFavorite = !friends[friendIndex].isFavorite;
                     saveData();
                     updateFavoriteButtonUI();
-                    
-                    // If we are viewing the Favorite tab and we unfavorite someone, update the list
                     if(currentChatTab === 'favorite') {
                         renderContacts();
                         resetRightWorkspacePane();
@@ -283,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-
 
         // ---------------------------------------------------------
         // G. PROFILE EDITING (LOGO, BANNER, DETAILS SAVE)
@@ -305,9 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Metadata re-indexed and profile configurations saved successfully.");
         }
 
-
         // ---------------------------------------------------------
-        // H. POST FEED HUB ENGINE (IMAGE ATTACH, POST, DELETE, LIKE)
+        // H. POST FEED HUB ENGINE
         // ---------------------------------------------------------
         if (target.closest('#post-image-btn')) {
             document.getElementById('post-image-upload-input').click();
@@ -316,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.closest('#action-remove-attached-post-file-buffer')) {
             attachedPostImage = null;
             document.getElementById('post-media-attachment-status-preview').classList.add('hidden');
-            document.getElementById('post-image-upload-input').value = ""; // Clear file input
+            document.getElementById('post-image-upload-input').value = ""; 
         }
 
         if (target.closest('#submit-post-btn')) {
@@ -363,9 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-
         // ---------------------------------------------------------
-        // I. GROUP CHAT CREATION & ICONS
+        // I. GROUP CREATION & ICONS
         // ---------------------------------------------------------
         if (target.closest('#trigger-group-icon-upload')) {
             document.getElementById('new-group-icon-input').click();
@@ -384,14 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-
         // ---------------------------------------------------------
-        // J. FRIENDSHIP BAND MATRIX (SEND & ACCEPT)
+        // J. FRIENDSHIP BAND MATRIX
         // ---------------------------------------------------------
         if (target.closest('#send-band-req-btn')) {
             const input = document.getElementById('band-request-input');
             if (input.value.trim() !== "") {
-                // Simulating pushing to local inbound requests for testing
                 bandRequests.push({ username: input.value.trim() });
                 saveData();
                 renderBandRequests();
@@ -412,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderBandRequests();
         }
 
-
         // ---------------------------------------------------------
         // K. WORLD CHAT (MUTE & BROADCAST)
         // ---------------------------------------------------------
@@ -424,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 muteBtn.innerHTML = '<i class="fas fa-volume-up"></i> <span>Unmute Room</span>';
             } else {
                 muteBtn.classList.remove('muted');
-                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i> <span>Mute Global Space Room</span>';
+                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i> <span>Mute Global Space</span>';
             }
         }
 
@@ -432,20 +443,16 @@ document.addEventListener('DOMContentLoaded', () => {
             sendWorldMessage();
         }
 
-
         // ---------------------------------------------------------
         // L. DEVELOPER DASHBOARD ALL 9 BUTTONS MATRIX
         // ---------------------------------------------------------
-        // Modals (Rank, Ring, Theme)
-        if (target.closest('#dev-assign-rank-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Security Privileges Vector Framework (Rank)"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('rank'); }
-        if (target.closest('#dev-assign-ring-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Visual Profile Ring Configurations"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('ring'); }
-        if (target.closest('#dev-assign-theme-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Application Style Theme Matrix"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('theme'); }
+        if (target.closest('#dev-assign-rank-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Security Privileges (Rank)"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('rank'); }
+        if (target.closest('#dev-assign-ring-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Visual Profile Ring"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('ring'); }
+        if (target.closest('#dev-assign-theme-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Application Theme Matrix"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('theme'); }
         
-        // Direct Actions (Ban, Unban)
-        if (target.closest('#dev-ban-user-execution-btn')) openDevActionModal('Execute Target Permanent Ban Protocol');
-        if (target.closest('#dev-unban-user-execution-btn')) openDevActionModal('Execute Target Profile Unban Protocol');
+        if (target.closest('#dev-ban-user-execution-btn')) openDevActionModal('Execute Permanent Ban Protocol');
+        if (target.closest('#dev-unban-user-execution-btn')) openDevActionModal('Execute Profile Unban Protocol');
         
-        // Toggle Actions (Shadowban, Global Mute, Maintenance)
         if (target.closest('#dev-shadowban-toggle-btn')) {
             devStates.shadowban = !devStates.shadowban;
             const btn = document.getElementById('dev-shadowban-toggle-btn');
@@ -454,11 +461,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (devStates.shadowban) {
                 btn.style.borderColor = '#ef4444';
                 icon.style.textShadow = '0 0 15px #ef4444';
-                desc.innerHTML = '<b style="color:white;">STATUS: ACTIVE</b> // Shadowban filter engaged on targets.';
+                desc.innerHTML = '<b style="color:white;">STATUS: ACTIVE</b> // Shadowban filter engaged.';
             } else {
                 btn.style.borderColor = '#a855f7';
                 icon.style.textShadow = '0 0 15px #a855f7';
-                desc.innerHTML = 'CURRENT: SYSTEM NORMAL MONITORING RUNNING // Execute silent transmission routing filter.';
+                desc.innerHTML = 'CURRENT: SYSTEM NORMAL MONITORING RUNNING.';
             }
         }
 
@@ -476,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.style.borderColor = '#a855f7';
                 icon.style.textShadow = '0 0 15px #a855f7';
                 icon.innerText = '🤐';
-                desc.innerHTML = 'CURRENT: TRANSMISSIONS OPEN UNRESTRICTED // Freeze or activate packet lines.';
+                desc.innerHTML = 'CURRENT: TRANSMISSIONS OPEN UNRESTRICTED.';
             }
         }
 
@@ -488,128 +495,80 @@ document.addEventListener('DOMContentLoaded', () => {
             if (devStates.maintenance) {
                 btn.style.borderColor = '#ef4444';
                 icon.style.textShadow = '0 0 15px #ef4444';
-                desc.innerHTML = '<b style="color:white;">STATUS: MAINTENANCE ACTIVE</b> // External pipelines restricted.';
+                desc.innerHTML = '<b style="color:white;">STATUS: MAINTENANCE ACTIVE</b> // Pipelines restricted.';
             } else {
                 btn.style.borderColor = '#f97316';
                 icon.style.textShadow = '0 0 15px #f97316';
-                desc.innerHTML = 'CURRENT: SYSTEM LIVE OPERATIONAL // Shut down client view screens pipelines.';
+                desc.innerHTML = 'CURRENT: SYSTEM LIVE OPERATIONAL.';
             }
         }
 
-        // Wipe Button
         if (target.closest('#dev-wipe-server-data-btn')) {
-            if (confirm("CRITICAL OVERRIDE: Destroy ALL local application workspace memory caches. This is irreversible. Proceed?")) { 
+            if (confirm("CRITICAL OVERRIDE: Destroy ALL local application caches. Proceed?")) { 
                 localStorage.clear(); 
                 location.reload(); 
             }
         }
+    });
 
-        // Settings Toggles (Dark Mode handled natively above)
-        if (target.closest('.toggle-switch')) {
-            // Allowing native checkbox behavior, handled by CSS. No JS needed for simple visual toggles unless logic requires it.
+    // =========================================================================
+    // 4. FILE UPLOADS (LISTENERS)
+    // =========================================================================
+    document.getElementById('edit-dp-input')?.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { currentUser.dp = e.target.result; saveData(); updateProfileUI(); alert("Logo updated!"); };
+            reader.readAsDataURL(file);
         }
+    });
 
-    }); // END GLOBAL CLICK EVENT LISTENER
+    document.getElementById('edit-banner-input')?.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { currentUser.banner = e.target.result; saveData(); updateProfileUI(); alert("Banner updated!"); };
+            reader.readAsDataURL(file);
+        }
+    });
 
+    document.getElementById('new-group-icon-input')?.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { tempGroupIcon = e.target.result; document.getElementById('new-group-icon-preview').src = tempGroupIcon; };
+            reader.readAsDataURL(file);
+        }
+    });
 
-    // =========================================================================
-    // 3. FILE UPLOAD EVENT LISTENERS (HIDDEN INPUT TRIGGERS)
-    // =========================================================================
-    
-    // DP (Profile Picture) Upload
-    const editDpInput = document.getElementById('edit-dp-input');
-    if(editDpInput) {
-        editDpInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => { 
-                    currentUser.dp = e.target.result; 
-                    saveData(); 
-                    updateProfileUI(); 
-                    alert("System Success: Core Avatar Graphic Asset Overwritten."); 
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // Banner Upload
-    const editBannerInput = document.getElementById('edit-banner-input');
-    if(editBannerInput) {
-        editBannerInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => { 
-                    currentUser.banner = e.target.result; 
-                    saveData(); 
-                    updateProfileUI(); 
-                    alert("System Success: Banner Layout Block Asset Synchronized."); 
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // Group Icon Upload
-    const groupIconInput = document.getElementById('new-group-icon-input');
-    if(groupIconInput) {
-        groupIconInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => { 
-                    tempGroupIcon = e.target.result; 
-                    document.getElementById('new-group-icon-preview').src = tempGroupIcon; 
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // Post Content Media (Image) Upload
-    const postImageInput = document.getElementById('post-image-upload-input');
-    if(postImageInput) {
-        postImageInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => { 
-                    attachedPostImage = e.target.result; 
-                    document.getElementById('post-media-attachment-status-preview').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
+    document.getElementById('post-image-upload-input')?.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { 
+                attachedPostImage = e.target.result; 
+                document.getElementById('post-media-attachment-status-preview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
     // =========================================================================
-    // 4. ENTER KEY EVENT LISTENERS FOR INPUT FIELDS
+    // 5. ENTER KEY EVENT LISTENERS FOR INPUT FIELDS
     // =========================================================================
-    
-    // Direct Chat Enter Key
     document.getElementById('message-input')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('send-btn').click();
     });
-
-    // World Chat Enter Key
     document.getElementById('world-message-input')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendWorldMessage();
     });
-
-    // Chat Sidebar Search Input Enter Key (Triggers Search)
     document.getElementById('chat-sidebar-search-input')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('sidebar-action-search-trigger').click();
     });
 
-
     // =========================================================================
-    // 5. CORE UI UPDATE & RENDER LOGIC FUNCTIONS
+    // 6. CORE UI UPDATE & RENDER LOGIC FUNCTIONS
     // =========================================================================
-
-    // World Chat Core Dispatch Engine
     function sendWorldMessage() {
         const input = document.getElementById('world-message-input');
         if (input && input.value.trim() !== "") {
@@ -626,7 +585,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Socket Payload Receiver Engine
     socket.on('receive_message', (data) => {
         if (!isWorldMuted && currentUser && data.sender !== currentUser.username) {
             const area = document.getElementById('world-messages-area');
@@ -643,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const usernameDisplay = document.getElementById('display-username');
         usernameDisplay.innerText = currentUser.username;
-        document.getElementById('user-bio').innerText = currentUser.bio || "No biographical information available.";
+        document.getElementById('user-bio').innerText = currentUser.bio || "No bio available.";
         document.getElementById('user-dp').src = currentUser.dp || DEFAULT_DP;
         document.getElementById('fb-my-dp').src = currentUser.dp || DEFAULT_DP;
         
@@ -658,7 +616,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rankBadge = document.getElementById('display-rank');
         rankBadge.innerText = currentUser.rank;
 
-        // Shiny Dev Logic Update
         if (currentUser.isDev) {
             usernameDisplay.classList.add('shiny-dev-text');
             rankBadge.className = 'rank-badge rank-developer';
@@ -683,42 +640,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('contact-list-container');
         container.innerHTML = '';
         
-        // Tab Filtering Logic
-        if (currentChatTab === 'general') {
-            if (friends.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">No general communication nodes found.</p>`;
-                return;
-            }
-            friends.forEach(friend => {
-                let starIcon = friend.isFavorite ? `<i class="fas fa-star" style="color:#f59e0b; margin-left: 5px;"></i>` : '';
-                container.innerHTML += `
-                    <div class="dummy-item contact-item" data-user="${friend.username}">
-                        <img src="${friend.dp}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:1px solid var(--primary-color);">
-                        <b>${friend.username} ${starIcon}</b>
-                    </div>
-                `;
-            });
-        } else if (currentChatTab === 'favorite') {
-            let favList = friends.filter(f => f.isFavorite);
-            if (favList.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">No favorite nodes tagged in index.</p>`;
-                return;
-            }
-            favList.forEach(friend => {
-                container.innerHTML += `
-                    <div class="dummy-item contact-item" data-user="${friend.username}">
-                        <img src="${friend.dp}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #f59e0b;">
-                        <b>${friend.username} <i class="fas fa-star" style="color:#f59e0b;"></i></b>
-                    </div>
-                `;
-            });
+        let displayList = currentChatTab === 'favorite' ? friends.filter(f => f.isFavorite) : friends;
+        
+        if (displayList.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">No friends found here.</p>`;
+            return;
         }
+        displayList.forEach(friend => {
+            let starIcon = friend.isFavorite ? `<i class="fas fa-star" style="color:#f59e0b; margin-left: 5px;"></i>` : '';
+            container.innerHTML += `
+                <div class="dummy-item contact-item" data-user="${friend.username}">
+                    <img src="${friend.dp}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:1px solid var(--primary-color);">
+                    <b>${friend.username} ${starIcon}</b>
+                </div>
+            `;
+        });
     }
 
     function renderRequestSubTabUI() {
         const container = document.getElementById('contact-list-container');
         container.innerHTML = '';
-        
         const acceptBtn = document.getElementById('sub-tab-accept-btn');
         const sendBtn = document.getElementById('sub-tab-send-btn');
         
@@ -747,31 +688,8 @@ document.addEventListener('DOMContentLoaded', () => {
             acceptBtn.classList.remove('active-sub-tab');
             sendBtn.classList.add('active-sub-tab');
             document.getElementById('search-friend-field-block').classList.remove('hidden');
-            
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">Input username text pattern in search field to identify targets across database blocks.</p>`;
+            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">Input username text pattern in search field to identify targets.</p>`;
         }
-    }
-
-    function renderOldIncomingRequestsModal() {
-        // Keeping this logic for backward compatibility if user clicks the button instead of tab
-        const container = document.getElementById('incoming-requests-container');
-        container.innerHTML = '';
-        if (friendRequests.length === 0) {
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding: 15px;">Queue is totally clear.</p>`;
-            return;
-        }
-        friendRequests.forEach(req => {
-            container.innerHTML += `
-                <div class="dummy-item" data-user="${req.username}" style="background:var(--bg-main); border:1px solid var(--border-color);">
-                    <img src="${req.dp}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
-                    <b style="flex:1;">${req.username}</b>
-                    <div class="req-action-btns">
-                        <button class="btn-accept-friend btn-accept"><i class="fas fa-check"></i></button>
-                        <button class="btn-reject-friend btn-reject"><i class="fas fa-times"></i></button>
-                    </div>
-                </div>
-            `;
-        });
     }
 
     function renderFriendsListModal() {
@@ -808,8 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${post.text ? `<div class="post-text-content">${post.text}</div>` : ''}
                     ${imgHtml}
                     <div class="post-footer">
-                        <button class="action-btn like-btn"><i class="far fa-heart"></i> Endorse Status</button>
-                        <button class="action-btn"><i class="far fa-comment"></i> Query Node</button>
+                        <button class="action-btn like-btn"><i class="far fa-heart"></i> Endorse</button>
                     </div>
                 </div>
             `;
@@ -834,13 +751,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('band-incoming-requests');
         container.innerHTML = '';
         if (bandRequests.length === 0) {
-            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">No inbound synchronization requests pipeline active.</p>`;
+            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">No inbound requests.</p>`;
             return;
         }
         bandRequests.forEach(req => {
             container.innerHTML += `
                 <div class="dummy-item" data-user="${req.username}" style="margin-top:10px; background:var(--bg-main); padding: 15px;">
-                    <b style="flex:1;">Incoming Matrix Signal From: ${req.username}</b>
+                    <b style="flex:1;">Incoming Link From: ${req.username}</b>
                     <button class="btn-accept-band btn-accept" style="width:45px; height:45px;"><i class="fas fa-check"></i></button>
                 </div>
             `;
@@ -873,15 +790,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Opens the profile in the right side window when searched
     function openRightProfilePreviewPane(userContext) {
-        // Hide standard active chat components
         document.getElementById('chat-placeholder').classList.add('hidden');
         document.getElementById('chat-header').classList.add('hidden');
         document.getElementById('messages-area').classList.add('hidden');
         document.getElementById('chat-input-area').classList.add('hidden');
         
-        // Show Profile Preview Area
         const previewPane = document.getElementById('request-profile-preview-pane');
         previewPane.classList.remove('hidden');
 
@@ -890,20 +804,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('preview-search-user-bio').innerText = userContext.bio;
     }
 
-    // Resets the right window to the empty standard placeholder
     function resetRightWorkspacePane() {
         document.getElementById('request-profile-preview-pane').classList.add('hidden');
         document.getElementById('chat-header').classList.add('hidden');
         document.getElementById('messages-area').classList.add('hidden');
         document.getElementById('chat-input-area').classList.add('hidden');
-        
         document.getElementById('chat-placeholder').classList.remove('hidden');
     }
 
-
-    // =========================================================================
-    // 6. DEVELOPER DASHBOARD ACTIONS (MODALS & MATRIX)
-    // =========================================================================
+    // DEV MODAL LOGIC
     let currentDevActionType = "";
     let selectedDevOptionValue = null;
 
@@ -952,42 +861,16 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             grid.appendChild(removeBtn);
         }
-
-        for (let i = 1; i <= 20; i++) {
-            const box = document.createElement('div');
-            box.style.width = '100%'; box.style.aspectRatio = '1/1'; box.style.borderRadius = '50%'; 
-            box.style.cursor = 'pointer'; box.style.display = 'flex'; box.style.justifyContent = 'center'; 
-            box.style.alignItems = 'center'; box.style.color = 'white'; box.style.fontWeight = 'bold'; box.innerHTML = `${i}`;
-
-            if (type === 'ring') { 
-                box.classList.add(`ring-style-${i}`); 
-                box.style.border = `3px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
-            } else if (type === 'theme') { 
-                box.style.background = `hsl(${(i * 18) % 360}, 60%, 50%)`; 
-            }
-
-            box.addEventListener('click', () => {
-                Array.from(grid.children).forEach(child => child.style.outline = 'none');
-                box.style.outline = '4px solid var(--primary-color)';
-                selectedDevOptionValue = (type === 'theme') ? `premium-${i}` : i;
-            });
-            grid.appendChild(box);
-        }
     }
 
     document.getElementById('confirm-assign-btn')?.addEventListener('click', () => {
         const targetUser = document.getElementById('dev-target-user').value;
-        if (!targetUser || !selectedDevOptionValue) return alert("System Error: Identify target string identifier and parameter payload options.");
-        
-        // Simulating parameter application logic on the current user if matched
+        if (!targetUser || !selectedDevOptionValue) return alert("System Error: Identify target and parameter payload.");
         if(targetUser === currentUser.username) {
             if (currentDevActionType === 'rank') currentUser.rank = selectedDevOptionValue;
             else if (currentDevActionType === 'theme') currentUser.theme = selectedDevOptionValue;
-            saveData(); 
-            updateProfileUI(); 
-            applyTheme(); 
+            saveData(); updateProfileUI(); applyTheme(); 
         }
-        
         document.getElementById('dev-assign-modal').classList.add('hidden'); 
         alert(`Core Power Applied: Settings dispatched to vector target: [${targetUser}].`);
     });
@@ -995,7 +878,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('confirm-action-btn')?.addEventListener('click', () => {
         const targetUser = document.getElementById('action-target-user').value;
         if (!targetUser) return alert("System Error: Identify target node vector identifier.");
-        
         document.getElementById('dev-action-modal').classList.add('hidden'); 
         document.getElementById('action-target-user').value = '';
         alert(`CRITICAL EXECUTION: Action Payload processed on index node target: [${targetUser}].`);
