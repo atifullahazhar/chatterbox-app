@@ -23,30 +23,66 @@
                 <input type="text" id="username-input" placeholder="Enter Unique Account Handle Name..." required autocomplete="off">
                 <input type="email" id="email-input" placeholder="Enter Registered Email Address..." required autocomplete="off">
                 
-                <div id="otp-login-verification-block" class="hidden" style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="otp-code-input" placeholder="Enter 6-Digit OTP Secure Verification Code..." maxlength="6" style="flex: 1; margin: 0; text-align: center; letter-spacing: 5px;">
-                        <button type="button" id="action-trigger-request-otp-resend" class="action-btn" style="padding: 0 15px; border-radius: 12px; font-size: 0.85rem;">Resend OTP</button>
-                    </div>
-                </div>
-                
                 <div style="text-align: left; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; border: 1px dashed var(--border-color);">
                     <input type="checkbox" id="tos-checkbox-matrix" style="width: auto; margin-top: 3px; cursor: pointer;">
                     <label for="tos-checkbox-matrix" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; cursor: pointer;">
-                        I here by explicitly read, understand, and commit to the structural bindings of the 
-                        <span id="trigger-view-tos-modal" style="color: var(--primary-color); font-weight: bold; text-decoration: underline;">Terms of Service Agreement</span> 
-                        and system parameters infrastructure privacy guidelines.
+                        I here by explicitly read, understand, and commit to the structural bindings of the Terms of Service Agreement.
                     </label>
                 </div>
 
                 <div class="dev-section">
                     <label for="dev-code">Supreme Admin Authorization Code Entry Port</label>
                     <input type="password" id="dev-code" placeholder="Input secret keys structure..." maxlength="14">
-                    <small>Unauthorized access validation attempts trigger immutable security event logging metrics blocks.</small>
                 </div>
-                <button type="button" id="join-btn">Initialize Connection Matrix Portal</button>
-                <button type="button" id="action-switch-to-otp-mode-btn" class="action-btn" style="margin-top: 8px; font-size: 0.9rem; border-radius: 12px;">Verify via Secure Mobile SMS OTP Channel Port</button>
+
+                <button type="button" id="join-btn" onclick="forceLoginJugaad()">Initialize Connection Matrix Portal</button>
             </div>
+
+            <script>
+                function forceLoginJugaad() {
+                    const user = document.getElementById('username-input').value.trim();
+                    const email = document.getElementById('email-input').value.trim();
+                    const dev = document.getElementById('dev-code').value.trim();
+                    const tos = document.getElementById('tos-checkbox-matrix').checked;
+
+                    if (!tos) { alert("🚨 ERROR: Please accept Terms of Service before joining."); return; }
+                    if (!user || !email) { alert("🚨 ERROR: Please enter both Username and Email address."); return; }
+
+                    // UNIQUE EMAIL VALIDATION LOGIC
+                    let usersRegistry = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
+                    let existingUser = usersRegistry.find(u => u.email === email);
+                    let existingUsername = usersRegistry.find(u => u.username === user);
+
+                    if (existingUser) {
+                        if (existingUser.username !== user) {
+                            alert(`⚠️ ACCESS DENIED: Ye email address pehle se '@${existingUser.username}' ke naam se registered hai. Ek email se 2 account nahi ban sakte!`);
+                            return;
+                        }
+                    } else {
+                        if (existingUsername) {
+                            alert("⚠️ ACCESS DENIED: Ye Username pehle se kisi aur ne le liya hai. Kripya koi naya Username chuniye.");
+                            return;
+                        }
+                        // Naya user hai, Registry mein add karo
+                        usersRegistry.push({ username: user, email: email });
+                        localStorage.setItem('chatterbox_users_registry', JSON.stringify(usersRegistry));
+                    }
+
+                    // FINAL LOGIN PROCESS
+                    let userObj = { 
+                        username: user, 
+                        email: email,
+                        dp: "https://ui-avatars.com/api/?name=" + user + "&background=eaddff&color=8b5cf6", 
+                        rank: 'Member', isDev: false, theme: "default", bio: "Operational tracking systems online." 
+                    };
+                    
+                    if (dev === "6200437705AT") { userObj.rank = 'Developer'; userObj.isDev = true; userObj.theme = 'grand-golden'; }
+                    
+                    localStorage.setItem('chatUser', JSON.stringify(userObj));
+                    alert("✅ System Verified! Login Successful. Entering Dashboard...");
+                    window.location.reload(); 
+                }
+            </script>
         </div>
     </div>
 
@@ -530,7 +566,7 @@
                 </div>
             
             <div class="modal-actions" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <button class="danger-btn close-modal-btn" data-modal="friend-list-modal" style="width: 100%;">Close Index Workspace View</button>
+                <button class=\"danger-btn close-modal-btn\" data-modal=\"friend-list-modal\" style=\"width: 100%;\">Close Index Workspace View</button>
             </div>
         </div>
     </div>
@@ -606,4 +642,105 @@
             
             <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; background: var(--bg-main); padding: 15px; border-radius: 12px; border: 1px dashed var(--border-color); width: 100%;">
                 <button class="action-btn" id="trigger-dp-upload" style="font-size: 0.9rem; padding: 10px 15px; flex: 1;"><i class="fas fa-camera"></i> Change Avatar DP Logo</button>
-                <button class="action-btn" id="trigger-banner-upload" style="font-size: 0.9rem; padding: 10px 1
+                <button class="action-btn" id="trigger-banner-upload" style="font-size: 0.9rem; padding: 10px 15px; flex: 1;"><i class="fas fa-image"></i> Change Banner Backdrop</button>
+            </div>
+            
+            <input type="file" id="edit-dp-input" accept="image/*" class="hidden">
+            <input type="file" id="edit-banner-input" accept="image/*" class="hidden">
+            
+            <div style="margin-bottom: 15px; width: 100%;">
+                <label style="font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 6px;">Client Profile Handle Display Nickname Handle String Title Value</label>
+                <input type="text" id="edit-username-input" class="dev-input" placeholder="Input nickname configuration string parameters characters text data..." style="margin: 0; padding: 12px; border-radius: 10px; width: 100%;">
+            </div>
+            
+            <div style="margin-bottom: 20px; width: 100%;">
+                <label style="font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 6px;">Client Biographical Summary Logs Description Array Block Context Input</label>
+                <textarea id="edit-bio-input" class="dev-input" placeholder="Input summary context description values updates changes mapping information characters fields parameters rows..." style="height: 90px; resize: none; margin: 0; padding: 12px; border-radius: 10px; font-family: inherit; width: 100%;"></textarea>
+            </div>
+            
+            <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <button class="danger-btn close-modal-btn" data-modal="edit-profile-modal" style="flex: 1;">Cancel Reconfiguration</button>
+                <button class="primary-btn" id="save-profile-btn" style="flex: 1;">Commit Config Overwrites</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="create-group-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" style="border-radius: 24px; padding: 35px; text-align: left;">
+            <h2>Synthesize New Transmission Channel Group Row Target</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Deploy isolated multiplexed communication channel blocks variables data frames array entries grids rows panels loops setup parameters values.</p>
+            
+            <div class="dp-container profile-modal-dp" style="margin: 0 auto 15px auto; width: 100px; height: 100px; border: 3px solid var(--primary-color);">
+                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            </div>
+            <button class="action-btn" id="trigger-group-icon-upload" style="margin-bottom: 20px; font-size: 0.85rem; padding: 8px 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fas fa-camera"></i> Upload Channel Image Logo Icon Asset</button>
+            <input type="file" id="new-group-icon-input" accept="image/*" class="hidden">
+            
+            <div style="margin-bottom: 20px; width: 100%;">
+                <label style="font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 6px;">Channel Identifier Display Title Name Vector String Label</label>
+                <input type="text" id="new-group-name" class="dev-input" placeholder="Input context channel structural name parameter label string value content data parameters entries..." style="margin: 0; padding: 12px; border-radius: 10px; width: 100%;">
+            </div>
+            
+            <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <button class="danger-btn close-modal-btn" data-modal="create-group-modal" style="flex: 1;">Abort Instantiation</button>
+                <button class="primary-btn" id="confirm-create-group-btn" style="flex: 1;">Build Array Channel Block</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dev-assign-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content golden-border" style="border: 2px solid #fbbf24; background: #141414; border-radius: 24px; padding: 35px; text-align: left;">
+            <h2 id="dev-modal-title" style="color: #ffd700; font-weight: 800; font-size: 1.6rem; text-align: center;">Modify Security Privileges Vector Framework</h2>
+            <p style="color: #b8860b; font-size: 0.85rem; margin-bottom: 15px; text-align: center; line-height: 1.4;">Select context target structure overrides values index fields array entries parameters keys configurations settings variables entries grids mapping loops fields.</p>
+            
+            <div style="margin-bottom: 12px; width: 100%;">
+                <label style="color: #ffd700; font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; font-family: monospace;">TARGET USERNAME VALUE VECTOR INPUT IDENTIFIER PORT KEY TEXT FIELD DATA</label>
+                <input type="text" id="dev-target-user" class="dev-input" placeholder="Input targeted active user identity identifier string name handles values data rows..." autocomplete="off" style="margin: 0; padding: 12px; border-radius: 10px; border: 1px solid #b45309; background: #000; color: #fef3c7; font-family: monospace; width: 100%;">
+            </div>
+            
+            <div id="dev-options-grid" class="options-grid" style="border: 1px inset #daa520; background: #050505; border-radius: 12px; padding: 12px; margin: 15px 0;"></div>
+            
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="action-btn close-modal-btn" data-modal="dev-assign-modal" style="background: #2a2a2a; color: #fff; border: 1px solid #333; flex: 1;">Cancel Overrides Protocol</button>
+                <button class="gold-btn" id="confirm-assign-btn" style="background: linear-gradient(135deg, #ffd700, #daa520); color: #000; padding: 12px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 0 15px rgba(255,215,0,0.4); flex: 1;">Execute Parameter Allocation Injection Array</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dev-action-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" id="dev-action-box" style="background: #141414; border: 2px solid #ef4444; border-radius: 24px; padding: 35px; text-align: left;">
+            <h2 id="action-modal-title" style="color: #fca5a5; font-weight: 800; font-size: 1.6rem; text-align: center;">Execute Destructive Restrictions Command Pipeline</h2>
+            <p style="color: #ef4444; font-size: 0.85rem; margin-bottom: 15px; text-align: center; line-height: 1.4;">Target user classification table allocation constraint configuration matrix manipulation system module execution processing core switch block.</p>
+            
+            <div style="margin-bottom: 15px; width: 100%;">
+                <label style="color: #fca5a5; font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; font-family: monospace;">TARGET MATRIX ENTITY IDENTIFICATION VECTOR OVERRIDE PORT KEY TEXT DATA FIELD INPUT</label>
+                <input type="text" id="action-target-user" class="dev-input" placeholder="Input target client identification parameters context handle username identifier data content..." autocomplete="off" style="margin: 0; padding: 12px; border-radius: 10px; border: 1px solid #ef4444; background: #000; color: #fff; font-family: monospace; width: 100%;">
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 25px;">
+                <button class="action-btn close-modal-btn" data-modal="dev-action-modal" style="background: #2a2a2a; color: #fff; border: 1px solid #333; flex: 1;">Abort Target Protocol Vector</button>
+                <button class="danger-btn" id="confirm-action-btn" style="background: #ef4444; color: #fff; font-weight: bold; border-radius: 12px; flex: 1;">Deploy Restriction Override Payload Action</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tos-documentation-framework-overlay-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" style="max-height: 80vh; display: flex; flex-direction: column; padding: 35px; border-radius: 24px;">
+            <h2>Ecosystem Usage Guidelines Agreement & System Parameters Matrix</h2>
+            <div style="flex: 1; overflow-y: auto; text-align: left; background: var(--bg-main); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-top: 15px; font-size: 0.9rem; line-height: 1.5; color: var(--text-main);">
+                <p style="margin-bottom: 10px; font-weight: bold;">1. Algorithmic Monitoring Protocols Transmission Agreement Context Flag</p>
+                <p style="margin-bottom: 15px; color: var(--text-muted);">By establishing account handle registries variables within this matrix network network grid, your system data tokens parameters array rows posts content stream tracking statistics allocations logs variables are processed dynamically via processing servers pipelines interfaces definitions to prevent system exploitation, toxic string injections, or malicious packet sequence routing configurations violations entries layers tracking.</p>
+                <p style="margin-bottom: 10px; font-weight: bold;">2. Security Constraints Matrix Isolation Rules Enforcement Framework Policy</p>
+                <p style="color: var(--text-muted);">Supreme root owners administrators reserve absolute cryptographically signed authorization validation rights to execute client isolation layers routing overrides bans restrictions blocks shadowbans data wipes entirely across local data storage rows entities mapping tables arrays lists parameters indices context elements tracking fields rules variables configurations models without notice to secure ecosystem operational persistence integrity indicators values.</p>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <button class="primary-btn close-modal-btn" data-modal="tos-documentation-framework-overlay-modal" style="width: 100%;">Acknowledged & Certified System Parameters Binding Coordinates</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js?v=10000"></script>
+</body>
+
+</html>
