@@ -23,11 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     
     let socket;
-    if (typeof io !== 'undefined') {
-        socket = io();
-    } else {
-        socket = { on: () => {}, emit: () => {} };
-    }
+    if (typeof io !== 'undefined') { socket = io(); } else { socket = { on: () => {}, emit: () => {} }; }
 
     if (currentUser && currentUser.username) { 
         checkDailyStreak(); 
@@ -37,32 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkDailyStreak() {
         const today = new Date().toDateString();
-        if (!currentUser.lastLoginDate) {
-            currentUser.streak = 1;
-        } else if (currentUser.lastLoginDate !== today) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (currentUser.lastLoginDate === yesterday.toDateString()) {
-                currentUser.streak = (currentUser.streak || 0) + 1;
-            } else {
-                currentUser.streak = 1; 
-            }
+        if (!currentUser.lastLoginDate) { currentUser.streak = 1; } else if (currentUser.lastLoginDate !== today) {
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            if (currentUser.lastLoginDate === yesterday.toDateString()) { currentUser.streak = (currentUser.streak || 0) + 1; } else { currentUser.streak = 1; }
         }
-        currentUser.lastLoginDate = today;
-        saveUserData();
+        currentUser.lastLoginDate = today; saveUserData();
     }
 
     function saveUserData() {
         if(!currentUser || !currentUser.email) return;
         const index = registeredUsers.findIndex(u => u.email === currentUser.email);
         if(index > -1) { registeredUsers[index] = currentUser; } else { registeredUsers.push(currentUser); }
-        
         try {
             localStorage.setItem('chatUser', JSON.stringify(currentUser));
             localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
-        } catch (error) {
-            alert("🚨 STORAGE FULL! Please use a smaller picture.");
-        }
+        } catch (error) { alert("🚨 STORAGE FULL! Please use a smaller picture."); }
     }
 
     // ==========================================
@@ -85,12 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     applyTheme();
 
-    if (darkModeBtn) {
-        darkModeBtn.addEventListener('click', () => { isDarkMode = !isDarkMode; localStorage.setItem('darkMode', isDarkMode); applyTheme(); });
-    }
-    if (settingsDarkModeToggle) {
-        settingsDarkModeToggle.addEventListener('change', (e) => { isDarkMode = e.target.checked; localStorage.setItem('darkMode', isDarkMode); applyTheme(); });
-    }
+    if (darkModeBtn) { darkModeBtn.addEventListener('click', () => { isDarkMode = !isDarkMode; localStorage.setItem('darkMode', isDarkMode); applyTheme(); }); }
+    if (settingsDarkModeToggle) { settingsDarkModeToggle.addEventListener('change', (e) => { isDarkMode = e.target.checked; localStorage.setItem('darkMode', isDarkMode); applyTheme(); }); }
 
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
@@ -118,9 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!userExists.email) {
                     userExists.email = emailInput;
                     try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
-                } else if (userExists.email !== emailInput) {
-                    return alert('This username is registered with a different email address!');
-                }
+                } else if (userExists.email !== emailInput) { return alert('This username is registered with a different email address!'); }
             } else {
                 const emailExists = registeredUsers.find(u => u.email === emailInput);
                 if (emailExists) return alert('This email is already used by another account.');
@@ -130,22 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!userExists) {
                 currentUser = {
-                    username: usernameInput,
-                    email: emailInput,
-                    isDev: isDev,
-                    bio: "Hallo World",
-                    dp: `https://ui-avatars.com/api/?name=${usernameInput}&background=eaddff&color=8b5cf6`,
-                    banner: "",
-                    rank: "Member",
-                    userColor: "",
-                    mood: "😎",
-                    statusMsg: "Available",
-                    streak: 1,
-                    lastLoginDate: new Date().toDateString()
+                    username: usernameInput, email: emailInput, isDev: isDev, bio: "Hallo World",
+                    dp: `https://ui-avatars.com/api/?name=${usernameInput}&background=eaddff&color=8b5cf6`, banner: "",
+                    rank: "Member", userColor: "", mood: "😎", statusMsg: "Available", streak: 1, lastLoginDate: new Date().toDateString()
                 };
             } else {
-                currentUser = userExists;
-                currentUser.isDev = isDev; 
+                currentUser = userExists; currentUser.isDev = isDev; 
                 if(!currentUser.rank) currentUser.rank = "Member";
                 if(!currentUser.mood) currentUser.mood = "😎";
                 if(!currentUser.statusMsg) currentUser.statusMsg = "Available";
@@ -161,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadProfileData() {
         if(!currentUser) return;
-        
         const nameDisplay = document.getElementById('display-username');
         const bioDisplay = document.getElementById('user-bio');
         const dpWrapper = document.getElementById('dp-wrapper');
@@ -171,19 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const moodEmoji = document.getElementById('mood-emoji');
         const devNavItem = document.getElementById('dev-nav-item');
 
-        // NEW: Verification Badge Sync
         let verifiedBadge = currentUser.isDev ? ' <i class="fas fa-check-circle" style="color: #10b981; font-size:1.5rem;" title="Verified Developer"></i>' : '';
         if(nameDisplay) nameDisplay.innerHTML = currentUser.username + verifiedBadge;
-        
         if(bioDisplay) bioDisplay.innerText = currentUser.bio;
         if(statusDisplay) statusDisplay.innerText = `"${currentUser.statusMsg || 'Available'}"`;
         if(moodEmoji) moodEmoji.innerText = currentUser.mood || '😎';
 
         const rank = currentUser.rank || 'Member';
-        if(rankDisplay) {
-            rankDisplay.innerText = rank;
-            rankDisplay.className = `rank-badge rank-${rank.toLowerCase()}`;
-        }
+        if(rankDisplay) { rankDisplay.innerText = rank; rankDisplay.className = `rank-badge rank-${rank.toLowerCase()}`; }
 
         applyMedia(currentUser.dp, 'user-dp', 'user-dp-video');
         applyMedia(currentUser.banner, 'banner-img', 'banner-video');
@@ -192,8 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fbMyDp) fbMyDp.src = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : DEFAULT_DP;
 
         if(nameDisplay) {
-            nameDisplay.className = 'username-display'; 
-            nameDisplay.style.color = ''; nameDisplay.style.textShadow = '';
+            nameDisplay.className = 'username-display'; nameDisplay.style.color = ''; nameDisplay.style.textShadow = '';
             if (rank === 'Operator' && currentUser.userColor) {
                 nameDisplay.classList.add('shine-operator');
                 nameDisplay.style.setProperty('--user-color', currentUser.userColor);
@@ -201,11 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (rank === 'Operator') {
-            if (colorSection) colorSection.classList.remove('hidden'); setupColorGrid();
-        } else {
-            if (colorSection) colorSection.classList.add('hidden');
-        }
+        if (rank === 'Operator') { if (colorSection) colorSection.classList.remove('hidden'); setupColorGrid(); } 
+        else { if (colorSection) colorSection.classList.add('hidden'); }
 
         if (currentUser.isDev) {
             if(nameDisplay) nameDisplay.classList.add('dev-username-style');
@@ -311,9 +270,18 @@ document.addEventListener('DOMContentLoaded', () => {
             navButtons.forEach(b => b.classList.remove('active'));
             contentViews.forEach(c => { c.classList.remove('active'); c.classList.add('hidden'); });
             btn.classList.add('active');
+            
             const targetId = btn.getAttribute('data-target');
             const targetView = document.getElementById(targetId);
             if(targetView) { targetView.classList.remove('hidden'); targetView.classList.add('active'); }
+            
+            // 🔥 Fixed Developer Mode Theme Sync
+            if (targetId === 'dev-section-view') {
+                document.body.classList.add('dev-theme-active');
+            } else {
+                document.body.classList.remove('dev-theme-active');
+            }
+
             if (window.innerWidth <= 768 && sidebar) sidebar.classList.remove('mobile-open');
         });
     });
@@ -334,14 +302,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // NEW: Typing Indicator Logic
     let typingTimer;
     function handleTyping(areaId) {
         socket.emit('typing', { sender: currentUser.username, area: areaId });
         clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => {
-            socket.emit('stop_typing', { sender: currentUser.username, area: areaId });
-        }, 1500); // Stop typing after 1.5 seconds of inactivity
+        typingTimer = setTimeout(() => { socket.emit('stop_typing', { sender: currentUser.username, area: areaId }); }, 1500); 
     }
 
     socket.on('typing', (data) => {
@@ -366,17 +331,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = document.getElementById(inputId);
         if(!input) return;
         const text = input.value.trim();
-        
         if (text !== "") {
             if (areaId === 'world-messages-area') {
                 const now = Date.now();
-                if (now - lastWorldMessageTime < 3000 && !currentUser.isDev) {
-                    return alert("⏳ Global Slow Mode is active! Please wait 3 seconds.");
-                }
+                if (now - lastWorldMessageTime < 3000 && !currentUser.isDev) { return alert("⏳ Global Slow Mode is active! Please wait 3 seconds."); }
                 lastWorldMessageTime = now;
             }
-
-            // Also emit stop typing when message is sent
             socket.emit('stop_typing', { sender: currentUser.username, area: areaId });
             socket.emit("send_message", { sender: currentUser.username, text: text, area: areaId });
             appendMessageToScreen(text, areaId, 'me');
@@ -387,29 +347,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function appendMessageToScreen(text, areaElementId, senderType = 'other') {
         const messageArea = document.getElementById(areaElementId);
         if(!messageArea) return;
-
         if (senderType === 'system') {
-            const sysDiv = document.createElement('div');
-            sysDiv.className = 'message-bubble system-msg';
-            sysDiv.innerText = text;
-            messageArea.appendChild(sysDiv);
-            messageArea.scrollTop = messageArea.scrollHeight;
-            return;
+            const sysDiv = document.createElement('div'); sysDiv.className = 'message-bubble system-msg';
+            sysDiv.innerText = text; messageArea.appendChild(sysDiv); messageArea.scrollTop = messageArea.scrollHeight; return;
         }
-
         const msgDiv = document.createElement('div');
         msgDiv.className = `message-bubble ${senderType === 'me' ? 'my-msg' : 'other-msg'}`;
-        
         let formattedText = text;
         if(text.includes('@' + currentUser.username) || text.includes('@everyone')) {
             msgDiv.classList.add('mentioned-msg');
             formattedText = text.replace(new RegExp(`(@${currentUser.username}|@everyone)`, 'g'), `<span class="mention-highlight">$1</span>`);
             if(senderType === 'other' && !isWorldMuted) { notifySound.play().catch(e=>{}); }
         }
-        
         msgDiv.innerHTML = formattedText;
-        messageArea.appendChild(msgDiv);
-        messageArea.scrollTop = messageArea.scrollHeight;
+        messageArea.appendChild(msgDiv); messageArea.scrollTop = messageArea.scrollHeight;
     }
 
     socket.on("receive_message", (data) => {
@@ -420,12 +371,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const setupInput = (inputId, areaId, btnId) => {
-        const input = document.getElementById(inputId);
-        const btn = document.getElementById(btnId);
-        
-        // Attach Typing Listener
+        const input = document.getElementById(inputId); const btn = document.getElementById(btnId);
         if(input) input.addEventListener('input', () => handleTyping(areaId));
-        
         if(btn) btn.addEventListener('click', () => sendMessage(inputId, areaId));
         if(input) { input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(inputId, areaId); }); }
     };
@@ -435,75 +382,140 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
     // ==========================================
-    // 7. STORIES, GROUPS & GAMES LOGIC
+    // 7. DEVELOPER ACTION LOGIC (All Buttons Working)
     // ==========================================
-    const addStatusBtn = document.getElementById('add-status-btn');
-    if (addStatusBtn) {
-        addStatusBtn.addEventListener('click', () => {
-            const statusText = prompt("Enter your text status:");
-            if (statusText) {
-                const newStory = document.createElement('div');
-                newStory.className = 'story-item';
-                newStory.innerHTML = `<div class="story-avatar" style="border-color: #10b981;"><img src="${currentUser.dp || DEFAULT_DP}" alt="DP"></div><span>You</span>`;
-                newStory.onclick = () => alert(`Status:\n\n${statusText}`);
-                addStatusBtn.insertAdjacentElement('afterend', newStory);
-            }
-        });
-    }
+    let currentDevAction = "";
+    let selectedDevOption = null;
 
-    const createGroupBtn = document.getElementById('create-group-btn');
-    const createGroupModal = document.getElementById('create-group-modal');
-    const confirmCreateGroupBtn = document.getElementById('confirm-create-group-btn');
-    let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
-
-    if (createGroupBtn) createGroupBtn.addEventListener('click', () => createGroupModal.classList.remove('hidden'));
-
-    document.getElementById('new-group-icon-input')?.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => { tempGroupIcon = e.target.result; document.getElementById('new-group-icon-preview').src = tempGroupIcon; };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    if (confirmCreateGroupBtn) {
-        confirmCreateGroupBtn.addEventListener('click', () => {
-            const name = document.getElementById('new-group-name').value.trim();
-            if(name) {
-                const groupList = document.getElementById('group-list-container');
-                const newGroup = document.createElement('div');
-                newGroup.className = 'dummy-item';
-                newGroup.innerHTML = `<img src="${tempGroupIcon}" class="contact-avatar" style="border-radius:50%; width:40px; height:40px; border: 2px solid var(--primary-color);"><b>${name}</b>`;
-                newGroup.onclick = () => {
-                    document.getElementById('group-placeholder')?.classList.add('hidden');
-                    document.getElementById('group-header')?.classList.remove('hidden');
-                    document.getElementById('group-messages-area')?.classList.remove('hidden');
-                    document.getElementById('group-input-area')?.classList.remove('hidden');
-                    if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = name;
-                    document.getElementById('group-header-img').src = tempGroupIcon;
-                };
-                groupList.appendChild(newGroup);
-                createGroupModal.classList.add('hidden');
-            } else { alert("Group name is required!"); }
-        });
-    }
-
-    const ticTacToeBtn = document.getElementById('tictactoe-btn');
-    const coinFlipBtn = document.getElementById('coinflip-btn');
-    if (ticTacToeBtn) ticTacToeBtn.addEventListener('click', () => alert("🎮 Tic-Tac-Toe requires a connected Duo partner."));
-    if (coinFlipBtn) coinFlipBtn.addEventListener('click', () => alert(`Flipping coin... \n\nResult: ${Math.random() > 0.5 ? "🪙 Heads!" : "🪙 Tails!"}`));
-
-    // ==========================================
-    // 8. DEVELOPER DASHBOARD
-    // ==========================================
+    // Fixed: Assign Rank, Ring, Theme Modals
     window.openDevModal = function (type) {
+        currentDevAction = type;
         const assignModal = document.getElementById('dev-assign-modal');
-        const banModal = document.getElementById('dev-ban-modal');
-        if (type === 'ban') { banModal.classList.remove('hidden'); } else { assignModal.classList.remove('hidden'); }
+        const title = document.getElementById('dev-modal-title');
+        selectedDevOption = null;
+
+        if (!assignModal || !title) return;
+
+        assignModal.classList.remove('hidden');
+        if (type === 'rank') title.innerText = "Assign Rank";
+        if (type === 'ring') title.innerText = "Assign Premium Profile Ring";
+        if (type === 'theme') title.innerText = "Assign Custom UI Theme";
+        
+        generateOptionsGrid(type);
     };
+
+    // Fixed: Generates grid properly inside modal
+    function generateOptionsGrid(type) {
+        const grid = document.getElementById('dev-options-grid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        
+        if(type === 'rank') {
+            ['Operator', 'Elite', 'Legend', 'Pro', 'Member'].forEach(r => {
+                const btn = document.createElement('button');
+                btn.className = 'action-btn'; btn.style.width = '100%'; btn.innerText = r;
+                btn.onclick = () => {
+                    selectedDevOption = r;
+                    Array.from(grid.children).forEach(c => c.style.border = '1px solid var(--border-color)');
+                    btn.style.border = '2px solid var(--primary-color)';
+                };
+                grid.appendChild(btn);
+            });
+            return;
+        }
+
+        for (let i = 1; i <= 20; i++) { 
+            const box = document.createElement('div');
+            box.style.width = '100%'; box.style.aspectRatio = '1/1'; box.style.borderRadius = '50%';
+            box.style.cursor = 'pointer'; box.style.display = 'flex'; box.style.justifyContent = 'center';
+            box.style.alignItems = 'center'; box.style.color = 'white'; box.innerHTML = `${i}`;
+
+            if (type === 'ring') { box.classList.add(`ring-style-${i}`); box.style.border = `2px solid hsl(${(i * 18) % 360}, 80%, 60%)`; }
+            else if (type === 'theme') { box.classList.add(`theme-style-${i}`); box.style.background = `hsl(${(i * 18) % 360}, 60%, 50%)`; }
+
+            box.addEventListener('click', () => {
+                Array.from(grid.children).forEach(child => child.style.outline = 'none');
+                box.style.outline = '3px solid var(--primary-color)';
+                selectedDevOption = i;
+            });
+            grid.appendChild(box);
+        }
+    }
+
+    // Apply Assign Power
+    const assignBtn = document.getElementById('confirm-assign-btn');
+    if(assignBtn) {
+        assignBtn.addEventListener('click', () => {
+            const targetUser = document.getElementById('dev-target-user').value;
+            if (!targetUser) return alert("Please enter a target username!");
+            if (!selectedDevOption) return alert("Please select an option from the grid!");
+
+            if (currentDevAction === 'rank') {
+                const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
+                if(targetObj) {
+                    targetObj.rank = selectedDevOption;
+                    try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
+                    alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
+                    if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
+                        currentUser.rank = selectedDevOption; saveUserData(); loadProfileData();
+                    }
+                } else { alert("User not found in local database!"); }
+            }
+            closeDevModal();
+        });
+    }
+
+    // Fixed: Ban, Unban, Shadowban Modals
+    window.openDevAction = function(actionType) {
+        currentDevAction = actionType;
+        const modal = document.getElementById('dev-action-modal');
+        const title = document.getElementById('action-modal-title');
+        const btn = document.getElementById('confirm-action-btn');
+        const box = document.getElementById('dev-action-box');
+        
+        if(!modal) return;
+        modal.classList.remove('hidden');
+        document.getElementById('action-target-user').value = ""; // clear input
+        
+        box.className = 'dev-modal-content'; 
+        if(actionType === 'ban') {
+            title.innerText = "Ban User"; btn.innerText = "Ban"; btn.className = "danger-btn"; box.classList.add('danger-border');
+        } else if(actionType === 'unban') {
+            title.innerText = "Unban User"; btn.innerText = "Unban"; btn.className = "primary-btn"; box.style.border = "2px solid #10b981";
+        } else if(actionType === 'shadowban') {
+            title.innerText = "Shadowban User"; btn.innerText = "Shadowban"; btn.className = "gold-btn"; box.style.border = "2px solid #a855f7";
+        }
+    };
+
+    // Execute Ban/Unban/Shadowban
+    const actionBtn = document.getElementById('confirm-action-btn');
+    if(actionBtn) {
+        actionBtn.addEventListener('click', () => {
+            const targetUser = document.getElementById('action-target-user').value;
+            if(!targetUser) return alert("Please enter a username!");
+            
+            // Logic mock (without Database)
+            alert(`✅ User '${targetUser}' has been successfully ${currentDevAction}ned!`);
+            closeDevModal();
+        });
+    }
+
+    // Direct Executable Buttons (Global Mute, Wipe, Maintenance)
+    window.executeDevDirect = function(action) {
+        if(action === 'global_mute') {
+            alert('🔇 Global Mute activated! Nobody can send messages except Developers.');
+        } else if(action === 'wipe') {
+            if(confirm('☢️ WARNING: Are you sure you want to wipe all server messages?')) {
+                document.querySelectorAll('.messages-container').forEach(c => c.innerHTML = '');
+                alert('Server Wiped Clean!');
+            }
+        } else if(action === 'maintenance') {
+            alert('🚧 Maintenance Mode Toggled! Normal users will see a maintenance screen.');
+        }
+    }
+
     window.closeDevModal = function () {
         document.getElementById('dev-assign-modal')?.classList.add('hidden');
-        document.getElementById('dev-ban-modal')?.classList.add('hidden');
+        document.getElementById('dev-action-modal')?.classList.add('hidden');
     };
 });

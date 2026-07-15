@@ -47,7 +47,7 @@
                 <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user"></i> Profile</button></li>
                 <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comment-dots"></i> Chat</button></li>
                 <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-users"></i> Group Chat</button></li>
-                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-handshake"></i> Dynamic Duo</button></li>
+                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-handshake"></i> Friendship Band</button></li>
                 <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe-americas"></i> World Chat</button></li>
                 <li><button class="nav-btn" data-target="post-section"><i class="fas fa-images"></i> Post Feed</button></li>
                 <li><button class="nav-btn" data-target="games-section"><i class="fas fa-gamepad"></i> Mini Games</button></li>
@@ -62,7 +62,6 @@
 
         <main id="content-area">
 
-            <!-- PROFILE (Enhanced with Stats & Badges) -->
             <section id="profile-section" class="content-view active">
                 <div class="profile-banner-wrapper">
                     <div class="profile-banner" id="user-banner-container">
@@ -89,7 +88,6 @@
                     <div id="display-rank" class="rank-badge rank-member">Member</div>
                     <div class="custom-status clickable-status" id="custom-status-text" title="Click to edit">"Available"</div>
 
-                    <!-- NEW: PROFILE STATS & BADGES -->
                     <div class="profile-stats-container">
                         <div class="stat-box"><strong>0</strong><span>Posts</span></div>
                         <div class="stat-box"><strong>124</strong><span>Followers</span></div>
@@ -119,7 +117,6 @@
                 </div>
             </section>
 
-            <!-- PRIVATE CHAT -->
             <section id="chat-section" class="content-view hidden">
                 <div class="chat-layout">
                     <div class="chat-sidebar">
@@ -158,7 +155,6 @@
                 </div>
             </section>
 
-            <!-- GROUP CHAT -->
             <section id="group-chat-section" class="content-view hidden">
                 <div class="chat-layout">
                     <div class="chat-sidebar">
@@ -186,11 +182,10 @@
                 </div>
             </section>
 
-            <!-- FRIENDSHIP BAND -->
             <section id="friendship-section" class="content-view hidden">
                 <div class="friendship-wrapper">
                     <div class="friendship-header">
-                        <h2>Dynamic Duo</h2>
+                        <h2>Friendship Band</h2>
                         <p>Link your accounts to level up your Friendship Band.</p>
                     </div>
                     <div class="band-status-card">
@@ -229,7 +224,6 @@
                 </div>
             </section>
 
-            <!-- WORLD CHAT -->
             <section id="world-chat-section" class="content-view hidden">
                 <div class="active-chat-window global-chat">
                     <div class="chat-header world-header">
@@ -252,7 +246,6 @@
                 </div>
             </section>
 
-            <!-- POST FEED -->
             <section id="post-section" class="content-view hidden">
                 <div class="feed-wrapper">
                     
@@ -279,14 +272,13 @@
                 </div>
             </section>
 
-            <!-- GAMES -->
             <section id="games-section" class="content-view hidden">
                 <div class="games-wrapper">
                     <h2 style="text-align:center; margin: 30px 0;">🎮 Game Zone</h2>
                     <div class="games-grid">
                         <div class="game-card">
                             <h3>Tic-Tac-Toe</h3>
-                            <p>Challenge your Duo to a quick game.</p>
+                            <p>Challenge your Friend to a quick game.</p>
                             <button class="action-btn" id="tictactoe-btn">Play Now</button>
                         </div>
                         <div class="game-card">
@@ -298,7 +290,6 @@
                 </div>
             </section>
 
-            <!-- SETTINGS (Updated with Dark Mode & Group Request) -->
             <section id="settings-section" class="content-view hidden">
                 <div class="settings-wrapper">
                     <h2 class="settings-title">App Settings</h2>
@@ -333,15 +324,10 @@
                             <span>Require Group Join Requests</span>
                             <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
                         </div>
-                        <div class="setting-item">
-                            <span>Allow Friend Requests</span>
-                            <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
-                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- DEV DASHBOARD (4 Columns) -->
             <section id="dev-section-view" class="content-view hidden">
                 <div id="dev-dashboard-wrapper">
                     <div class="dev-header">
@@ -349,7 +335,6 @@
                         <p>With great power comes great responsibility.</p>
                     </div>
 
-                    <!-- 4 Columns Grid CSS class -->
                     <div class="dev-cards-grid grid-4-cols">
                         <div class="dev-card golden-card" onclick="openDevModal('rank')">
                             <div class="card-icon">🎖️</div>
@@ -363,23 +348,27 @@
                             <div class="card-icon">🎨</div>
                             <h3>Assign Theme</h3>
                         </div>
-                        <div class="dev-card purple-card" onclick="alert('Shadowban feature coming in DB update')">
+                        <div class="dev-card purple-card" onclick="openDevAction('shadowban')">
                             <div class="card-icon">👻</div>
                             <h3>Shadowban User</h3>
                         </div>
-                        <div class="dev-card purple-card" onclick="alert('Global mute feature coming in DB update')">
+                        <div class="dev-card purple-card" onclick="executeDevDirect('global_mute')">
                             <div class="card-icon">🤐</div>
                             <h3>Global Mute</h3>
                         </div>
-                        <div class="dev-card red-card" onclick="openDevModal('ban')">
+                        <div class="dev-card red-card" onclick="openDevAction('ban')">
                             <div class="card-icon">🔨</div>
                             <h3>Ban User</h3>
                         </div>
-                        <div class="dev-card dark-red-card" onclick="alert('WARNING: Server wipe requires Database access')">
+                        <div class="dev-card green-card" onclick="openDevAction('unban')">
+                            <div class="card-icon">✅</div>
+                            <h3>Unban User</h3>
+                        </div>
+                        <div class="dev-card dark-red-card" onclick="executeDevDirect('wipe')">
                             <div class="card-icon">☢️</div>
                             <h3>Server Wipe</h3>
                         </div>
-                        <div class="dev-card orange-card" onclick="alert('Maintenance mode toggled')">
+                        <div class="dev-card orange-card" onclick="executeDevDirect('maintenance')">
                             <div class="card-icon">🚧</div>
                             <h3>Maintenance Mode</h3>
                         </div>
@@ -390,7 +379,6 @@
         </main>
     </div>
 
-    <!-- NEW CUSTOM GROUP CREATION MODAL -->
     <div id="create-group-modal" class="modal-overlay hidden">
         <div class="dev-modal-content">
             <h2>Create New Group</h2>
@@ -406,11 +394,6 @@
                 <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Group Name</label>
                 <input type="text" id="new-group-name" class="dev-input" placeholder="Enter group name..." style="margin-top: 5px;">
             </div>
-            
-            <div style="text-align: left; margin-top: 15px;">
-                <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Description (Optional)</label>
-                <input type="text" id="new-group-desc" class="dev-input" placeholder="What is this group about?" style="margin-top: 5px;">
-            </div>
 
             <div class="modal-actions">
                 <button class="danger-btn" onclick="document.getElementById('create-group-modal').classList.add('hidden')">Cancel</button>
@@ -419,7 +402,6 @@
         </div>
     </div>
 
-    <!-- OTHER MODALS -->
     <div id="edit-profile-modal" class="modal-overlay hidden">
         <div class="dev-modal-content">
             <h2>Edit Profile</h2>
@@ -443,18 +425,30 @@
     </div>
 
     <div id="dev-assign-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content golden-border">
+        <div class="dev-modal-content golden-border" style="border: 2px solid #fbbf24;">
             <h2 id="dev-modal-title">Assign Feature</h2>    
             <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal" autocomplete="off">
+            
             <div id="dev-options-grid" class="options-grid"></div>
+            
             <div class="modal-actions">
                 <button class="action-btn" onclick="closeDevModal()">Cancel</button>
-                <button class="gold-btn" id="confirm-assign-btn">Apply Power</button>
+                <button class="gold-btn" id="confirm-assign-btn" style="background:#fbbf24; color:#000;">Apply Power</button>
             </div>
         </div>
     </div>
 
-    <!-- PWA Service Worker Registration -->
+    <div id="dev-action-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content" id="dev-action-box">
+            <h2 id="action-modal-title">Take Action</h2>
+            <input type="text" id="action-target-user" class="dev-input" placeholder="Enter username..." autocomplete="off">
+            <div class="modal-actions">
+                <button class="action-btn" onclick="closeDevModal()">Cancel</button>
+                <button class="danger-btn" id="confirm-action-btn">Execute</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
