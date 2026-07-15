@@ -479,3 +479,100 @@ input:-webkit-autofill:active {
     0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); transform: scale(1); }
     50% { box-shadow: 0 0 25px rgba(255, 140, 0, 0.9); transform: scale(1.02); }
 }
+/* ========================================== */
+/* 📱 MOBILE BOTTOM NAVIGATION (Instagram Style) */
+/* ========================================== */
+@media (max-width: 1024px) { 
+    .grid-4-cols { grid-template-columns: repeat(2, 1fr) !important; } 
+}
+
+@media (max-width: 768px) {
+    /* 1. App Layout ko column banaya */
+    #main-app { flex-direction: column; height: 100vh; overflow: hidden; }
+    
+    /* 2. Top Bar - Sirf Logo Dikhayega, Hamburger gayab */
+    #mobile-top-bar { 
+        display: flex; 
+        background: var(--bg-panel); 
+        padding: 15px 20px; 
+        border-bottom: 1px solid var(--border-color); 
+        align-items: center; 
+        justify-content: center;
+        z-index: 50; 
+    }
+    #hamburger-btn { display: none !important; } 
+    .mobile-title { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin: 0; }
+    
+    /* 3. Content Area ko middle me rakha (Order: 2) */
+    #content-area { 
+        flex: 1; 
+        order: 2; 
+        overflow-y: auto; 
+        padding-bottom: 20px;
+    }
+
+    /* 4. Sidebar ko Bottom Nav banaya (Order: 3) */
+    #sidebar { 
+        order: 3; /* Sabse Niche (Bottom) */
+        position: relative;
+        left: 0; 
+        width: 100%; 
+        height: 70px; 
+        flex-direction: row; 
+        padding: 0 10px; 
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05); 
+        border-top: 1px solid var(--border-color);
+        border-right: none;
+        z-index: 1000;
+        overflow-x: auto; /* Horizontal Scroll agar icons zyada hon */
+        overflow-y: hidden;
+        -ms-overflow-style: none;  
+        scrollbar-width: none; 
+    }
+    #sidebar::-webkit-scrollbar { display: none; } 
+    
+    .nav-logo, .mobile-only-btn { display: none !important; }
+    
+    .nav-links { 
+        flex-direction: row; 
+        width: max-content; 
+        min-width: 100%;
+        justify-content: space-between; 
+        align-items: center;
+        height: 100%;
+        gap: 15px;
+    }
+    
+    .nav-links li { display: flex; justify-content: center; }
+    
+    /* 5. Buttons ko sirf Icon banaya (Text Gayab) */
+    .nav-btn { 
+        font-size: 0 !important; /* Magic: Text Gayab */
+        padding: 0; 
+        width: 45px; 
+        height: 45px; 
+        display: flex;
+        justify-content: center; 
+        align-items: center;
+        border-radius: 50%;
+        margin: 0 !important;
+        flex-shrink: 0;
+    }
+    
+    .nav-btn i { 
+        font-size: 1.5rem !important; /* Icons ko bada rakha */
+        margin: 0; 
+    }
+
+    /* 6. General Mobile Fixes */
+    .chat-layout { flex-direction: column; }
+    .chat-sidebar { width: 100%; height: 40%; border-right: none; border-bottom: 2px solid var(--border-color); }
+    .active-chat-window { height: 60%; }
+    .profile-info-container { padding: 0 20px 20px 20px; }
+    .friendship-wrapper { padding: 20px; }
+    .duo-display { flex-direction: column; }
+    .band-connection { width: 100%; margin: 20px 0; }
+    .grid-4-cols { grid-template-columns: 1fr !important; }
+    .settings-wrapper { padding: 20px; }
+    .dev-modal-content { width: 95%; padding: 20px; }
+}
