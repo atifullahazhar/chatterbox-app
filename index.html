@@ -52,7 +52,6 @@
                 <li><button class="nav-btn" data-target="post-section"><i class="fas fa-images"></i> Post Feed</button></li>
                 <li><button class="nav-btn" data-target="games-section"><i class="fas fa-gamepad"></i> Mini Games</button></li>
                 <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-cog"></i> Settings</button></li>
-                <li><button class="nav-btn" id="dark-mode-btn"><i class="fas fa-moon"></i> Dark Mode</button></li>
 
                 <li id="dev-nav-item" class="hidden">
                     <button class="nav-btn dev-tab-btn" data-target="dev-section-view"><i class="fas fa-crown"></i> Developer</button>
@@ -88,13 +87,7 @@
                     <div id="display-rank" class="rank-badge rank-member">Member</div>
                     <div class="custom-status clickable-status" id="custom-status-text" title="Click to edit">"Available"</div>
 
-                    <div class="profile-stats-container">
-                        <div class="stat-box"><strong>0</strong><span>Posts</span></div>
-                        <div class="stat-box"><strong>124</strong><span>Followers</span></div>
-                        <div class="stat-box"><strong>89</strong><span>Following</span></div>
-                    </div>
-
-                    <div class="profile-badges">
+                    <div class="profile-badges" style="margin-top: 20px;">
                         <span title="Early Adopter">🌟</span>
                         <span title="Chatterbox Pro">💎</span>
                         <span title="Friendly Neighbor">🤝</span>
@@ -428,9 +421,7 @@
         <div class="dev-modal-content golden-border" style="border: 2px solid #fbbf24;">
             <h2 id="dev-modal-title">Assign Feature</h2>    
             <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal" autocomplete="off">
-            
             <div id="dev-options-grid" class="options-grid"></div>
-            
             <div class="modal-actions">
                 <button class="action-btn" onclick="closeDevModal()">Cancel</button>
                 <button class="gold-btn" id="confirm-assign-btn" style="background:#fbbf24; color:#000;">Apply Power</button>

@@ -51,27 +51,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. THEME & SIDEBAR
+    // 3. THEME MANAGER (Handles The Grand Golden)
     // ==========================================
-    const darkModeBtn = document.getElementById('dark-mode-btn');
     const settingsDarkModeToggle = document.getElementById('settings-dark-mode-toggle');
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
 
     function applyTheme() {
-        if (isDarkMode) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            if (darkModeBtn) darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-            if (settingsDarkModeToggle) settingsDarkModeToggle.checked = true;
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            if (darkModeBtn) darkModeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-            if (settingsDarkModeToggle) settingsDarkModeToggle.checked = false;
+        // Grand Golden override
+        if (currentUser && currentUser.theme === 'grand-golden') {
+            document.documentElement.setAttribute('data-theme', 'grand-golden');
+            if (settingsDarkModeToggle) { 
+                settingsDarkModeToggle.checked = true; 
+                settingsDarkModeToggle.disabled = true; // Lock switch for VIP
+            }
+        } 
+        // Normal Premium Themes
+        else if (currentUser && currentUser.theme && currentUser.theme !== 'default') {
+            document.documentElement.setAttribute('data-theme', currentUser.theme);
+            if (settingsDarkModeToggle) settingsDarkModeToggle.disabled = false;
+        } 
+        // Standard Light/Dark Mode
+        else {
+            if (settingsDarkModeToggle) settingsDarkModeToggle.disabled = false;
+            if (isDarkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                if (settingsDarkModeToggle) settingsDarkModeToggle.checked = true;
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                if (settingsDarkModeToggle) settingsDarkModeToggle.checked = false;
+            }
         }
     }
     applyTheme();
 
-    if (darkModeBtn) { darkModeBtn.addEventListener('click', () => { isDarkMode = !isDarkMode; localStorage.setItem('darkMode', isDarkMode); applyTheme(); }); }
-    if (settingsDarkModeToggle) { settingsDarkModeToggle.addEventListener('change', (e) => { isDarkMode = e.target.checked; localStorage.setItem('darkMode', isDarkMode); applyTheme(); }); }
+    if (settingsDarkModeToggle) { 
+        settingsDarkModeToggle.addEventListener('change', (e) => { 
+            isDarkMode = e.target.checked; 
+            localStorage.setItem('darkMode', isDarkMode); 
+            applyTheme(); 
+        }); 
+    }
 
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
@@ -111,20 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentUser = {
                     username: usernameInput, email: emailInput, isDev: isDev, bio: "Hallo World",
                     dp: `https://ui-avatars.com/api/?name=${usernameInput}&background=eaddff&color=8b5cf6`, banner: "",
-                    rank: "Member", userColor: "", mood: "😎", statusMsg: "Available", streak: 1, lastLoginDate: new Date().toDateString()
+                    rank: "Member", userColor: "", mood: "😎", statusMsg: "Available", streak: 1, 
+                    theme: "default", ring: null, lastLoginDate: new Date().toDateString()
                 };
             } else {
                 currentUser = userExists; currentUser.isDev = isDev; 
                 if(!currentUser.rank) currentUser.rank = "Member";
                 if(!currentUser.mood) currentUser.mood = "😎";
                 if(!currentUser.statusMsg) currentUser.statusMsg = "Available";
+                if(!currentUser.theme) currentUser.theme = "default";
             }
             checkDailyStreak(); showMainApp();
         });
     }
 
     // ==========================================
-    // 5. PROFILE UI
+    // 5. PROFILE UI & RING ASSIGNMENT
     // ==========================================
     const operatorColors = ["#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", "#00FA9A", "#32CD32", "#FFD700", "#FF8C00", "#FF4500", "#FFFFFF"];
 
@@ -166,15 +187,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rank === 'Operator') { if (colorSection) colorSection.classList.remove('hidden'); setupColorGrid(); } 
         else { if (colorSection) colorSection.classList.add('hidden'); }
 
-        if (currentUser.isDev) {
-            if(nameDisplay) nameDisplay.classList.add('dev-username-style');
-            if(rankDisplay) rankDisplay.innerText = "Developer 👑";
-            if(dpWrapper) dpWrapper.classList.add('dev-ring-active');
-            if(devNavItem) devNavItem.classList.remove('hidden');
-        } else {
-            if(devNavItem) devNavItem.classList.add('hidden');
-            if(dpWrapper) dpWrapper.classList.remove('dev-ring-active');
+        // Dynamic Ring Application
+        if (dpWrapper) {
+            dpWrapper.className = 'dp-container'; // reset
+            if (currentUser.ring && currentUser.ring !== 'default') {
+                dpWrapper.classList.add(`ring-style-${currentUser.ring}`);
+            }
+            if (currentUser.isDev) {
+                dpWrapper.classList.add('dev-ring-active');
+            }
         }
+
+        if (currentUser.isDev) { if(devNavItem) devNavItem.classList.remove('hidden'); } 
+        else { if(devNavItem) devNavItem.classList.add('hidden'); }
     }
 
     function setupColorGrid() {
@@ -259,13 +284,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loginScreen.classList.remove('active'); loginScreen.classList.add('hidden');
             mainApp.classList.remove('hidden'); mainApp.classList.add('active');
         }
+        applyTheme();
         loadProfileData();
     }
 
     const navButtons = document.querySelectorAll('.nav-btn');
     const contentViews = document.querySelectorAll('.content-view');
     navButtons.forEach(btn => {
-        if (btn.id === 'dark-mode-btn') return;
         btn.addEventListener('click', () => {
             navButtons.forEach(b => b.classList.remove('active'));
             contentViews.forEach(c => { c.classList.remove('active'); c.classList.add('hidden'); });
@@ -275,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetView = document.getElementById(targetId);
             if(targetView) { targetView.classList.remove('hidden'); targetView.classList.add('active'); }
             
-            // 🔥 Fixed Developer Mode Theme Sync
             if (targetId === 'dev-section-view') {
                 document.body.classList.add('dev-theme-active');
             } else {
@@ -382,12 +406,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
     // ==========================================
-    // 7. DEVELOPER ACTION LOGIC (All Buttons Working)
+    // 7. DEVELOPER ACTION LOGIC & GRAND GOLDEN
     // ==========================================
     let currentDevAction = "";
     let selectedDevOption = null;
 
-    // Fixed: Assign Rank, Ring, Theme Modals
     window.openDevModal = function (type) {
         currentDevAction = type;
         const assignModal = document.getElementById('dev-assign-modal');
@@ -404,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
         generateOptionsGrid(type);
     };
 
-    // Fixed: Generates grid properly inside modal
     function generateOptionsGrid(type) {
         const grid = document.getElementById('dev-options-grid');
         if(!grid) return;
@@ -424,6 +446,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 🔥 THE GRAND GOLDEN THEME OPTIONS
+        if (type === 'theme') {
+            const grandBtn = document.createElement('button');
+            grandBtn.className = 'action-btn theme-style-grand'; 
+            grandBtn.style.width = '100%'; grandBtn.style.gridColumn = '1 / -1'; 
+            grandBtn.innerText = '🌟 THE GRAND GOLDEN 🌟';
+            grandBtn.onclick = () => {
+                selectedDevOption = 'grand-golden';
+                Array.from(grid.children).forEach(c => c.style.outline = 'none');
+                grandBtn.style.outline = '3px solid var(--primary-color)';
+            };
+            grid.appendChild(grandBtn);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'danger-btn'; 
+            removeBtn.style.width = '100%'; removeBtn.style.gridColumn = '1 / -1'; 
+            removeBtn.innerText = '❌ Remove Theme (Reset to Default)';
+            removeBtn.onclick = () => {
+                selectedDevOption = 'default';
+                Array.from(grid.children).forEach(c => c.style.outline = 'none');
+                removeBtn.style.outline = '3px solid var(--primary-color)';
+            };
+            grid.appendChild(removeBtn);
+        }
+
+        // Theme and Rings Generator
         for (let i = 1; i <= 20; i++) { 
             const box = document.createElement('div');
             box.style.width = '100%'; box.style.aspectRatio = '1/1'; box.style.borderRadius = '50%';
@@ -436,13 +484,26 @@ document.addEventListener('DOMContentLoaded', () => {
             box.addEventListener('click', () => {
                 Array.from(grid.children).forEach(child => child.style.outline = 'none');
                 box.style.outline = '3px solid var(--primary-color)';
-                selectedDevOption = i;
+                selectedDevOption = (type === 'theme') ? `premium-${i}` : i;
             });
             grid.appendChild(box);
         }
+
+        // Add Ring Revoke Button
+        if (type === 'ring') {
+            const removeRingBtn = document.createElement('button');
+            removeRingBtn.className = 'danger-btn'; 
+            removeRingBtn.style.width = '100%'; removeRingBtn.style.gridColumn = '1 / -1'; 
+            removeRingBtn.innerText = '❌ Remove Ring';
+            removeRingBtn.onclick = () => {
+                selectedDevOption = 'default';
+                Array.from(grid.children).forEach(c => c.style.outline = 'none');
+                removeRingBtn.style.outline = '3px solid var(--primary-color)';
+            };
+            grid.appendChild(removeRingBtn);
+        }
     }
 
-    // Apply Assign Power
     const assignBtn = document.getElementById('confirm-assign-btn');
     if(assignBtn) {
         assignBtn.addEventListener('click', () => {
@@ -450,22 +511,34 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!targetUser) return alert("Please enter a target username!");
             if (!selectedDevOption) return alert("Please select an option from the grid!");
 
+            const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
+            if(!targetObj) return alert("User not found in local database!");
+
             if (currentDevAction === 'rank') {
-                const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
-                if(targetObj) {
-                    targetObj.rank = selectedDevOption;
-                    try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
-                    alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
-                    if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
-                        currentUser.rank = selectedDevOption; saveUserData(); loadProfileData();
-                    }
-                } else { alert("User not found in local database!"); }
+                targetObj.rank = selectedDevOption;
+                alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
+            } else if (currentDevAction === 'theme') {
+                targetObj.theme = selectedDevOption;
+                if(selectedDevOption === 'default') alert(`Theme removed for ${targetObj.username}.`);
+                else alert(`Theme applied to ${targetObj.username}!`);
+            } else if (currentDevAction === 'ring') {
+                targetObj.ring = selectedDevOption;
+                if(selectedDevOption === 'default') alert(`Ring removed for ${targetObj.username}.`);
+                else alert(`Ring applied to ${targetObj.username}!`);
             }
+
+            try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
+            
+            // Check if assigning to self
+            if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
+                currentUser = targetObj; saveUserData(); loadProfileData();
+                if(currentDevAction === 'theme') applyTheme();
+            }
+            
             closeDevModal();
         });
     }
 
-    // Fixed: Ban, Unban, Shadowban Modals
     window.openDevAction = function(actionType) {
         currentDevAction = actionType;
         const modal = document.getElementById('dev-action-modal');
@@ -474,44 +547,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const box = document.getElementById('dev-action-box');
         
         if(!modal) return;
-        modal.classList.remove('hidden');
-        document.getElementById('action-target-user').value = ""; // clear input
-        
+        modal.classList.remove('hidden'); document.getElementById('action-target-user').value = ""; 
         box.className = 'dev-modal-content'; 
-        if(actionType === 'ban') {
-            title.innerText = "Ban User"; btn.innerText = "Ban"; btn.className = "danger-btn"; box.classList.add('danger-border');
-        } else if(actionType === 'unban') {
-            title.innerText = "Unban User"; btn.innerText = "Unban"; btn.className = "primary-btn"; box.style.border = "2px solid #10b981";
-        } else if(actionType === 'shadowban') {
-            title.innerText = "Shadowban User"; btn.innerText = "Shadowban"; btn.className = "gold-btn"; box.style.border = "2px solid #a855f7";
-        }
+        if(actionType === 'ban') { title.innerText = "Ban User"; btn.innerText = "Ban"; btn.className = "danger-btn"; box.classList.add('danger-border'); } 
+        else if(actionType === 'unban') { title.innerText = "Unban User"; btn.innerText = "Unban"; btn.className = "primary-btn"; box.style.border = "2px solid #10b981"; } 
+        else if(actionType === 'shadowban') { title.innerText = "Shadowban User"; btn.innerText = "Shadowban"; btn.className = "gold-btn"; box.style.border = "2px solid #a855f7"; }
     };
 
-    // Execute Ban/Unban/Shadowban
     const actionBtn = document.getElementById('confirm-action-btn');
     if(actionBtn) {
         actionBtn.addEventListener('click', () => {
             const targetUser = document.getElementById('action-target-user').value;
             if(!targetUser) return alert("Please enter a username!");
-            
-            // Logic mock (without Database)
             alert(`✅ User '${targetUser}' has been successfully ${currentDevAction}ned!`);
             closeDevModal();
         });
     }
 
-    // Direct Executable Buttons (Global Mute, Wipe, Maintenance)
     window.executeDevDirect = function(action) {
-        if(action === 'global_mute') {
-            alert('🔇 Global Mute activated! Nobody can send messages except Developers.');
-        } else if(action === 'wipe') {
-            if(confirm('☢️ WARNING: Are you sure you want to wipe all server messages?')) {
-                document.querySelectorAll('.messages-container').forEach(c => c.innerHTML = '');
-                alert('Server Wiped Clean!');
-            }
-        } else if(action === 'maintenance') {
-            alert('🚧 Maintenance Mode Toggled! Normal users will see a maintenance screen.');
-        }
+        if(action === 'global_mute') alert('🔇 Global Mute activated!');
+        else if(action === 'wipe') { if(confirm('☢️ WARNING: Wipe all server messages?')) { document.querySelectorAll('.messages-container').forEach(c => c.innerHTML = ''); alert('Server Wiped Clean!'); } } 
+        else if(action === 'maintenance') alert('🚧 Maintenance Mode Toggled!');
     }
 
     window.closeDevModal = function () {
