@@ -1,4 +1,4 @@
-console.log("🔥 CHATTERBOX VIP ECOSYSTEM OS - PYTHON AI INTEGRATED ENGINE V15 🔥");
+console.log("🔥 CHATTERBOX VIP ECOSYSTEM OS - PYTHON AI INTEGRATED ENGINE V15 (LOGIN FIXED) 🔥");
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -24,13 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let posts = [];
     let groups = [];
     
-    // NEW FEATURE STACK DATABASE LOGS
     let systemBugReports = [];
     let activeChatPinnedMessages = {}; 
     let activeDisappearingMessagesMode = false;
     let currentSystemLanguage = 'en';
 
-    // Mock Directory Database for Search Validation
     const systemVerifiedUserDirectory = [
         { username: "Atifullah Azhar", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Supreme Root Developer & Owner of Chatterbox VIP Architecture Matrix.", rank: "Developer" },
         { username: "Nauras Daniyal", dp: "https://ui-avatars.com/api/?name=Nauras&background=eaddff&color=8b5cf6", bio: "Verified Operations Specialist Platform Node Administrator.", rank: "Operator" },
@@ -169,6 +167,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
+    // 🔥 DIRECT BUTTON BINDINGS (YE FIX HAI JO BUTTON KO CLICKABLE BANAYEGA) 🔥
+    // =========================================================================
+    
+    // 1. Login Button Fix
+    const loginButton = safeEl('join-btn');
+    if (loginButton) {
+        loginButton.onclick = function(e) {
+            e.preventDefault();
+            performLoginProcess();
+        };
+    }
+
+    // 2. OTP Button Fix
+    const otpButton = safeEl('action-switch-to-otp-mode-btn');
+    if (otpButton) {
+        otpButton.onclick = function(e) {
+            e.preventDefault();
+            const otpBlock = safeEl('otp-login-verification-block');
+            if (otpBlock) {
+                if (otpBlock.classList.contains('hidden')) {
+                    otpBlock.classList.remove('hidden');
+                    otpButton.innerText = "Cancel OTP Verification Process";
+                    otpButton.style.background = "#ef4444";
+                    otpButton.style.color = "#fff";
+                } else {
+                    otpBlock.classList.add('hidden');
+                    otpButton.innerText = "Verify via Secure Mobile SMS OTP Channel Port";
+                    otpButton.style.background = "var(--bg-panel)";
+                    otpButton.style.color = "var(--text-main)";
+                }
+            }
+        };
+    }
+
+    // =========================================================================
     // 3. 🤖 PYTHON AI INTEGRATION ASYNC FUNCTIONS (SENTIMENT & SPAM) 🤖
     // =========================================================================
 
@@ -267,30 +300,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = e.target;
         if (!target) return;
 
-        // --- LOGIN & OTP BUTTON TRIGGERS ---
-        if (target.closest('#join-btn')) { 
-            performLoginProcess(); 
-            return; 
-        }
-
-        if (target.closest('#action-switch-to-otp-mode-btn')) {
-            const otpBlock = safeEl('otp-login-verification-block');
-            const otpBtn = target.closest('#action-switch-to-otp-mode-btn');
-            if (otpBlock) {
-                if (otpBlock.classList.contains('hidden')) {
-                    otpBlock.classList.remove('hidden');
-                    otpBtn.innerText = "Cancel OTP Verification Process";
-                    otpBtn.style.background = "#ef4444";
-                    otpBtn.style.color = "#fff";
-                } else {
-                    otpBlock.classList.add('hidden');
-                    otpBtn.innerText = "Verify via Secure Mobile SMS OTP Channel Port";
-                    otpBtn.style.background = "var(--bg-panel)";
-                    otpBtn.style.color = "var(--text-main)";
-                }
-            }
-            return;
-        }
+        // Skip directly bounded buttons to prevent double-clicks
+        if (target.id === 'join-btn' || target.closest('#join-btn') || target.id === 'action-switch-to-otp-mode-btn' || target.closest('#action-switch-to-otp-mode-btn')) return;
 
         if (target.closest('#trigger-view-tos-modal')) { sRem('tos-documentation-framework-overlay-modal', 'hidden'); return; }
 
