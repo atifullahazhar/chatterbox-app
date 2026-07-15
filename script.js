@@ -1,17 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 🔥 GLOBAL CLICK LISTENER (Fixing all buttons at once)
+    document.addEventListener('click', (e) => {
+        // World Chat Send Button logic
+        if (e.target.closest('#world-send-btn')) {
+            const input = document.getElementById('world-chat-input');
+            if (input && input.value.trim() !== "") {
+                // Line 8 ki jagah ye likho:
+                sendMessage(input.value); // Aapka original function yahan call hoga
+                // Yahan apna send message function call kar dena
+                input.value = '';
+            } else {
+                alert("Bhai, message toh likho!");
+            }
+        }
+
+        // Post Like Button logic
+        if (e.target.closest('.like-btn')) {
+            const btn = e.target.closest('.like-btn');
+            btn.style.color = '#ef4444';
+            btn.innerHTML = '<i class="fas fa-heart"></i> Liked';
+        }
+    });
     // ==========================================
     // 1. SAFE STATE & STORAGE
     // ==========================================
     let currentUser = null;
     let registeredUsers = [];
     const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
-    
+
     try {
         currentUser = JSON.parse(localStorage.getItem('chatUser'));
         registeredUsers = JSON.parse(localStorage.getItem('chatAppUsers') || '[]');
-    } catch(e) {}
+    } catch (e) { }
 
-    const socket = (typeof io !== 'undefined') ? io() : { on:()=>{}, emit:()=>{} };
+    const socket = (typeof io !== 'undefined') ? io() : { on: () => { }, emit: () => { } };
 
     function saveUserData() {
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
@@ -33,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (settingsDarkModeToggle) settingsDarkModeToggle.disabled = false;
         } else {
             if (settingsDarkModeToggle) settingsDarkModeToggle.disabled = false;
-            if (isDarkMode) { document.documentElement.setAttribute('data-theme', 'dark'); if(settingsDarkModeToggle) settingsDarkModeToggle.checked = true; } 
-            else { document.documentElement.removeAttribute('data-theme'); if(settingsDarkModeToggle) settingsDarkModeToggle.checked = false; }
+            if (isDarkMode) { document.documentElement.setAttribute('data-theme', 'dark'); if (settingsDarkModeToggle) settingsDarkModeToggle.checked = true; }
+            else { document.documentElement.removeAttribute('data-theme'); if (settingsDarkModeToggle) settingsDarkModeToggle.checked = false; }
         }
     }
 
@@ -48,12 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.content-view').forEach(c => { c.classList.remove('active'); c.classList.add('hidden'); });
             const target = document.getElementById(btn.dataset.target);
-            if(target) { target.classList.remove('hidden'); target.classList.add('active'); }
-            
+            if (target) { target.classList.remove('hidden'); target.classList.add('active'); }
+
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            if(btn.dataset.target === 'dev-section-view') document.body.classList.add('dev-theme-active');
+            if (btn.dataset.target === 'dev-section-view') document.body.classList.add('dev-theme-active');
             else document.body.classList.remove('dev-theme-active');
         });
     });
@@ -76,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = document.getElementById('username-input').value.trim();
             const email = document.getElementById('email-input').value.trim();
             const devCode = document.getElementById('dev-code').value.replace(/\s+/g, '');
-            
+
             currentUser = { username: user, email: email, isDev: (devCode === '6200437705AT'), rank: "Member", theme: "default", ring: null, bio: "Hallo World", dp: DEFAULT_DP };
             saveUserData(); showMainApp();
         });
@@ -91,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadProfileData() {
-        if(!currentUser) return;
-        
+        if (!currentUser) return;
+
         // 🔥 Auto-Upgrade: Agar user Dev hai toh rank "Developer" kar do
         if (currentUser.isDev) {
             currentUser.rank = "Developer";
@@ -103,17 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('user-bio').innerText = currentUser.bio || "Hallo World";
         document.getElementById('user-dp').src = currentUser.dp || DEFAULT_DP;
         document.getElementById('fb-my-dp').src = currentUser.dp || DEFAULT_DP;
-        
+
         const rankEl = document.getElementById('display-rank');
         rankEl.innerText = currentUser.rank || "Member";
         rankEl.className = `rank-badge rank-${(currentUser.rank || 'Member').toLowerCase()}`;
 
         const ringWrapper = document.getElementById('dp-wrapper');
         ringWrapper.className = 'dp-container';
-        if(currentUser.ring && currentUser.ring !== 'default') ringWrapper.classList.add(`ring-style-${currentUser.ring}`);
-        
+        if (currentUser.ring && currentUser.ring !== 'default') ringWrapper.classList.add(`ring-style-${currentUser.ring}`);
+
         // 🔥 Developer Ring Activation
-        if(currentUser.isDev) {
+        if (currentUser.isDev) {
             ringWrapper.classList.add('dev-ring-active');
             document.getElementById('dev-nav-item').classList.remove('hidden');
         }
@@ -131,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         saveUserData(); loadProfileData(); closeEditProfile();
     };
 
-    document.getElementById('dp-upload-input')?.addEventListener('change', function() {
+    document.getElementById('dp-upload-input')?.addEventListener('change', function () {
         const file = this.files[0];
-        if(file) {
+        if (file) {
             const reader = new FileReader();
             reader.onload = e => { currentUser.dp = e.target.result; saveUserData(); loadProfileData(); };
             reader.readAsDataURL(file);
@@ -148,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
     function appendMessage(sender, text, type) {
-        if(!msgArea) return;
+        if (!msgArea) return;
         const div = document.createElement('div');
         div.className = `message-bubble ${type === 'me' ? 'my-msg' : 'other-msg'}`;
         div.innerHTML = `<strong>${sender}:</strong><br>${text}`;
@@ -157,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function sendMessage() {
-        if(!msgInput) return;
+        if (!msgInput) return;
         const text = msgInput.value.trim();
         if (text) {
             socket.emit('send_message', { sender: currentUser.username, text: text });
@@ -173,14 +195,14 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('receive_message', (data) => {
         if (data.sender !== currentUser.username) {
             appendMessage(data.sender, data.text, 'other');
-            notifySound.play().catch(()=>{});
+            notifySound.play().catch(() => { });
         }
     });
 
     socket.on('typing', (data) => {
-        if(data.sender !== currentUser.username) {
+        if (data.sender !== currentUser.username) {
             const statusEl = document.querySelector('.status-text');
-            if(statusEl) {
+            if (statusEl) {
                 statusEl.innerText = `${data.sender} is typing...`;
                 setTimeout(() => statusEl.innerText = 'Online', 2000);
             }
@@ -204,16 +226,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'rank') title.innerText = "Assign Rank";
         if (type === 'ring') title.innerText = "Assign Premium Profile Ring";
         if (type === 'theme') title.innerText = "Assign Custom UI Theme";
-        
+
         generateOptionsGrid(type);
     };
 
     function generateOptionsGrid(type) {
         const grid = document.getElementById('dev-options-grid');
-        if(!grid) return;
+        if (!grid) return;
         grid.innerHTML = '';
-        
-        if(type === 'rank') {
+
+        if (type === 'rank') {
             ['Operator', 'Elite', 'Legend', 'Pro', 'Member'].forEach(r => {
                 const btn = document.createElement('button');
                 btn.className = 'action-btn'; btn.style.width = '100%'; btn.innerText = r;
@@ -229,8 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (type === 'theme') {
             const grandBtn = document.createElement('button');
-            grandBtn.className = 'action-btn theme-style-grand'; 
-            grandBtn.style.width = '100%'; grandBtn.style.gridColumn = '1 / -1'; 
+            grandBtn.className = 'action-btn theme-style-grand';
+            grandBtn.style.width = '100%'; grandBtn.style.gridColumn = '1 / -1';
             grandBtn.innerText = '🌟 THE GRAND GOLDEN 🌟';
             grandBtn.onclick = () => {
                 selectedDevOption = 'grand-golden';
@@ -240,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(grandBtn);
 
             const removeBtn = document.createElement('button');
-            removeBtn.className = 'danger-btn'; 
-            removeBtn.style.width = '100%'; removeBtn.style.gridColumn = '1 / -1'; 
+            removeBtn.className = 'danger-btn';
+            removeBtn.style.width = '100%'; removeBtn.style.gridColumn = '1 / -1';
             removeBtn.innerText = '❌ Remove Theme';
             removeBtn.onclick = () => {
                 selectedDevOption = 'default';
@@ -251,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(removeBtn);
         }
 
-        for (let i = 1; i <= 20; i++) { 
+        for (let i = 1; i <= 20; i++) {
             const box = document.createElement('div');
             box.style.width = '100%'; box.style.aspectRatio = '1/1'; box.style.borderRadius = '50%';
             box.style.cursor = 'pointer'; box.style.display = 'flex'; box.style.justifyContent = 'center';
@@ -291,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.executeDevDirect = (action) => {
-        if(action === 'wipe') { if(confirm('⚠️ Wipe server messages?')) document.querySelectorAll('.messages-container').forEach(c => c.innerHTML = ''); }
+        if (action === 'wipe') { if (confirm('⚠️ Wipe server messages?')) document.querySelectorAll('.messages-container').forEach(c => c.innerHTML = ''); }
         else alert(action.replace('_', ' ').toUpperCase() + " executed!");
     };
 
@@ -309,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (createGroupBtn) createGroupBtn.addEventListener('click', () => createGroupModal.classList.remove('hidden'));
 
-    document.getElementById('new-group-icon-input')?.addEventListener('change', function() {
+    document.getElementById('new-group-icon-input')?.addEventListener('change', function () {
         const file = this.files[0];
         if (file) {
             const reader = new FileReader();
@@ -320,9 +342,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('confirm-create-group-btn')?.addEventListener('click', () => {
         const name = document.getElementById('new-group-name').value;
-        if(name) {
+        if (name) {
             const div = document.createElement('div');
-            div.className = 'dummy-item'; 
+            div.className = 'dummy-item';
             div.innerHTML = `<img src="${tempGroupIcon}" class="contact-avatar" style="border-radius:50%; width:40px; height:40px;"><b>${name}</b>`;
             document.getElementById('group-list-container').appendChild(div);
             createGroupModal.classList.add('hidden');
@@ -338,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const postInput = document.getElementById('post-input');
     const submitPostBtn = document.getElementById('submit-post-btn');
     const feedContainer = document.getElementById('feed-container');
-    let attachedImageURL = null; 
+    let attachedImageURL = null;
 
     const hiddenFileInput = document.createElement('input');
     hiddenFileInput.type = 'file';
@@ -375,19 +397,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // POST BUTTON CLICK HANDLER
-    if(submitPostBtn) {
+    if (submitPostBtn) {
         submitPostBtn.addEventListener('click', () => {
             const text = postInput ? postInput.value.trim() : '';
-            
+
             if (text || attachedImageURL) {
                 const postDiv = document.createElement('div');
                 postDiv.className = 'feed-post';
-                
+
                 let textHTML = text ? `<p class="post-text-content">${text}</p>` : '';
                 let mediaHTML = attachedImageURL ? `<img src="${attachedImageURL}" class="post-media-img">` : '';
                 let safeName = currentUser ? currentUser.username : 'User';
                 let safeDp = (currentUser && currentUser.dp) ? currentUser.dp : DEFAULT_DP;
-                
+
                 postDiv.innerHTML = `
                     <div class="post-header">
                         <div class="post-user-info">
@@ -408,20 +430,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="comment-btn"><i class="far fa-comment"></i> Comment</button>
                     </div>
                 `;
-                
+
                 // Delete Event
                 const deleteBtn = postDiv.querySelector('.delete-post-btn');
-                if(deleteBtn) {
+                if (deleteBtn) {
                     deleteBtn.addEventListener('click', () => {
                         if (confirm("Are you sure you want to delete this post?")) {
                             postDiv.remove();
                         }
                     });
                 }
-                
+
                 feedContainer.prepend(postDiv);
-                
-                if(postInput) postInput.value = '';
+
+                if (postInput) postInput.value = '';
                 attachedImageURL = null;
             } else {
                 alert("⚠️ Please write something or attach an image to post!");
@@ -430,15 +452,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 // SINGLE GLOBAL LISTENER (Sab buttons ke liye ek hi solution)
-document.addEventListener('click', function(e) {
-    
+document.addEventListener('click', function (e) {
+
     // 1. World Chat Send Button
     if (e.target.closest('#world-send-btn')) {
         const input = document.getElementById('world-chat-input');
         if (input && input.value.trim() !== "") {
             // Yahan message logic...
             console.log("Sending: " + input.value);
-            input.value = ''; 
+            input.value = '';
         }
     }
 
@@ -450,7 +472,7 @@ document.addEventListener('click', function(e) {
 
     // 3. Delete Post Button
     if (e.target.closest('.delete-post-btn')) {
-        if(confirm("Delete this post?")) {
+        if (confirm("Delete this post?")) {
             e.target.closest('.feed-post').remove();
         }
     }
