@@ -429,3 +429,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// SINGLE GLOBAL LISTENER (Sab buttons ke liye ek hi solution)
+document.addEventListener('click', function(e) {
+    
+    // 1. World Chat Send Button
+    if (e.target.closest('#world-send-btn')) {
+        const input = document.getElementById('world-chat-input');
+        if (input && input.value.trim() !== "") {
+            // Yahan message logic...
+            console.log("Sending: " + input.value);
+            input.value = ''; 
+        }
+    }
+
+    // 2. Post Feed Like Button
+    if (e.target.closest('.like-btn')) {
+        e.target.closest('.like-btn').classList.toggle('liked');
+        // Like logic...
+    }
+
+    // 3. Delete Post Button
+    if (e.target.closest('.delete-post-btn')) {
+        if(confirm("Delete this post?")) {
+            e.target.closest('.feed-post').remove();
+        }
+    }
+});
