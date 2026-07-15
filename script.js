@@ -466,29 +466,31 @@ if (submitPostBtn) {
     });
 }
 ;
-// SINGLE GLOBAL LISTENER (Sab buttons ke liye ek hi solution)
-document.addEventListener('click', function (e) {
-
-    // 1. World Chat Send Button
-    if (e.target.closest('#world-send-btn')) {
-        const input = document.getElementById('world-chat-input');
-        if (input && input.value.trim() !== "") {
-            // Yahan message logic...
-            console.log("Sending: " + input.value);
-            input.value = '';
+// 🔥 CLEAN GLOBAL CLICK LISTENER
+    document.addEventListener('click', (e) => {
+        // 1. World Chat Send Logic
+        if (e.target.closest('#world-send-btn')) {
+            const input = document.getElementById('world-message-input');
+            if (input && input.value.trim() !== "") {
+                // Yahan direct sendMessage logic call karo
+                socket.emit('send_message', { sender: currentUser.username, text: input.value });
+                input.value = ''; 
+                console.log("Message sent to world!");
+            }
         }
-    }
 
-    // 2. Post Feed Like Button
-    if (e.target.closest('.like-btn')) {
-        e.target.closest('.like-btn').classList.toggle('liked');
-        // Like logic...
-    }
-
-    // 3. Delete Post Button
-    if (e.target.closest('.delete-post-btn')) {
-        if (confirm("Delete this post?")) {
-            e.target.closest('.feed-post').remove();
+        // 2. Post Like Button
+        if (e.target.closest('.like-btn')) {
+            const btn = e.target.closest('.like-btn');
+            btn.classList.toggle('liked');
+            btn.style.color = btn.classList.contains('liked') ? '#ef4444' : '';
+            btn.innerHTML = btn.classList.contains('liked') ? '<i class="fas fa-heart"></i> Liked' : '<i class="far fa-heart"></i> Like';
         }
-    }
-});
+        
+        // 3. Delete Post
+        if (e.target.closest('.delete-post-btn')) {
+            if (confirm("Delete this post?")) {
+                e.target.closest('.feed-post').remove();
+            }
+        }
+    });
