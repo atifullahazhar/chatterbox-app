@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atif Chat App - Ultimate Edition</title>
-    <!-- Favicon fix to stop 404 error -->
     <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name=C&background=8b5cf6&color=fff">
     
     <link rel="stylesheet" href="style.css">
@@ -63,7 +62,7 @@
 
         <main id="content-area">
 
-            <!-- PROFILE -->
+            <!-- PROFILE (Enhanced with Stats & Badges) -->
             <section id="profile-section" class="content-view active">
                 <div class="profile-banner-wrapper">
                     <div class="profile-banner" id="user-banner-container">
@@ -88,10 +87,21 @@
                     </div>
                     
                     <div id="display-rank" class="rank-badge rank-member">Member</div>
-                    
                     <div class="custom-status clickable-status" id="custom-status-text" title="Click to edit">"Available"</div>
 
-                    <div class="stats"><span id="friend-count">0 friends</span></div>
+                    <!-- NEW: PROFILE STATS & BADGES -->
+                    <div class="profile-stats-container">
+                        <div class="stat-box"><strong>0</strong><span>Posts</span></div>
+                        <div class="stat-box"><strong>124</strong><span>Followers</span></div>
+                        <div class="stat-box"><strong>89</strong><span>Following</span></div>
+                    </div>
+
+                    <div class="profile-badges">
+                        <span title="Early Adopter">🌟</span>
+                        <span title="Chatterbox Pro">💎</span>
+                        <span title="Friendly Neighbor">🤝</span>
+                    </div>
+
                     <p id="user-bio">Hallo World</p>
                     
                     <div class="social-links-bar">
@@ -118,8 +128,7 @@
                             <button class="tab-btn" data-tab="general">General</button>
                         </div>
                         <div class="search-bar"><input type="text" placeholder="Search..."></div>
-                        <div class="contact-list" id="contact-list-container">
-                            </div>
+                        <div class="contact-list" id="contact-list-container"></div>
                     </div>
 
                     <div class="active-chat-window">
@@ -136,16 +145,12 @@
                             <button id="block-user-btn" class="danger-btn"><i class="fas fa-ban"></i></button>
                         </div>
 
-                        <div class="messages-container hidden" id="messages-area">
-                            </div>
+                        <div class="messages-container hidden" id="messages-area"></div>
 
                         <div class="chat-input-area hidden" id="chat-input-area">
                             <button id="attach-btn" title="Attach File"><i class="fas fa-paperclip"></i></button>
                             <button id="emoji-btn" title="Emojis"><i class="far fa-smile"></i></button>
-
-                            <div id="private-mention-dropdown" class="mention-dropdown hidden"></div>
                             <input type="text" placeholder="Type a message..." id="message-input" autocomplete="off">
-
                             <button id="voice-note-btn" title="Hold to record"><i class="fas fa-microphone"></i></button>
                             <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
@@ -167,14 +172,13 @@
                             <p>Select a group to start messaging</p>
                         </div>
                         <div class="chat-header hidden" id="group-header">
-                            <img src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" alt="Group Icon">
+                            <img src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" id="group-header-img" alt="Group Icon">
                             <h3 id="current-group-name">Group</h3>
                             <button id="group-settings-btn" class="action-btn"><i class="fas fa-cog"></i></button>
                         </div>
                         <div class="messages-container hidden" id="group-messages-area"></div>
                         <div class="chat-input-area hidden" id="group-input-area">
                             <button id="group-attach-btn"><i class="fas fa-plus"></i></button>
-                            <div id="group-mention-dropdown" class="mention-dropdown hidden"></div>
                             <input type="text" placeholder="Type a message..." id="group-message-input" autocomplete="off">
                             <button id="group-send-btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
@@ -242,7 +246,6 @@
                         </div>
                     </div>
                     <div class="chat-input-area">
-                        <div id="world-mention-dropdown" class="mention-dropdown hidden"></div>
                         <input type="text" placeholder="Say hello to the world..." id="world-message-input" autocomplete="off">
                         <button id="world-send-btn"><i class="fas fa-paper-plane"></i></button>
                     </div>
@@ -253,8 +256,8 @@
             <section id="post-section" class="content-view hidden">
                 <div class="feed-wrapper">
                     
-                    <div class="stories-container">
-                        <div class="story-item create-story">
+                    <div class="stories-container" id="stories-container-div">
+                        <div class="story-item create-story" id="add-status-btn">
                             <div class="story-avatar"><i class="fas fa-plus"></i></div>
                             <span>Add Status</span>
                         </div>
@@ -272,9 +275,7 @@
                         </div>
                     </div>
 
-                    <div id="feed-container">
-                        <!-- JS injects posts here -->
-                    </div>
+                    <div id="feed-container"></div>
                 </div>
             </section>
 
@@ -286,22 +287,30 @@
                         <div class="game-card">
                             <h3>Tic-Tac-Toe</h3>
                             <p>Challenge your Duo to a quick game.</p>
-                            <button class="action-btn">Play Now</button>
+                            <button class="action-btn" id="tictactoe-btn">Play Now</button>
                         </div>
                         <div class="game-card">
                             <h3>Coin Flip</h3>
                             <p>Bet virtual coins with friends.</p>
-                            <button class="action-btn">Flip Coin</button>
+                            <button class="action-btn" id="coinflip-btn">Flip Coin</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- SETTINGS -->
+            <!-- SETTINGS (Updated with Dark Mode & Group Request) -->
             <section id="settings-section" class="content-view hidden">
                 <div class="settings-wrapper">
                     <h2 class="settings-title">App Settings</h2>
                     
+                    <div class="settings-group">
+                        <h3><i class="fas fa-paint-brush"></i> Appearance</h3>
+                        <div class="setting-item">
+                            <span>Dark Mode</span>
+                            <label class="toggle-switch"><input type="checkbox" id="settings-dark-mode-toggle"><span class="slider"></span></label>
+                        </div>
+                    </div>
+
                     <div class="settings-group">
                         <h3><i class="fas fa-bell"></i> Notifications</h3>
                         <div class="setting-item">
@@ -315,9 +324,13 @@
                     </div>
 
                     <div class="settings-group">
-                        <h3><i class="fas fa-shield-alt"></i> Privacy</h3>
+                        <h3><i class="fas fa-shield-alt"></i> Privacy & Groups</h3>
                         <div class="setting-item">
                             <span>Show Online Status</span>
+                            <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Require Group Join Requests</span>
                             <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
                         </div>
                         <div class="setting-item">
@@ -328,7 +341,7 @@
                 </div>
             </section>
 
-            <!-- DEV DASHBOARD -->
+            <!-- DEV DASHBOARD (4 Columns) -->
             <section id="dev-section-view" class="content-view hidden">
                 <div id="dev-dashboard-wrapper">
                     <div class="dev-header">
@@ -336,7 +349,8 @@
                         <p>With great power comes great responsibility.</p>
                     </div>
 
-                    <div class="dev-cards-grid">
+                    <!-- 4 Columns Grid CSS class -->
+                    <div class="dev-cards-grid grid-4-cols">
                         <div class="dev-card golden-card" onclick="openDevModal('rank')">
                             <div class="card-icon">🎖️</div>
                             <h3>Assign Rank</h3>
@@ -349,7 +363,6 @@
                             <div class="card-icon">🎨</div>
                             <h3>Assign Theme</h3>
                         </div>
-                        
                         <div class="dev-card purple-card" onclick="alert('Shadowban feature coming in DB update')">
                             <div class="card-icon">👻</div>
                             <h3>Shadowban User</h3>
@@ -377,26 +390,51 @@
         </main>
     </div>
 
-    <!-- MODALS -->
+    <!-- NEW CUSTOM GROUP CREATION MODAL -->
+    <div id="create-group-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content">
+            <h2>Create New Group</h2>
+            
+            <div class="dp-container profile-modal-dp" style="margin: 0 auto 15px auto; width: 100px; height: 100px;">
+                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            </div>
+            
+            <button class="action-btn" onclick="document.getElementById('new-group-icon-input').click()"><i class="fas fa-camera"></i> Group Icon</button>
+            <input type="file" id="new-group-icon-input" accept="image/*" class="hidden">
+            
+            <div style="text-align: left; margin-top: 20px;">
+                <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Group Name</label>
+                <input type="text" id="new-group-name" class="dev-input" placeholder="Enter group name..." style="margin-top: 5px;">
+            </div>
+            
+            <div style="text-align: left; margin-top: 15px;">
+                <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Description (Optional)</label>
+                <input type="text" id="new-group-desc" class="dev-input" placeholder="What is this group about?" style="margin-top: 5px;">
+            </div>
+
+            <div class="modal-actions">
+                <button class="danger-btn" onclick="document.getElementById('create-group-modal').classList.add('hidden')">Cancel</button>
+                <button class="primary-btn" id="confirm-create-group-btn">Create Group</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTHER MODALS -->
     <div id="edit-profile-modal" class="modal-overlay hidden">
         <div class="dev-modal-content">
             <h2>Edit Profile</h2>
-            
             <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
                 <button class="action-btn" onclick="document.getElementById('dp-upload-input').click()"><i class="fas fa-camera"></i> Change Logo</button>
                 <button class="action-btn" onclick="document.getElementById('banner-upload-input').click()"><i class="fas fa-image"></i> Change Banner</button>
             </div>
-            
             <div style="text-align: left; margin-bottom: 10px;">
                 <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Nickname</label>
                 <input type="text" id="edit-username-input" class="dev-input" placeholder="Your Name" style="margin-top: 5px;">
             </div>
-            
             <div style="text-align: left; margin-bottom: 10px;">
                 <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Description (Bio)</label>
                 <textarea id="edit-bio-input" class="dev-input" placeholder="Write something about yourself..." style="height: 100px; resize: none; margin-top: 5px;"></textarea>
             </div>
-
             <div class="modal-actions">
                 <button class="danger-btn" onclick="closeEditProfile()">Cancel</button>
                 <button class="primary-btn" onclick="saveProfileDetails()">Save Changes</button>
@@ -416,33 +454,6 @@
         </div>
     </div>
 
-    <div id="dev-ban-modal" class="modal-overlay hidden">
-        <div class="dev-modal-content danger-border">
-            <h2 id="ban-modal-title">Ban User</h2>
-            <input type="text" id="ban-target-user" class="dev-input" placeholder="Enter username..." autocomplete="off">
-            <div class="modal-actions">
-                <button class="action-btn" onclick="closeDevModal()">Cancel</button>
-                <button class="danger-btn" id="confirm-ban-btn">Execute</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="public-profile-modal" class="modal-overlay hidden">
-        <div class="public-modal-content">
-            <button class="close-modal-btn" onclick="closePublicProfile()"><i class="fas fa-times"></i></button>
-            <div class="dp-container profile-modal-dp">
-                <img id="public-profile-dp" src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6">
-            </div>
-            <h2 id="public-profile-name">Username</h2>
-            <div id="public-profile-rank" class="rank-badge">Member</div>
-            <p id="public-profile-bio">Hallo World</p>
-            <div class="profile-modal-actions">
-                <button class="primary-btn"><i class="fas fa-comment"></i> Message</button>
-                <button class="action-btn"><i class="fas fa-user-plus"></i> Add Duo</button>
-            </div>
-        </div>
-    </div>
-
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
@@ -456,5 +467,4 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>

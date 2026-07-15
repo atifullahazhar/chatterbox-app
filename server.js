@@ -10,7 +10,6 @@ const io = new Server(server);
 // ==========================================
 // 1. STATIC FILES SERVING (Fixes "Cannot GET /")
 // ==========================================
-// This tells the server to send your HTML, CSS, and JS files to the browser
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
@@ -26,6 +25,16 @@ io.on('connection', (socket) => {
     // Normal Chat Messages
     socket.on('send_message', (data) => {
         io.emit('receive_message', data);
+    });
+
+    // 🔴 NEW: Typing Indicator Events
+    socket.on('typing', (data) => {
+        // broadcast.emit ka matlab hai sender ko chhod kar sabko bhejo
+        socket.broadcast.emit('typing', data); 
+    });
+
+    socket.on('stop_typing', (data) => {
+        socket.broadcast.emit('stop_typing', data);
     });
 
     // Developer Powers handling

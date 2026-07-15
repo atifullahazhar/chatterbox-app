@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. SAFE STATE & LOCAL STORAGE
+    // 1. SAFE STATE & LOCAL STORAGE (Crash-Proof)
     // ==========================================
     let currentUser = null;
     let registeredUsers = [];
-    
-    // Fallback Image API to prevent 404 errors
     const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
     
     try {
@@ -15,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const storedAppUsers = localStorage.getItem('chatAppUsers');
         if (storedAppUsers) registeredUsers = JSON.parse(storedAppUsers);
     } catch (error) {
-        console.warn("Memory limit exceeded. Clearing corrupted local storage.");
+        console.warn("Memory limit exceeded. Clearing storage.");
         localStorage.removeItem('chatUser');
         localStorage.removeItem('chatAppUsers');
     }
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainApp = document.getElementById('main-app');
     const loginForm = document.getElementById('login-form');
     
-    // SAFE SOCKET CONNECTION
     let socket;
     if (typeof io !== 'undefined') {
         socket = io();
@@ -38,9 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('user-reconnected', currentUser);
     }
 
-    // ==========================================
-    // 2. DAILY LOGIN STREAK & SECURE SAVING
-    // ==========================================
     function checkDailyStreak() {
         const today = new Date().toDateString();
         if (!currentUser.lastLoginDate) {
@@ -60,57 +54,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveUserData() {
         if(!currentUser || !currentUser.email) return;
-        
         const index = registeredUsers.findIndex(u => u.email === currentUser.email);
-        if(index > -1) {
-            registeredUsers[index] = currentUser;
-        } else {
-            registeredUsers.push(currentUser);
-        }
+        if(index > -1) { registeredUsers[index] = currentUser; } else { registeredUsers.push(currentUser); }
         
         try {
             localStorage.setItem('chatUser', JSON.stringify(currentUser));
             localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
         } catch (error) {
-            alert("🚨 STORAGE FULL! Your image/video exceeds the browser limit. The app has been saved from crashing, but the file wasn't saved. Please use a smaller picture!");
+            alert("🚨 STORAGE FULL! Please use a smaller picture.");
         }
     }
 
     // ==========================================
-    // 3. THEME & MOBILE SIDEBAR
+    // 3. THEME & SIDEBAR
     // ==========================================
     const darkModeBtn = document.getElementById('dark-mode-btn');
+    const settingsDarkModeToggle = document.getElementById('settings-dark-mode-toggle');
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
 
     function applyTheme() {
         if (isDarkMode) {
             document.documentElement.setAttribute('data-theme', 'dark');
             if (darkModeBtn) darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            if (settingsDarkModeToggle) settingsDarkModeToggle.checked = true;
         } else {
             document.documentElement.removeAttribute('data-theme');
             if (darkModeBtn) darkModeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            if (settingsDarkModeToggle) settingsDarkModeToggle.checked = false;
         }
     }
     applyTheme();
 
     if (darkModeBtn) {
-        darkModeBtn.addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-            localStorage.setItem('darkMode', isDarkMode);
-            applyTheme();
-        });
+        darkModeBtn.addEventListener('click', () => { isDarkMode = !isDarkMode; localStorage.setItem('darkMode', isDarkMode); applyTheme(); });
+    }
+    if (settingsDarkModeToggle) {
+        settingsDarkModeToggle.addEventListener('change', (e) => { isDarkMode = e.target.checked; localStorage.setItem('darkMode', isDarkMode); applyTheme(); });
     }
 
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const sidebar = document.getElementById('sidebar');
 
-    if (hamburgerBtn && sidebar) {
-        hamburgerBtn.addEventListener('click', () => sidebar.classList.add('mobile-open'));
-    }
-    if (closeSidebarBtn && sidebar) {
-        closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('mobile-open'));
-    }
+    if (hamburgerBtn && sidebar) hamburgerBtn.addEventListener('click', () => sidebar.classList.add('mobile-open'));
+    if (closeSidebarBtn && sidebar) closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('mobile-open'));
 
     // ==========================================
     // 4. SECURE LOGIN
@@ -118,11 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
-            
             const usernameInput = document.getElementById('username-input').value.trim();
             const emailInput = document.getElementById('email-input').value.trim().toLowerCase();
-            const devInputRaw = document.getElementById('dev-code').value;
-            const devCodeClean = devInputRaw.replace(/\s+/g, '');
+            const devCodeClean = document.getElementById('dev-code').value.replace(/\s+/g, '');
 
             if (usernameInput === '') return alert('Username cannot be empty');
             if (emailInput === '') return alert('Email cannot be empty');
@@ -164,21 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(!currentUser.rank) currentUser.rank = "Member";
                 if(!currentUser.mood) currentUser.mood = "😎";
                 if(!currentUser.statusMsg) currentUser.statusMsg = "Available";
-                if(currentUser.dp === "default-dp.png") currentUser.dp = `https://ui-avatars.com/api/?name=${currentUser.username}&background=eaddff&color=8b5cf6`;
             }
-            
-            checkDailyStreak();
-            showMainApp();
+            checkDailyStreak(); showMainApp();
         });
     }
 
     // ==========================================
-    // 5. PROFILE UI & EDIT MODAL
+    // 5. PROFILE UI
     // ==========================================
-    const operatorColors = [
-        "#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", 
-        "#00FA9A", "#32CD32", "#FFD700", "#FF8C00", "#FF4500", "#FFFFFF"
-    ];
+    const operatorColors = ["#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", "#00FA9A", "#32CD32", "#FFD700", "#FF8C00", "#FF4500", "#FFFFFF"];
 
     function loadProfileData() {
         if(!currentUser) return;
@@ -192,7 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const moodEmoji = document.getElementById('mood-emoji');
         const devNavItem = document.getElementById('dev-nav-item');
 
-        if(nameDisplay) nameDisplay.innerText = currentUser.username;
+        // NEW: Verification Badge Sync
+        let verifiedBadge = currentUser.isDev ? ' <i class="fas fa-check-circle" style="color: #10b981; font-size:1.5rem;" title="Verified Developer"></i>' : '';
+        if(nameDisplay) nameDisplay.innerHTML = currentUser.username + verifiedBadge;
+        
         if(bioDisplay) bioDisplay.innerText = currentUser.bio;
         if(statusDisplay) statusDisplay.innerText = `"${currentUser.statusMsg || 'Available'}"`;
         if(moodEmoji) moodEmoji.innerText = currentUser.mood || '😎';
@@ -211,8 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if(nameDisplay) {
             nameDisplay.className = 'username-display'; 
-            nameDisplay.style.color = '';
-            nameDisplay.style.textShadow = '';
+            nameDisplay.style.color = ''; nameDisplay.style.textShadow = '';
             if (rank === 'Operator' && currentUser.userColor) {
                 nameDisplay.classList.add('shine-operator');
                 nameDisplay.style.setProperty('--user-color', currentUser.userColor);
@@ -221,8 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (rank === 'Operator') {
-            if (colorSection) colorSection.classList.remove('hidden');
-            setupColorGrid();
+            if (colorSection) colorSection.classList.remove('hidden'); setupColorGrid();
         } else {
             if (colorSection) colorSection.classList.add('hidden');
         }
@@ -240,20 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupColorGrid() {
         const grid = document.getElementById('operator-color-grid');
-        if(!grid) return;
-        grid.innerHTML = '';
+        if(!grid) return; grid.innerHTML = '';
         operatorColors.forEach(color => {
             const div = document.createElement('div');
-            div.className = 'color-option';
-            div.style.background = color;
+            div.className = 'color-option'; div.style.background = color;
             div.style.width = '30px'; div.style.height = '30px'; div.style.borderRadius = '50%'; div.style.cursor = 'pointer';
             if (currentUser.userColor === color) div.style.border = '2px solid white';
-            
-            div.onclick = () => {
-                currentUser.userColor = color;
-                saveUserData();
-                loadProfileData(); 
-            };
+            div.onclick = () => { currentUser.userColor = color; saveUserData(); loadProfileData(); };
             grid.appendChild(div);
         });
     }
@@ -262,11 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(statusText) {
         statusText.addEventListener('click', () => {
             const newStatus = prompt("What's on your mind?", currentUser.statusMsg);
-            if(newStatus !== null) {
-                currentUser.statusMsg = newStatus.substring(0, 30); 
-                saveUserData();
-                loadProfileData();
-            }
+            if(newStatus !== null) { currentUser.statusMsg = newStatus.substring(0, 30); saveUserData(); loadProfileData(); }
         });
     }
 
@@ -277,29 +246,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(editBtn && editModal) {
         editBtn.addEventListener('click', () => {
-            editUserIn.value = currentUser.username;
-            editBioIn.value = currentUser.bio;
+            editUserIn.value = currentUser.username; editBioIn.value = currentUser.bio;
             editModal.classList.remove('hidden');
         });
     }
 
-    window.closeEditProfile = () => {
-        if(editModal) editModal.classList.add('hidden');
-    };
+    window.closeEditProfile = () => { if(editModal) editModal.classList.add('hidden'); };
 
     window.saveProfileDetails = () => {
         const newName = editUserIn.value.trim();
         if(newName !== '') {
-            if (newName.toLowerCase() !== currentUser.username.toLowerCase()) {
-                const exists = registeredUsers.some(u => u.username.toLowerCase() === newName.toLowerCase());
-                if (exists) return alert("This username is already taken by someone else!");
-            }
-
-            currentUser.username = newName;
-            currentUser.bio = editBioIn.value.trim();
-            saveUserData();
-            loadProfileData();
-            closeEditProfile();
+            currentUser.username = newName; currentUser.bio = editBioIn.value.trim();
+            saveUserData(); loadProfileData(); closeEditProfile();
         }
     };
 
@@ -309,9 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('change', function () {
                 const file = this.files[0];
                 if (file) {
-                    if (file.size > 1500000) { 
-                        return alert("File is too large! Please select an image smaller than 1.5MB.");
-                    }
+                    if (file.size > 1500000) return alert("File is too large! Please select an image smaller than 1.5MB.");
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         currentUser[type] = e.target.result;
@@ -325,12 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function applyMedia(dataUrl, imgId, videoId) {
-        const imgElement = document.getElementById(imgId);
-        const videoElement = document.getElementById(videoId);
+        const imgElement = document.getElementById(imgId); const videoElement = document.getElementById(videoId);
         if (!dataUrl || dataUrl === 'default-dp.png' || dataUrl === '') {
             if (imgElement) { imgElement.src = DEFAULT_DP; imgElement.classList.remove('hidden'); }
-            if (videoElement) videoElement.classList.add('hidden');
-            return;
+            if (videoElement) videoElement.classList.add('hidden'); return;
         }
         if (dataUrl.startsWith('data:video')) {
             if (imgElement) imgElement.classList.add('hidden');
@@ -343,10 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showMainApp() {
         if(loginScreen && mainApp) {
-            loginScreen.classList.remove('active');
-            loginScreen.classList.add('hidden');
-            mainApp.classList.remove('hidden');
-            mainApp.classList.add('active');
+            loginScreen.classList.remove('active'); loginScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden'); mainApp.classList.add('active');
         }
         loadProfileData();
     }
@@ -359,30 +311,18 @@ document.addEventListener('DOMContentLoaded', () => {
             navButtons.forEach(b => b.classList.remove('active'));
             contentViews.forEach(c => { c.classList.remove('active'); c.classList.add('hidden'); });
             btn.classList.add('active');
-
             const targetId = btn.getAttribute('data-target');
             const targetView = document.getElementById(targetId);
             if(targetView) { targetView.classList.remove('hidden'); targetView.classList.add('active'); }
-
             if (window.innerWidth <= 768 && sidebar) sidebar.classList.remove('mobile-open');
-
-            if (targetId === 'dev-section-view') {
-                document.documentElement.setAttribute('data-theme', 'gold');
-                if (darkModeBtn && darkModeBtn.parentElement) darkModeBtn.parentElement.style.display = 'none';
-            } else {
-                applyTheme();
-                if (darkModeBtn && darkModeBtn.parentElement) darkModeBtn.parentElement.style.display = 'block';
-            }
         });
     });
 
     // ==========================================
-    // 6. CHAT, SOUND & MUTE LOGIC (BUG FIXED)
+    // 6. CHAT, TYPING INDICATOR & SOUND LOGIC
     // ==========================================
     let isWorldMuted = false;
     let lastWorldMessageTime = 0;
-    
-    // Notification Sound
     const notifySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
     const muteWorldBtn = document.getElementById('world-mute-btn');
@@ -393,6 +333,34 @@ document.addEventListener('DOMContentLoaded', () => {
             muteWorldBtn.style.background = isWorldMuted ? '#10b981' : '#ef4444';
         });
     }
+
+    // NEW: Typing Indicator Logic
+    let typingTimer;
+    function handleTyping(areaId) {
+        socket.emit('typing', { sender: currentUser.username, area: areaId });
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            socket.emit('stop_typing', { sender: currentUser.username, area: areaId });
+        }, 1500); // Stop typing after 1.5 seconds of inactivity
+    }
+
+    socket.on('typing', (data) => {
+        if(data.sender === currentUser.username) return;
+        if(data.area === 'world-messages-area') {
+            document.querySelector('.world-header p').innerHTML = `<i><span style="color:#10b981;">${data.sender}</span> is typing... ✍️</i>`;
+        } else if (data.area === 'group-messages-area') {
+            document.getElementById('current-group-name').innerHTML = `Group <span style="font-size:0.8rem; color:#8b5cf6;">(${data.sender} typing...)</span>`;
+        }
+    });
+
+    socket.on('stop_typing', (data) => {
+        if(data.sender === currentUser.username) return;
+        if(data.area === 'world-messages-area') {
+            document.querySelector('.world-header p').innerHTML = `Global slow mode: 3s`;
+        } else if (data.area === 'group-messages-area') {
+            document.getElementById('current-group-name').innerHTML = `Group`;
+        }
+    });
 
     function sendMessage(inputId, areaId) {
         const input = document.getElementById(inputId);
@@ -408,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 lastWorldMessageTime = now;
             }
 
+            // Also emit stop typing when message is sent
+            socket.emit('stop_typing', { sender: currentUser.username, area: areaId });
             socket.emit("send_message", { sender: currentUser.username, text: text, area: areaId });
             appendMessageToScreen(text, areaId, 'me');
             input.value = "";
@@ -434,11 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(text.includes('@' + currentUser.username) || text.includes('@everyone')) {
             msgDiv.classList.add('mentioned-msg');
             formattedText = text.replace(new RegExp(`(@${currentUser.username}|@everyone)`, 'g'), `<span class="mention-highlight">$1</span>`);
-            
-            // Special ping sound for mentions
-            if(senderType === 'other' && !isWorldMuted) {
-                notifySound.play().catch(e=>{});
-            }
+            if(senderType === 'other' && !isWorldMuted) { notifySound.play().catch(e=>{}); }
         }
         
         msgDiv.innerHTML = formattedText;
@@ -448,25 +414,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on("receive_message", (data) => {
         if(data.sender === currentUser.username) return;
-        
         if(data.area === 'world-messages-area' && isWorldMuted) return; 
-        
-        // Play sound if message received and not muted
-        if (!isWorldMuted) {
-            notifySound.currentTime = 0;
-            notifySound.play().catch(e => console.log('Audio blocked by browser.'));
-        }
-
-        appendMessageToScreen(data.text, data.area, 'other');
+        if (!isWorldMuted) { notifySound.currentTime = 0; notifySound.play().catch(e => console.log('Audio blocked')); }
+        appendMessageToScreen(`<strong>${data.sender}:</strong> ` + data.text, data.area, 'other');
     });
 
     const setupInput = (inputId, areaId, btnId) => {
         const input = document.getElementById(inputId);
         const btn = document.getElementById(btnId);
+        
+        // Attach Typing Listener
+        if(input) input.addEventListener('input', () => handleTyping(areaId));
+        
         if(btn) btn.addEventListener('click', () => sendMessage(inputId, areaId));
-        if(input) {
-            input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(inputId, areaId); });
-        }
+        if(input) { input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(inputId, areaId); }); }
     };
 
     setupInput('world-message-input', 'world-messages-area', 'world-send-btn');
@@ -474,170 +435,75 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
     // ==========================================
-    // 7. MISSING BUTTONS FIXED (Groups & Posts)
+    // 7. STORIES, GROUPS & GAMES LOGIC
     // ==========================================
+    const addStatusBtn = document.getElementById('add-status-btn');
+    if (addStatusBtn) {
+        addStatusBtn.addEventListener('click', () => {
+            const statusText = prompt("Enter your text status:");
+            if (statusText) {
+                const newStory = document.createElement('div');
+                newStory.className = 'story-item';
+                newStory.innerHTML = `<div class="story-avatar" style="border-color: #10b981;"><img src="${currentUser.dp || DEFAULT_DP}" alt="DP"></div><span>You</span>`;
+                newStory.onclick = () => alert(`Status:\n\n${statusText}`);
+                addStatusBtn.insertAdjacentElement('afterend', newStory);
+            }
+        });
+    }
 
-    // Fix 1: Add Group Button
     const createGroupBtn = document.getElementById('create-group-btn');
-    if (createGroupBtn) {
-        createGroupBtn.addEventListener('click', () => {
-            const groupName = prompt("Enter a name for the new group:");
-            if (groupName && groupName.trim() !== "") {
+    const createGroupModal = document.getElementById('create-group-modal');
+    const confirmCreateGroupBtn = document.getElementById('confirm-create-group-btn');
+    let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
+
+    if (createGroupBtn) createGroupBtn.addEventListener('click', () => createGroupModal.classList.remove('hidden'));
+
+    document.getElementById('new-group-icon-input')?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { tempGroupIcon = e.target.result; document.getElementById('new-group-icon-preview').src = tempGroupIcon; };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    if (confirmCreateGroupBtn) {
+        confirmCreateGroupBtn.addEventListener('click', () => {
+            const name = document.getElementById('new-group-name').value.trim();
+            if(name) {
                 const groupList = document.getElementById('group-list-container');
                 const newGroup = document.createElement('div');
                 newGroup.className = 'dummy-item';
-                newGroup.innerHTML = `<div class="contact-avatar"><i class="fas fa-users"></i></div><b>${groupName}</b>`;
+                newGroup.innerHTML = `<img src="${tempGroupIcon}" class="contact-avatar" style="border-radius:50%; width:40px; height:40px; border: 2px solid var(--primary-color);"><b>${name}</b>`;
                 newGroup.onclick = () => {
                     document.getElementById('group-placeholder')?.classList.add('hidden');
                     document.getElementById('group-header')?.classList.remove('hidden');
                     document.getElementById('group-messages-area')?.classList.remove('hidden');
                     document.getElementById('group-input-area')?.classList.remove('hidden');
-                    if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = groupName;
+                    if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = name;
+                    document.getElementById('group-header-img').src = tempGroupIcon;
                 };
                 groupList.appendChild(newGroup);
-            }
+                createGroupModal.classList.add('hidden');
+            } else { alert("Group name is required!"); }
         });
     }
 
-    // Fix 2: Submit Post Button
-    const submitPostBtn = document.getElementById('submit-post-btn');
-    if (submitPostBtn) {
-        submitPostBtn.addEventListener('click', () => {
-            const postInput = document.getElementById('post-input');
-            const text = postInput.value.trim();
-            if (text !== "") {
-                const feedContainer = document.getElementById('feed-container');
-                const newPost = document.createElement('div');
-                newPost.className = 'feed-post';
-                newPost.innerHTML = `
-                    <div class="post-header">
-                        <img src="${currentUser.dp || DEFAULT_DP}" alt="DP">
-                        <div>
-                            <b>${currentUser.username}</b>
-                            <span class="rank-badge rank-${(currentUser.rank || 'member').toLowerCase()}" style="font-size: 0.6rem; padding: 2px 6px; margin-left: 5px;">${currentUser.rank || 'Member'}</span>
-                        </div>
-                        <span>• Just now</span>
-                    </div>
-                    <div class="post-content">${text}</div>
-                    <div class="post-footer">
-                        <button class="like-btn" onclick="this.style.color='#ef4444'"><i class="far fa-heart"></i> Like</button>
-                        <button class="comment-btn"><i class="far fa-comment"></i> Comment</button>
-                    </div>
-                `;
-                feedContainer.prepend(newPost);
-                postInput.value = "";
-            }
-        });
-    }
+    const ticTacToeBtn = document.getElementById('tictactoe-btn');
+    const coinFlipBtn = document.getElementById('coinflip-btn');
+    if (ticTacToeBtn) ticTacToeBtn.addEventListener('click', () => alert("🎮 Tic-Tac-Toe requires a connected Duo partner."));
+    if (coinFlipBtn) coinFlipBtn.addEventListener('click', () => alert(`Flipping coin... \n\nResult: ${Math.random() > 0.5 ? "🪙 Heads!" : "🪙 Tails!"}`));
 
     // ==========================================
-    // 8. DEVELOPER DASHBOARD LOGIC
+    // 8. DEVELOPER DASHBOARD
     // ==========================================
-    let currentDevAction = "";
-    let selectedDevOption = null;
-
     window.openDevModal = function (type) {
-        currentDevAction = type;
         const assignModal = document.getElementById('dev-assign-modal');
         const banModal = document.getElementById('dev-ban-modal');
-        const title = document.getElementById('dev-modal-title');
-        selectedDevOption = null;
-
-        if (!assignModal || !banModal || !title) return;
-
-        if (type === 'ban') {
-            banModal.classList.remove('hidden');
-        } else {
-            assignModal.classList.remove('hidden');
-            if (type === 'rank') title.innerText = "Assign Rank";
-            if (type === 'ring') title.innerText = "Assign Premium Profile Ring";
-            if (type === 'theme') title.innerText = "Assign Custom UI Theme";
-            generateOptionsGrid(type);
-        }
+        if (type === 'ban') { banModal.classList.remove('hidden'); } else { assignModal.classList.remove('hidden'); }
     };
-
     window.closeDevModal = function () {
         document.getElementById('dev-assign-modal')?.classList.add('hidden');
         document.getElementById('dev-ban-modal')?.classList.add('hidden');
-        document.getElementById('public-profile-modal')?.classList.add('hidden');
     };
-
-    window.closePublicProfile = window.closeDevModal;
-
-    function generateOptionsGrid(type) {
-        const grid = document.getElementById('dev-options-grid');
-        if(!grid) return;
-        grid.innerHTML = '';
-        
-        if(type === 'rank') {
-            ['Operator', 'Elite', 'Legend', 'Pro', 'Member'].forEach(r => {
-                const btn = document.createElement('button');
-                btn.className = 'action-btn';
-                btn.style.width = '100%';
-                btn.innerText = r;
-                btn.onclick = () => {
-                    selectedDevOption = r;
-                    Array.from(grid.children).forEach(c => c.style.border = '1px solid var(--border-color)');
-                    btn.style.border = '2px solid var(--primary-color)';
-                };
-                grid.appendChild(btn);
-            });
-            return;
-        }
-
-        for (let i = 1; i <= 20; i++) { 
-            const box = document.createElement('div');
-            box.style.width = '100%';
-            box.style.aspectRatio = '1/1';
-            box.style.borderRadius = '50%';
-            box.style.cursor = 'pointer';
-            box.style.display = 'flex';
-            box.style.justifyContent = 'center';
-            box.style.alignItems = 'center';
-            box.style.color = 'white';
-            box.innerHTML = `${i}`;
-
-            if (type === 'ring') {
-                box.classList.add(`ring-style-${i}`); 
-                box.style.border = `2px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
-            }
-            else if (type === 'theme') {
-                box.classList.add(`theme-style-${i}`);
-                box.style.background = `hsl(${(i * 18) % 360}, 60%, 50%)`;
-            }
-
-            box.addEventListener('click', () => {
-                Array.from(grid.children).forEach(child => child.style.outline = 'none');
-                box.style.outline = '3px solid var(--primary-color)';
-                selectedDevOption = i;
-            });
-            grid.appendChild(box);
-        }
-    }
-
-    const assignBtn = document.getElementById('confirm-assign-btn');
-    if(assignBtn) {
-        assignBtn.addEventListener('click', () => {
-            const targetUser = document.getElementById('dev-target-user').value;
-            if (!targetUser) return alert("Please enter a target username!");
-            if (!selectedDevOption) return alert("Please select an option!");
-
-            if (currentDevAction === 'rank') {
-                const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
-                if(targetObj) {
-                    targetObj.rank = selectedDevOption;
-                    try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
-                    alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
-                    if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
-                        currentUser.rank = selectedDevOption;
-                        saveUserData();
-                        loadProfileData();
-                    }
-                } else {
-                    alert("User not found in local database!");
-                }
-            }
-            closeDevModal();
-        });
-    }
 });
