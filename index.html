@@ -18,7 +18,7 @@
         <div class="login-container">
             <h1>Welcome</h1>
             <p>Enter your details to continue to Chatterbox</p>
-            <form id="login-form">
+            <div id="login-form">
                 <input type="text" id="username-input" placeholder="Enter Username" required autocomplete="off">
                 <input type="email" id="email-input" placeholder="Enter Email Address" required autocomplete="off">
                 <div class="dev-section">
@@ -26,8 +26,8 @@
                     <input type="password" id="dev-code" placeholder="Enter secret key..." maxlength="14">
                     <small>Only authorized administrators can access developer tabs</small>
                 </div>
-                <button type="submit" id="join-btn">Join Chat Room</button>
-            </form>
+                <button type="button" id="join-btn">Join Chat Room</button>
+            </div>
         </div>
     </div>
 
@@ -87,11 +87,6 @@
                     <div class="social-links-bar"><i class="fab fa-instagram"></i><i class="fab fa-github"></i><i class="fab fa-youtube"></i></div>
                     
                     <button id="edit-profile-btn" class="primary-btn"><i class="fas fa-user-edit"></i> Edit Core Profile</button>
-                    
-                    <div id="operator-color-section" class="settings-card hidden" style="margin-top: 30px; width: 100%; max-width: 450px;">
-                        <h3>Select Operator Neon Glow Spectrum</h3>
-                        <div id="operator-color-grid" class="options-grid" style="grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));"></div>
-                    </div>
                 </div>
             </section>
 
@@ -117,8 +112,7 @@
                             </div>
                         </div>
 
-                        <div class="contact-list" id="contact-list-container">
-                            </div>
+                        <div class="contact-list" id="contact-list-container"></div>
                     </div>
 
                     <div class="active-chat-window" id="main-chat-workspace-pane">
@@ -334,17 +328,6 @@
                             <label class="toggle-switch"><input type="checkbox" id="settings-sound-effects-audio-toggle" checked><span class="slider"></span></label>
                         </div>
                     </div>
-
-                    <div class="settings-group">
-                        <h3><i class="fas fa-shield-alt"></i> Security Framework Isolation Metrics Infrastructure Configurations</h3>
-                        <div class="setting-item">
-                            <div>
-                                <span style="display: block; font-size: 1.1rem; font-weight: bold;">Public Profile Vector Parameters Visibility Matrix Scope</span>
-                                <small style="color: var(--text-muted); font-weight: normal; font-size: 0.85rem;">Allow non-synchronized terminal connection targets nodes identifiers grids discovery search vectors indexing.</small>
-                            </div>
-                            <label class="toggle-switch"><input type="checkbox" id="settings-profile-visibility-scope-toggle" checked><span class="slider"></span></label>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -356,61 +339,51 @@
                     </div>
                     
                     <div class="dev-cards-grid grid-4-cols">
-                        
                         <div class="dev-card golden-card" id="dev-assign-rank-btn" style="border: 2px solid #fbbf24; background: #141414;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #fbbf24;">🎖️</div>
                             <h3 style="color: #ffd700; font-weight: 800;">Modify User Rank</h3>
                             <p style="color: #b8860b; font-size: 0.85rem; margin-top: 5px;">Reconfigure permission structures ranks hierarchies matrix categories overrides items hooks.</p>
                         </div>
-
                         <div class="dev-card golden-card" id="dev-assign-ring-btn" style="border: 2px solid #fbbf24; background: #141414;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #fbbf24;">⭕</div>
                             <h3 style="color: #ffd700; font-weight: 800;">Modify Visual Profile Ring</h3>
                             <p style="color: #b8860b; font-size: 0.85rem; margin-top: 5px;">Inject dynamic particle canvas profile perimeter geometry graphics borders assets filters colors tracking.</p>
                         </div>
-
                         <div class="dev-card golden-card" id="dev-assign-theme-btn" style="border: 2px solid #fbbf24; background: #141414;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #fbbf24;">🎨</div>
                             <h3 style="color: #ffd700; font-weight: 800;">Modify Application Style Theme</h3>
                             <p style="color: #b8860b; font-size: 0.85rem; margin-top: 5px;">Force-override document client style parameters configuration assets palettes elements hooks classes variables.</p>
                         </div>
-
                         <div class="dev-card purple-card" id="dev-shadowban-toggle-btn" style="border: 2px solid #a855f7; background: #1a0f2e;">
                             <div class="card-icon" id="dev-shadowban-icon-display" style="text-shadow: 0 0 15px #a855f7;">👻</div>
                             <h3 style="color: #c084fc; font-weight: 800;" id="dev-shadowban-headline-display">Toggle Shadowban Mode System</h3>
                             <p style="color: #a855f7; font-size: 0.85rem; margin-top: 5px;" id="dev-shadowban-desc-display">CURRENT: SYSTEM NORMAL MONITORING RUNNING // Execute silent transmission routing filter isolation layer over target username parameters nodes pipelines vectors rules.</p>
                         </div>
-
                         <div class="dev-card purple-card" id="dev-global-mute-toggle-btn" style="border: 2px solid #a855f7; background: #1a0f2e;">
                             <div class="card-icon" id="dev-global-mute-icon-display" style="text-shadow: 0 0 15px #a855f7;">🤐</div>
                             <h3 style="color: #c084fc; font-weight: 800;" id="dev-global-mute-headline-display">Toggle Global Mute Restrictions</h3>
                             <p style="color: #a855f7; font-size: 0.85rem; margin-top: 5px;" id="dev-global-mute-desc-display">CURRENT: TRANSMISSIONS OPEN UNRESTRICTED // Freeze or activate packet line parsing pipelines processes across all client transmission data systems slots buffers.</p>
                         </div>
-
                         <div class="dev-card red-card" id="dev-ban-user-execution-btn" style="border: 2px solid #ef4444; background: #2d1212;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #ef4444;">🔨</div>
                             <h3 style="color: #fca5a5; font-weight: 800;">Execute Target Permanent Ban</h3>
                             <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">Invalidate permission authorization tokens arrays profiles for specific targeted accounts systems nodes indices vectors entries.</p>
                         </div>
-
                         <div class="dev-card green-card" id="dev-unban-user-execution-btn" style="border: 2px solid #10b981; background: #0f2d1e;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #10b981;">✅</div>
                             <h3 style="color: #6ee7b7; font-weight: 800;">Execute Target Profile Unban</h3>
                             <p style="color: #10b981; font-size: 0.85rem; margin-top: 5px;">Restore suspended authentication clearance vectors indices entries across banned tables lists directories blocks repositories databases.</p>
                         </div>
-
                         <div class="dev-card dark-red-card" id="dev-wipe-server-data-btn" style="border: 2px solid #991b1b; background: #1e0a0a;">
                             <div class="card-icon" style="text-shadow: 0 0 15px #991b1b;">☢️</div>
                             <h3 style="color: #f87171; font-weight: 800;">Purge Local Storage Data Wipe</h3>
                             <p style="color: #991b1b; font-size: 0.85rem; margin-top: 5px;">CRITICAL SYSTEM CLEARANCE TRIGGER OPERATION // Destroy local application workspace memory pools caches files maps arrays states parameters tracking blocks entirely.</p>
                         </div>
-
                         <div class="dev-card orange-card" id="dev-maintenance-toggle-mode-btn" style="border: 2px solid #f97316; background: #2d1910;">
                             <div class="card-icon" id="dev-maintenance-icon-display" style="text-shadow: 0 0 15px #f97316;">🚧</div>
                             <h3 style="color: #fed7aa; font-weight: 800;" id="dev-maintenance-headline-display">Toggle Maintenance Architecture Mode</h3>
                             <p style="color: #f97316; font-size: 0.85rem; margin-top: 5px;" id="dev-maintenance-desc-display">CURRENT: SYSTEM LIVE OPERATIONAL // Shut down client view screens pipelines displays layers and redirect target incoming traffic to architecture error grids blocks layouts windows items fields framework.</p>
                         </div>
-
                     </div>
                 </div>
             </section>
@@ -420,7 +393,6 @@
     <div id="friend-requests-modal" class="modal-overlay hidden">
         <div class="dev-modal-content" style="max-height: 85vh; display: flex; flex-direction: column; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 24px; padding: 30px;">
             <h2>Friend Interaction Request Routing Matrix</h2>
-            
             <div style="background: var(--bg-main); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: left; border: 1px solid var(--border-color);">
                 <label style="font-size: 0.9rem; color: var(--text-main); font-weight: 800; display: block; margin-bottom: 5px;">Query Profile Target Vector Registry Identity Name (Send Request)</label>
                 <div style="display: flex; gap: 10px; margin-top: 8px;">
@@ -428,13 +400,10 @@
                     <button id="send-friend-req-btn" class="primary-btn" style="padding: 0 25px; border-radius: 10px;"><i class="fas fa-search-plus"></i> Search Entity</button>
                 </div>
             </div>
-
             <div style="text-align: left; margin-top: 25px; flex: 1; overflow-y: auto;">
                 <h3 style="font-size: 1.1rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; font-weight: 800;">Pending Incoming Verification Action Request Buffers Queue (Accept Request)</h3>
-                <div id="incoming-requests-container" style="display: flex; flex-direction: column; gap: 10px;">
-                    </div>
+                <div id="incoming-requests-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
-
             <div class="modal-actions" style="margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border-color);">
                 <button class="danger-btn close-modal-btn" data-modal="friend-requests-modal" style="width: 100%;">Terminate Window Control</button>
             </div>
@@ -445,8 +414,7 @@
         <div class="dev-modal-content" style="max-height: 80vh; display: flex; flex-direction: column; border-radius: 24px; padding: 30px;">
             <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary-color);"><i class="fas fa-address-book"></i> Authenticated Synchronized Accounts Index Registry</h2>
             <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.85rem;">Index catalog listing of active communication channel terminal nodes mapped parameters.</p>
-            <div id="modal-friend-list-container" style="margin-top: 10px; flex: 1; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;">
-                </div>
+            <div id="modal-friend-list-container" style="margin-top: 10px; flex: 1; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;"></div>
             <div class="modal-actions" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                 <button class="danger-btn close-modal-btn" data-modal="friend-list-modal" style="width: 100%;">Close Index Workspace</button>
             </div>
@@ -462,12 +430,10 @@
             </div>
             <h2 id="view-user-name" style="margin-top: 20px; font-size: 2rem; font-weight: 800;" class="username-display">Target Entity Node Name</h2>
             <div id="view-user-rank" class="rank-badge" style="display: inline-block; margin-top: 5px; text-transform: uppercase;">Member Allocation Class</div>
-            
             <div style="background: var(--bg-main); padding: 20px; border-radius: 16px; margin-top: 20px; border: 1px solid var(--border-color); text-align: left;">
                 <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; font-weight: bold;">User Bio Metadata</h4>
                 <p id="view-user-bio" style="color: var(--text-main); font-size: 1rem; line-height: 1.4;">Biographical summary fields container element text lines block elements.</p>
             </div>
-            
             <div class="modal-actions" style="margin-top: 30px;">
                 <button id="view-user-chat-btn" class="primary-btn" style="padding: 14px;"><i class="fas fa-paper-plane"></i> Initiate Stream Channel</button>
                 <button class="danger-btn close-modal-btn" data-modal="view-user-modal" style="padding: 14px;">Terminate Review Canvas</button>
@@ -499,7 +465,7 @@
             
             <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
                 <button class="danger-btn close-modal-btn" data-modal="edit-profile-modal">Cancel Reconfiguration</button>
-                <button class="primary-btn" id="save-profile-btn">Commit Changes Changes</button>
+                <button class="primary-btn" id="save-profile-btn">Commit Changes</button>
             </div>
         </div>
     </div>
@@ -530,7 +496,7 @@
     <div id="dev-assign-modal" class="modal-overlay hidden">
         <div class="dev-modal-content golden-border" style="border: 2px solid #fbbf24; background: #141414; border-radius: 24px; padding: 35px;">
             <h2 id="dev-modal-title" style="color: #ffd700; font-weight: 800; font-size: 1.6rem;">Modify Security Privileges Vector Framework</h2>
-            <p style="color: #b8860b; font-size: 0.85rem; margin-bottom: 15px;">Select context target target target structure overrides values index fields array entries parameters keys configurations settings variables entries grids mapping loops fields.</p>
+            <p style="color: #b8860b; font-size: 0.85rem; margin-bottom: 15px;">Select context target structure overrides values index fields array entries parameters keys configurations settings variables entries grids mapping loops fields.</p>
             
             <div style="text-align: left; margin-bottom: 12px;">
                 <label style="color: #ffd700; font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; font-family: monospace;">TARGET USERNAME VALUE VECTOR INPUT IDENTIFIER PORT</label>
@@ -563,5 +529,7 @@
         </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js?v=11"></script>
 </body>
 </html>
