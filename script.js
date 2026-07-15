@@ -1,3 +1,5 @@
+console.log("🔥 ULTIMATE PREMIUM JS LOADED V10 🔥");
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================================
@@ -40,15 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     let activeChatUser = null;
-    let currentChatTab = 'general'; // 'general', 'favorite', 'requests'
-    let currentRequestSubTab = 'accept'; // 'accept', 'send'
+    let currentChatTab = 'general';
+    let currentRequestSubTab = 'accept';
     let searchedUserContext = null;
 
-    // Toggle States for Developer Options
     let isWorldMuted = false;
     let devStates = { shadowban: false, globalMute: false, maintenance: false };
     
-    // Temp Variables for File Uploads
     let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
     let attachedPostImage = null;
 
@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderBandRequests();
     }
 
-    // Comprehensive Data Save Engine
     function saveData() {
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
         localStorage.setItem('chatFriends', JSON.stringify(friends));
@@ -82,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadgesAndCounts();
     }
 
-    // Theme Engine Processor
     function applyTheme() {
         if (!currentUser) return;
         const darkModeToggle = safeEl('settings-dark-mode-toggle');
@@ -107,9 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // 2. 🔥 LOGIN ENGINE (CRASH PROOF & RELOAD PROOF) 🔥
     // =========================================================================
-    function performLoginProcess(e) {
-        if(e) e.preventDefault(); // Stop page reload immediately
-        
+    function performLoginProcess() {
         const username = gVal('username-input');
         const devCode = gVal('dev-code');
 
@@ -124,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 theme: "default" 
             };
             
-            // Dev Code Verification
             if (devCode === "6200437705AT") {
                 currentUser.rank = 'Developer';
                 currentUser.isDev = true;
@@ -139,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sRem('main-app', 'hidden');
             sAdd('main-app', 'active');
             
-            // Initialize Systems safely
+            // Initialize Systems
             applyTheme();
             updateProfileUI();
             renderContacts();
@@ -152,10 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Bind to Form Submit (Pressing Enter inside input)
+    // Is block se Enter aur Button Click dono handle ho jayenge bina reload hue!
     const loginForm = safeEl('login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', performLoginProcess);
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Pura reload hamesha rok dega!
+            performLoginProcess();
+        });
     }
 
     // =========================================================================
@@ -165,15 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = e.target;
         if (!target) return;
 
-        // Login Button Backup Check
-        if (target.closest('#join-btn')) {
-            performLoginProcess(e);
-            return;
-        }
-
-        // ---------------------------------------------------------
         // B. PRIMARY NAVIGATION TABS (SIDEBAR)
-        // ---------------------------------------------------------
         const navBtn = target.closest('.nav-btn');
         if (navBtn) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -187,9 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sAdd(targetId, 'active');
         }
 
-        // ---------------------------------------------------------
-        // C. CHAT WORKSPACE TABS (General, Favorite, Requests)
-        // ---------------------------------------------------------
+        // C. CHAT WORKSPACE TABS
         const chatTab = target.closest('.chat-tabs .tab-btn');
         if (chatTab) {
             document.querySelectorAll('.chat-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -240,9 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
         // D. FRIEND REQUESTS (ACCEPT / REJECT)
-        // ---------------------------------------------------------
         if (target.closest('.btn-accept-friend')) {
             const closestItem = target.closest('.dummy-item');
             if(closestItem) {
@@ -270,9 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
-        // E. MODAL WINDOWS (OPEN & CLOSE ROUTING)
-        // ---------------------------------------------------------
+        // E. MODAL WINDOWS
         if (target.closest('.close-modal-btn')) {
             const modalId = target.closest('.close-modal-btn').getAttribute('data-modal');
             sAdd(modalId, 'hidden');
@@ -302,9 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
-        // F. DIRECT CHAT OPERATIONS & FAVORITE TOGGLE
-        // ---------------------------------------------------------
+        // F. DIRECT CHAT OPERATIONS
         if (target.closest('.contact-item')) {
             const username = target.closest('.contact-item').getAttribute('data-user');
             openChatWindow(username);
@@ -325,9 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
-        // G. PROFILE EDITING (SAVE BUTTON)
-        // ---------------------------------------------------------
+        // G. PROFILE EDITING
         if (target.closest('#trigger-dp-upload')) {
             const dpInput = safeEl('edit-dp-input');
             if(dpInput) dpInput.click();
@@ -347,9 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Metadata re-indexed and profile configurations saved successfully.");
         }
 
-        // ---------------------------------------------------------
-        // H. POST FEED HUB ENGINE
-        // ---------------------------------------------------------
+        // H. POST FEED HUB
         if (target.closest('#post-image-btn')) {
             const postImgInput = safeEl('post-image-upload-input');
             if(postImgInput) postImgInput.click();
@@ -380,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sAdd('post-media-attachment-status-preview', 'hidden');
                 sVal('post-image-upload-input', '');
             } else {
-                alert("SYSTEM HALT: Post payload empty. Please insert text strings or image binaries.");
+                alert("SYSTEM HALT: Post payload empty.");
             }
         }
 
@@ -408,9 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
         // I. GROUP CREATION
-        // ---------------------------------------------------------
         if (target.closest('#trigger-group-icon-upload')) {
             const grpInput = safeEl('new-group-icon-input');
             if(grpInput) grpInput.click();
@@ -429,9 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
         // J. FRIENDSHIP BAND MATRIX
-        // ---------------------------------------------------------
         if (target.closest('#send-band-req-btn')) {
             const inputVal = gVal('band-request-input');
             if (inputVal !== "") {
@@ -439,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveData();
                 renderBandRequests();
                 sVal('band-request-input', '');
-                alert("Synchronization Handshake Outbound Signal Dispatched!");
+                alert("Synchronization Handshake Signal Dispatched!");
             }
         }
 
@@ -459,9 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ---------------------------------------------------------
-        // K. WORLD CHAT (MUTE & BROADCAST)
-        // ---------------------------------------------------------
+        // K. WORLD CHAT
         if (target.closest('#world-mute-btn')) {
             isWorldMuted = !isWorldMuted;
             const muteBtn = safeEl('world-mute-btn');
@@ -480,9 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sendWorldMessage();
         }
 
-        // ---------------------------------------------------------
-        // L. DEVELOPER DASHBOARD ALL 9 BUTTONS MATRIX
-        // ---------------------------------------------------------
+        // L. DEVELOPER DASHBOARD 9 BUTTONS MATRIX
         if (target.closest('#dev-assign-rank-btn')) { sText('dev-modal-title', "Modify Security Privileges (Rank)"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('rank'); }
         if (target.closest('#dev-assign-ring-btn')) { sText('dev-modal-title', "Modify Visual Profile Ring"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('ring'); }
         if (target.closest('#dev-assign-theme-btn')) { sText('dev-modal-title', "Modify Application Theme Matrix"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('theme'); }
