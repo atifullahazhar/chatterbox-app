@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 🔥 GLOBAL CLICK LISTENER (Fixing all buttons)
+    // 🔥 GLOBAL CLICK LISTENER (FIXED)
     document.addEventListener('click', (e) => {
 
-        // 1. World Chat Send Button (ID corrected: world-message-input)
+        // 1. World Chat Send Logic
         if (e.target.closest('#world-send-btn')) {
-            const input = document.getElementById('world-message-input');
+            const input = document.getElementById('world-message-input'); // ID Corrected
             if (input && input.value.trim() !== "") {
                 console.log("Sending to World: " + input.value);
-                // Yahan aap world chat ki apni logic daal sakte ho
+                // World chat logic:
+                // socket.emit('send_message', { sender: currentUser.username, text: input.value });
                 input.value = '';
             } else {
                 alert("Bhai, message toh likho!");
