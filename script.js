@@ -1,6 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================================
+    // 0. CRASH-PROOF HELPER FUNCTIONS (KABHI KOI ERROR NAHI AAYEGI)
+    // =========================================================================
+    const safeEl = id => document.getElementById(id);
+    const sAdd = (id, cls) => { const el = safeEl(id); if(el) el.classList.add(cls); };
+    const sRem = (id, cls) => { const el = safeEl(id); if(el) el.classList.remove(cls); };
+    const sText = (id, txt) => { const el = safeEl(id); if(el) el.innerText = txt; };
+    const sHtml = (id, html) => { const el = safeEl(id); if(el) el.innerHTML = html; };
+    const sVal = (id, val) => { const el = safeEl(id); if(el) el.value = val; };
+    const gVal = (id) => { const el = safeEl(id); return el ? el.value.trim() : ''; };
+    const sSrc = (id, src) => { const el = safeEl(id); if(el) el.src = src; };
+
+    // =========================================================================
     // 1. STATE MANAGEMENT, LOCAL STORAGE & CORE VARIABLES
     // =========================================================================
     let currentUser = null;
@@ -24,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         posts = JSON.parse(localStorage.getItem('chatPosts')) || [];
         groups = JSON.parse(localStorage.getItem('chatGroups')) || [];
     } catch (e) {
-        console.error("Local storage parsing error:", e);
+        console.error("Local storage processing error:", e);
     }
     
     let activeChatUser = null;
@@ -40,13 +52,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
     let attachedPostImage = null;
 
-    const socket = (typeof io !== 'undefined') ? io() : { on: () => { }, emit: () => { }, broadcast: { emit: () => {} } };
+    const socket = (typeof io !== 'undefined') ? io() : { on: () => {}, emit: () => {} };
     const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
 
     // App Initialization Logic
     if (currentUser && currentUser.username) {
-        document.getElementById('login-screen').classList.replace('active', 'hidden');
-        document.getElementById('main-app').classList.replace('hidden', 'active');
+        sRem('login-screen', 'active');
+        sAdd('login-screen', 'hidden');
+        sRem('main-app', 'hidden');
+        sAdd('main-app', 'active');
+        
         applyTheme();
         updateProfileUI();
         renderContacts();
@@ -70,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme Engine Processor
     function applyTheme() {
         if (!currentUser) return;
-        const darkModeToggle = document.getElementById('settings-dark-mode-toggle');
+        const darkModeToggle = safeEl('settings-dark-mode-toggle');
         
         if (currentUser.theme === 'grand-golden') {
             document.documentElement.setAttribute('data-theme', 'grand-golden');
@@ -89,57 +104,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // =========================================================================
+    // 2. 🔥 LOGIN ENGINE (CRASH PROOF & RELOAD PROOF) 🔥
+    // =========================================================================
+    function performLoginProcess(e) {
+        if(e) e.preventDefault(); // Stop page reload immediately
+        
+        const username = gVal('username-input');
+        const devCode = gVal('dev-code');
 
-    // =========================================================================
-    // 2. 🔥 LOGIN FORM LISTENER (SPECIFIC FIX FOR LOGIN BUG) 🔥
-    // =========================================================================
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // VERY IMPORTANT: Stops page refresh
+        if (username) {
+            currentUser = { 
+                username: username, 
+                dp: DEFAULT_DP, 
+                banner: null, 
+                rank: 'Member', 
+                isDev: false, 
+                bio: "Operational systems online. Ready to chat.", 
+                theme: "default" 
+            };
             
-            const username = document.getElementById('username-input').value.trim();
-            const devCode = document.getElementById('dev-code').value.trim();
-
-            if (username) {
-                currentUser = { 
-                    username: username, 
-                    dp: DEFAULT_DP, 
-                    banner: null, 
-                    rank: 'Member', 
-                    isDev: false, 
-                    bio: "Operational systems online. Ready to chat.", 
-                    theme: "default" 
-                };
-                
-                // Dev Code Verification
-                if (devCode === "6200437705AT") {
-                    currentUser.rank = 'Developer';
-                    currentUser.isDev = true;
-                    currentUser.theme = 'grand-golden';
-                }
-                
-                saveData();
-                
-                // Hide login, show main app
-                document.getElementById('login-screen').classList.remove('active');
-                document.getElementById('login-screen').classList.add('hidden');
-                
-                document.getElementById('main-app').classList.remove('hidden');
-                document.getElementById('main-app').classList.add('active');
-                
-                // Initialize UI
-                applyTheme();
-                updateProfileUI();
-                renderContacts();
-                updateBadgesAndCounts();
-                renderPosts();
-                renderGroups();
-                renderBandRequests();
-            } else {
-                alert("CRITICAL: Username verification failed. Please enter a valid identifier.");
+            // Dev Code Verification
+            if (devCode === "6200437705AT") {
+                currentUser.rank = 'Developer';
+                currentUser.isDev = true;
+                currentUser.theme = 'grand-golden';
             }
-        });
+            
+            saveData();
+            
+            // Transition Screens safely
+            sRem('login-screen', 'active');
+            sAdd('login-screen', 'hidden');
+            sRem('main-app', 'hidden');
+            sAdd('main-app', 'active');
+            
+            // Initialize Systems safely
+            applyTheme();
+            updateProfileUI();
+            renderContacts();
+            updateBadgesAndCounts();
+            renderPosts();
+            renderGroups();
+            renderBandRequests();
+        } else {
+            alert("CRITICAL: Username verification failed. Please enter a valid identifier.");
+        }
+    }
+
+    // Bind to Form Submit (Pressing Enter inside input)
+    const loginForm = safeEl('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', performLoginProcess);
     }
 
     // =========================================================================
@@ -147,6 +163,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     document.addEventListener('click', (e) => {
         const target = e.target;
+        if (!target) return;
+
+        // Login Button Backup Check
+        if (target.closest('#join-btn')) {
+            performLoginProcess(e);
+            return;
+        }
 
         // ---------------------------------------------------------
         // B. PRIMARY NAVIGATION TABS (SIDEBAR)
@@ -160,8 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             navBtn.classList.add('active');
             const targetId = navBtn.getAttribute('data-target');
-            document.getElementById(targetId).classList.remove('hidden');
-            document.getElementById(targetId).classList.add('active');
+            sRem(targetId, 'hidden');
+            sAdd(targetId, 'active');
         }
 
         // ---------------------------------------------------------
@@ -173,20 +196,18 @@ document.addEventListener('DOMContentLoaded', () => {
             chatTab.classList.add('active');
             currentChatTab = chatTab.getAttribute('data-tab');
             
-            // Layout Adjustments based on Tab
             if (currentChatTab === 'requests') {
-                document.getElementById('request-sub-tabs-container').classList.remove('hidden');
-                document.getElementById('search-friend-field-block').classList.add('hidden');
+                sRem('request-sub-tabs-container', 'hidden');
+                sAdd('search-friend-field-block', 'hidden');
                 renderRequestSubTabUI();
             } else {
-                document.getElementById('request-sub-tabs-container').classList.add('hidden');
-                document.getElementById('search-friend-field-block').classList.remove('hidden');
+                sAdd('request-sub-tabs-container', 'hidden');
+                sRem('search-friend-field-block', 'hidden');
                 resetRightWorkspacePane();
                 renderContacts();
             }
         }
 
-        // Request Sub-Tabs Logic (Accept vs Send)
         if (target.closest('#sub-tab-accept-btn')) {
             currentRequestSubTab = 'accept';
             renderRequestSubTabUI();
@@ -197,9 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderRequestSubTabUI();
         }
 
-        // Request Search (Search Entity Logic) -> OPENS PROFILE PREVIEW ON RIGHT
         if (target.closest('#sidebar-action-search-trigger') && currentChatTab === 'requests' && currentRequestSubTab === 'send') {
-            const searchVal = document.getElementById('chat-sidebar-search-input').value.trim();
+            const searchVal = gVal('chat-sidebar-search-input');
             if (searchVal !== "") {
                 searchedUserContext = {
                     username: searchVal,
@@ -212,37 +232,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Send Friend Request Button (Inside the Right Preview Pane)
         if (target.closest('#action-dispatch-friend-request-btn')) {
             if (searchedUserContext) {
                 alert(`Friend Request Payload dispatched securely to [${searchedUserContext.username}]!`);
-                document.getElementById('chat-sidebar-search-input').value = '';
+                sVal('chat-sidebar-search-input', '');
                 resetRightWorkspacePane();
             }
         }
 
         // ---------------------------------------------------------
-        // D. FRIEND REQUESTS (ACCEPT / REJECT IN LEFT SIDEBAR)
+        // D. FRIEND REQUESTS (ACCEPT / REJECT)
         // ---------------------------------------------------------
         if (target.closest('.btn-accept-friend')) {
-            const username = target.closest('.dummy-item').getAttribute('data-user');
-            friendRequests = friendRequests.filter(req => req.username !== username);
-            friends.push({ 
-                username: username, 
-                dp: `https://ui-avatars.com/api/?name=${username}&background=random&color=fff`, 
-                isFavorite: false,
-                bio: "New connection synchronized."
-            });
-            saveData();
-            renderRequestSubTabUI();
-            alert(`SUCCESS: Network connection established with ${username}.`);
+            const closestItem = target.closest('.dummy-item');
+            if(closestItem) {
+                const username = closestItem.getAttribute('data-user');
+                friendRequests = friendRequests.filter(req => req.username !== username);
+                friends.push({ 
+                    username: username, 
+                    dp: `https://ui-avatars.com/api/?name=${username}&background=random&color=fff`, 
+                    isFavorite: false,
+                    bio: "New connection synchronized."
+                });
+                saveData();
+                renderRequestSubTabUI();
+                alert(`SUCCESS: Network connection established with ${username}.`);
+            }
         }
 
         if (target.closest('.btn-reject-friend')) {
-            const username = target.closest('.dummy-item').getAttribute('data-user');
-            friendRequests = friendRequests.filter(req => req.username !== username);
-            saveData();
-            renderRequestSubTabUI();
+            const closestItem = target.closest('.dummy-item');
+            if(closestItem) {
+                const username = closestItem.getAttribute('data-user');
+                friendRequests = friendRequests.filter(req => req.username !== username);
+                saveData();
+                renderRequestSubTabUI();
+            }
         }
 
         // ---------------------------------------------------------
@@ -250,31 +275,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // ---------------------------------------------------------
         if (target.closest('.close-modal-btn')) {
             const modalId = target.closest('.close-modal-btn').getAttribute('data-modal');
-            document.getElementById(modalId).classList.add('hidden');
+            sAdd(modalId, 'hidden');
         }
 
         if (target.closest('#view-friends-list-btn')) {
             renderFriendsListModal();
-            document.getElementById('friend-list-modal').classList.remove('hidden');
+            sRem('friend-list-modal', 'hidden');
         }
 
         if (target.closest('#edit-profile-btn')) {
-            document.getElementById('edit-username-input').value = currentUser.username;
-            document.getElementById('edit-bio-input').value = currentUser.bio || '';
-            document.getElementById('edit-profile-modal').classList.remove('hidden');
+            sVal('edit-username-input', currentUser.username);
+            sVal('edit-bio-input', currentUser.bio || '');
+            sRem('edit-profile-modal', 'hidden');
         }
 
         if (target.closest('#create-group-btn')) {
-            document.getElementById('create-group-modal').classList.remove('hidden');
+            sRem('create-group-modal', 'hidden');
         }
 
-        // View User Profile (Clicking Header Info)
         if (target.closest('#current-chat-dp') || target.closest('#current-chat-name')) {
             if (activeChatUser) {
-                document.getElementById('view-user-dp').src = activeChatUser.dp;
-                document.getElementById('view-user-name').innerText = activeChatUser.username;
-                document.getElementById('view-user-bio').innerText = activeChatUser.bio || "No biographical metadata available.";
-                document.getElementById('view-user-modal').classList.remove('hidden');
+                sSrc('view-user-dp', activeChatUser.dp);
+                sText('view-user-name', activeChatUser.username);
+                sText('view-user-bio', activeChatUser.bio || "No biographical metadata available.");
+                sRem('view-user-modal', 'hidden');
             }
         }
 
@@ -302,22 +326,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ---------------------------------------------------------
-        // G. PROFILE EDITING (LOGO, BANNER, DETAILS SAVE)
+        // G. PROFILE EDITING (SAVE BUTTON)
         // ---------------------------------------------------------
         if (target.closest('#trigger-dp-upload')) {
-            document.getElementById('edit-dp-input').click();
+            const dpInput = safeEl('edit-dp-input');
+            if(dpInput) dpInput.click();
         }
         if (target.closest('#trigger-banner-upload')) {
-            document.getElementById('edit-banner-input').click();
+            const bannerInput = safeEl('edit-banner-input');
+            if(bannerInput) bannerInput.click();
         }
         if (target.closest('#save-profile-btn')) {
-            const newName = document.getElementById('edit-username-input').value.trim();
-            const newBio = document.getElementById('edit-bio-input').value.trim();
+            const newName = gVal('edit-username-input');
+            const newBio = gVal('edit-bio-input');
             if (newName) currentUser.username = newName;
             currentUser.bio = newBio;
             saveData();
             updateProfileUI();
-            document.getElementById('edit-profile-modal').classList.add('hidden');
+            sAdd('edit-profile-modal', 'hidden');
             alert("Metadata re-indexed and profile configurations saved successfully.");
         }
 
@@ -325,33 +351,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // H. POST FEED HUB ENGINE
         // ---------------------------------------------------------
         if (target.closest('#post-image-btn')) {
-            document.getElementById('post-image-upload-input').click();
+            const postImgInput = safeEl('post-image-upload-input');
+            if(postImgInput) postImgInput.click();
         }
         
         if (target.closest('#action-remove-attached-post-file-buffer')) {
             attachedPostImage = null;
-            document.getElementById('post-media-attachment-status-preview').classList.add('hidden');
-            document.getElementById('post-image-upload-input').value = ""; 
+            sAdd('post-media-attachment-status-preview', 'hidden');
+            sVal('post-image-upload-input', ''); 
         }
 
         if (target.closest('#submit-post-btn')) {
-            const postInput = document.getElementById('post-input');
-            if (postInput.value.trim() !== "" || attachedPostImage) {
+            const postText = gVal('post-input');
+            if (postText !== "" || attachedPostImage) {
                 const newPost = {
                     id: Date.now(),
                     user: currentUser.username,
                     dp: currentUser.dp,
-                    text: postInput.value.trim(),
+                    text: postText,
                     image: attachedPostImage,
                     time: "Just initialized"
                 };
                 posts.unshift(newPost);
                 saveData();
                 renderPosts();
-                postInput.value = '';
+                sVal('post-input', '');
                 attachedPostImage = null;
-                document.getElementById('post-media-attachment-status-preview').classList.add('hidden');
-                document.getElementById('post-image-upload-input').value = "";
+                sAdd('post-media-attachment-status-preview', 'hidden');
+                sVal('post-image-upload-input', '');
             } else {
                 alert("SYSTEM HALT: Post payload empty. Please insert text strings or image binaries.");
             }
@@ -359,10 +386,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (target.closest('.delete-post-btn')) {
             if (confirm("CRITICAL WARNING: Irreversible destruction of post block data. Proceed?")) {
-                const id = target.closest('.feed-post').getAttribute('data-id');
-                posts = posts.filter(p => p.id != id);
-                saveData();
-                renderPosts();
+                const closestPost = target.closest('.feed-post');
+                if(closestPost) {
+                    const id = closestPost.getAttribute('data-id');
+                    posts = posts.filter(p => p.id != id);
+                    saveData();
+                    renderPosts();
+                }
             }
         }
 
@@ -379,22 +409,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ---------------------------------------------------------
-        // I. GROUP CREATION & ICONS
+        // I. GROUP CREATION
         // ---------------------------------------------------------
         if (target.closest('#trigger-group-icon-upload')) {
-            document.getElementById('new-group-icon-input').click();
+            const grpInput = safeEl('new-group-icon-input');
+            if(grpInput) grpInput.click();
         }
 
         if (target.closest('#confirm-create-group-btn')) {
-            const groupName = document.getElementById('new-group-name').value.trim();
+            const groupName = gVal('new-group-name');
             if (groupName) {
                 groups.push({ id: Date.now(), name: groupName, icon: tempGroupIcon });
                 saveData();
                 renderGroups();
-                document.getElementById('create-group-modal').classList.add('hidden');
-                document.getElementById('new-group-name').value = '';
+                sAdd('create-group-modal', 'hidden');
+                sVal('new-group-name', '');
                 tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
-                document.getElementById('new-group-icon-preview').src = tempGroupIcon;
+                sSrc('new-group-icon-preview', tempGroupIcon);
             }
         }
 
@@ -402,26 +433,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // J. FRIENDSHIP BAND MATRIX
         // ---------------------------------------------------------
         if (target.closest('#send-band-req-btn')) {
-            const input = document.getElementById('band-request-input');
-            if (input.value.trim() !== "") {
-                bandRequests.push({ username: input.value.trim() });
+            const inputVal = gVal('band-request-input');
+            if (inputVal !== "") {
+                bandRequests.push({ username: inputVal });
                 saveData();
                 renderBandRequests();
-                input.value = '';
+                sVal('band-request-input', '');
                 alert("Synchronization Handshake Outbound Signal Dispatched!");
             }
         }
 
         if (target.closest('.btn-accept-band')) {
-            const username = target.closest('.dummy-item').getAttribute('data-user');
-            bandRequests = bandRequests.filter(req => req.username !== username);
-            document.getElementById('fb-partner-dp-slot').innerHTML = `<img src="https://ui-avatars.com/api/?name=${username}&background=random&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-            document.getElementById('fb-partner-name').innerText = username;
-            document.getElementById('band-level').innerText = "Synchronization Tier Level 1";
-            document.getElementById('band-progress').style.width = "20%";
-            document.getElementById('time-remaining').innerText = "Signal Line Secured & Synchronized";
-            saveData();
-            renderBandRequests();
+            const closestItem = target.closest('.dummy-item');
+            if(closestItem) {
+                const username = closestItem.getAttribute('data-user');
+                bandRequests = bandRequests.filter(req => req.username !== username);
+                sHtml('fb-partner-dp-slot', `<img src="https://ui-avatars.com/api/?name=${username}&background=random&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`);
+                sText('fb-partner-name', username);
+                sText('band-level', "Synchronization Tier Level 1");
+                const bandProgress = safeEl('band-progress');
+                if(bandProgress) bandProgress.style.width = "20%";
+                sText('time-remaining', "Signal Line Secured & Synchronized");
+                saveData();
+                renderBandRequests();
+            }
         }
 
         // ---------------------------------------------------------
@@ -429,13 +464,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // ---------------------------------------------------------
         if (target.closest('#world-mute-btn')) {
             isWorldMuted = !isWorldMuted;
-            const muteBtn = document.getElementById('world-mute-btn');
-            if (isWorldMuted) {
-                muteBtn.classList.add('muted');
-                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i> <span>Unmute Room</span>';
-            } else {
-                muteBtn.classList.remove('muted');
-                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i> <span>Mute Global Space</span>';
+            const muteBtn = safeEl('world-mute-btn');
+            if(muteBtn) {
+                if (isWorldMuted) {
+                    muteBtn.classList.add('muted');
+                    muteBtn.innerHTML = '<i class="fas fa-volume-up"></i> <span>Unmute Room</span>';
+                } else {
+                    muteBtn.classList.remove('muted');
+                    muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i> <span>Mute Global Space</span>';
+                }
             }
         }
 
@@ -446,60 +483,55 @@ document.addEventListener('DOMContentLoaded', () => {
         // ---------------------------------------------------------
         // L. DEVELOPER DASHBOARD ALL 9 BUTTONS MATRIX
         // ---------------------------------------------------------
-        if (target.closest('#dev-assign-rank-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Security Privileges (Rank)"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('rank'); }
-        if (target.closest('#dev-assign-ring-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Visual Profile Ring"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('ring'); }
-        if (target.closest('#dev-assign-theme-btn')) { document.getElementById('dev-modal-title').innerText = "Modify Application Theme Matrix"; document.getElementById('dev-assign-modal').classList.remove('hidden'); generateDevOptionsGrid('theme'); }
+        if (target.closest('#dev-assign-rank-btn')) { sText('dev-modal-title', "Modify Security Privileges (Rank)"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('rank'); }
+        if (target.closest('#dev-assign-ring-btn')) { sText('dev-modal-title', "Modify Visual Profile Ring"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('ring'); }
+        if (target.closest('#dev-assign-theme-btn')) { sText('dev-modal-title', "Modify Application Theme Matrix"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('theme'); }
         
         if (target.closest('#dev-ban-user-execution-btn')) openDevActionModal('Execute Permanent Ban Protocol');
         if (target.closest('#dev-unban-user-execution-btn')) openDevActionModal('Execute Profile Unban Protocol');
         
         if (target.closest('#dev-shadowban-toggle-btn')) {
             devStates.shadowban = !devStates.shadowban;
-            const btn = document.getElementById('dev-shadowban-toggle-btn');
-            const icon = document.getElementById('dev-shadowban-icon-display');
-            const desc = document.getElementById('dev-shadowban-desc-display');
+            const btn = safeEl('dev-shadowban-toggle-btn');
+            const icon = safeEl('dev-shadowban-icon-display');
             if (devStates.shadowban) {
-                btn.style.borderColor = '#ef4444';
-                icon.style.textShadow = '0 0 15px #ef4444';
-                desc.innerHTML = '<b style="color:white;">STATUS: ACTIVE</b> // Shadowban filter engaged.';
+                if(btn) btn.style.borderColor = '#ef4444';
+                if(icon) icon.style.textShadow = '0 0 15px #ef4444';
+                sHtml('dev-shadowban-desc-display', '<b style="color:white;">STATUS: ACTIVE</b> // Shadowban filter engaged.');
             } else {
-                btn.style.borderColor = '#a855f7';
-                icon.style.textShadow = '0 0 15px #a855f7';
-                desc.innerHTML = 'CURRENT: SYSTEM NORMAL MONITORING RUNNING.';
+                if(btn) btn.style.borderColor = '#a855f7';
+                if(icon) icon.style.textShadow = '0 0 15px #a855f7';
+                sText('dev-shadowban-desc-display', 'CURRENT: SYSTEM NORMAL MONITORING RUNNING.');
             }
         }
 
         if (target.closest('#dev-global-mute-toggle-btn')) {
             devStates.globalMute = !devStates.globalMute;
-            const btn = document.getElementById('dev-global-mute-toggle-btn');
-            const icon = document.getElementById('dev-global-mute-icon-display');
-            const desc = document.getElementById('dev-global-mute-desc-display');
+            const btn = safeEl('dev-global-mute-toggle-btn');
+            const icon = safeEl('dev-global-mute-icon-display');
             if (devStates.globalMute) {
-                btn.style.borderColor = '#ef4444';
-                icon.style.textShadow = '0 0 15px #ef4444';
-                icon.innerText = '🔇';
-                desc.innerHTML = '<b style="color:white;">STATUS: MUTED</b> // All client parsing pipelines frozen.';
+                if(btn) btn.style.borderColor = '#ef4444';
+                if(icon) { icon.style.textShadow = '0 0 15px #ef4444'; icon.innerText = '🔇'; }
+                sHtml('dev-global-mute-desc-display', '<b style="color:white;">STATUS: MUTED</b> // All client parsing pipelines frozen.');
             } else {
-                btn.style.borderColor = '#a855f7';
-                icon.style.textShadow = '0 0 15px #a855f7';
-                icon.innerText = '🤐';
-                desc.innerHTML = 'CURRENT: TRANSMISSIONS OPEN UNRESTRICTED.';
+                if(btn) btn.style.borderColor = '#a855f7';
+                if(icon) { icon.style.textShadow = '0 0 15px #a855f7'; icon.innerText = '🤐'; }
+                sText('dev-global-mute-desc-display', 'CURRENT: TRANSMISSIONS OPEN UNRESTRICTED.');
             }
         }
 
         if (target.closest('#dev-maintenance-toggle-mode-btn')) {
             devStates.maintenance = !devStates.maintenance;
-            const btn = document.getElementById('dev-maintenance-toggle-mode-btn');
-            const icon = document.getElementById('dev-maintenance-icon-display');
-            const desc = document.getElementById('dev-maintenance-desc-display');
+            const btn = safeEl('dev-maintenance-toggle-mode-btn');
+            const icon = safeEl('dev-maintenance-icon-display');
             if (devStates.maintenance) {
-                btn.style.borderColor = '#ef4444';
-                icon.style.textShadow = '0 0 15px #ef4444';
-                desc.innerHTML = '<b style="color:white;">STATUS: MAINTENANCE ACTIVE</b> // Pipelines restricted.';
+                if(btn) btn.style.borderColor = '#ef4444';
+                if(icon) icon.style.textShadow = '0 0 15px #ef4444';
+                sHtml('dev-maintenance-desc-display', '<b style="color:white;">STATUS: MAINTENANCE ACTIVE</b> // Pipelines restricted.');
             } else {
-                btn.style.borderColor = '#f97316';
-                icon.style.textShadow = '0 0 15px #f97316';
-                desc.innerHTML = 'CURRENT: SYSTEM LIVE OPERATIONAL.';
+                if(btn) btn.style.borderColor = '#f97316';
+                if(icon) icon.style.textShadow = '0 0 15px #f97316';
+                sText('dev-maintenance-desc-display', 'CURRENT: SYSTEM LIVE OPERATIONAL.');
             }
         }
 
@@ -512,138 +544,131 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 4. FILE UPLOADS (LISTENERS)
+    // 4. FILE UPLOADS (SAFE LISTENERS)
     // =========================================================================
-    document.getElementById('edit-dp-input')?.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => { currentUser.dp = e.target.result; saveData(); updateProfileUI(); alert("Logo updated!"); };
-            reader.readAsDataURL(file);
+    function setupFileInput(id, callback) {
+        const el = safeEl(id);
+        if(el) {
+            el.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => callback(e.target.result);
+                    reader.readAsDataURL(file);
+                }
+            });
         }
-    });
+    }
 
-    document.getElementById('edit-banner-input')?.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => { currentUser.banner = e.target.result; saveData(); updateProfileUI(); alert("Banner updated!"); };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    document.getElementById('new-group-icon-input')?.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => { tempGroupIcon = e.target.result; document.getElementById('new-group-icon-preview').src = tempGroupIcon; };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    document.getElementById('post-image-upload-input')?.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => { 
-                attachedPostImage = e.target.result; 
-                document.getElementById('post-media-attachment-status-preview').classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
+    setupFileInput('edit-dp-input', (res) => { currentUser.dp = res; saveData(); updateProfileUI(); alert("Logo updated!"); });
+    setupFileInput('edit-banner-input', (res) => { currentUser.banner = res; saveData(); updateProfileUI(); alert("Banner updated!"); });
+    setupFileInput('new-group-icon-input', (res) => { tempGroupIcon = res; sSrc('new-group-icon-preview', tempGroupIcon); });
+    setupFileInput('post-image-upload-input', (res) => { 
+        attachedPostImage = res; 
+        sRem('post-media-attachment-status-preview', 'hidden');
     });
 
     // =========================================================================
     // 5. ENTER KEY EVENT LISTENERS FOR INPUT FIELDS
     // =========================================================================
-    document.getElementById('message-input')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('send-btn').click();
-    });
-    document.getElementById('world-message-input')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendWorldMessage();
-    });
-    document.getElementById('chat-sidebar-search-input')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('sidebar-action-search-trigger').click();
-    });
+    const handleEnter = (id, triggerId) => {
+        const el = safeEl(id);
+        if(el) {
+            el.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const btn = safeEl(triggerId);
+                    if(btn) btn.click();
+                }
+            });
+        }
+    };
+    handleEnter('message-input', 'send-btn');
+    handleEnter('world-message-input', 'world-send-btn');
+    handleEnter('chat-sidebar-search-input', 'sidebar-action-search-trigger');
 
     // =========================================================================
     // 6. CORE UI UPDATE & RENDER LOGIC FUNCTIONS
     // =========================================================================
     function sendWorldMessage() {
-        const input = document.getElementById('world-message-input');
-        if (input && input.value.trim() !== "") {
-            socket.emit('send_message', { sender: currentUser.username, text: input.value.trim() });
-            
-            const area = document.getElementById('world-messages-area');
-            const div = document.createElement('div');
-            div.className = `message-bubble my-msg`;
-            div.innerHTML = `<strong>${currentUser.username}:</strong> ${input.value}`;
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
-
-            input.value = '';
+        const inputVal = gVal('world-message-input');
+        if (inputVal !== "") {
+            socket.emit('send_message', { sender: currentUser.username, text: inputVal });
+            const area = safeEl('world-messages-area');
+            if(area) {
+                const div = document.createElement('div');
+                div.className = `message-bubble my-msg`;
+                div.innerHTML = `<strong>${currentUser.username}:</strong> ${inputVal}`;
+                area.appendChild(div);
+                area.scrollTop = area.scrollHeight;
+            }
+            sVal('world-message-input', '');
         }
     }
 
     socket.on('receive_message', (data) => {
         if (!isWorldMuted && currentUser && data.sender !== currentUser.username) {
-            const area = document.getElementById('world-messages-area');
-            const div = document.createElement('div');
-            div.className = `message-bubble other-msg`;
-            div.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
+            const area = safeEl('world-messages-area');
+            if(area) {
+                const div = document.createElement('div');
+                div.className = `message-bubble other-msg`;
+                div.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
+                area.appendChild(div);
+                area.scrollTop = area.scrollHeight;
+            }
         }
     });
 
     function updateProfileUI() {
         if (!currentUser) return;
         
-        const usernameDisplay = document.getElementById('display-username');
-        usernameDisplay.innerText = currentUser.username;
-        document.getElementById('user-bio').innerText = currentUser.bio || "No bio available.";
-        document.getElementById('user-dp').src = currentUser.dp || DEFAULT_DP;
-        document.getElementById('fb-my-dp').src = currentUser.dp || DEFAULT_DP;
+        sText('display-username', currentUser.username);
+        sText('user-bio', currentUser.bio || "No bio available.");
+        sSrc('user-dp', currentUser.dp || DEFAULT_DP);
+        sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
         
-        const bannerImg = document.getElementById('banner-img');
         if (currentUser.banner) { 
-            bannerImg.src = currentUser.banner; 
-            bannerImg.classList.remove('hidden'); 
+            sSrc('banner-img', currentUser.banner); 
+            sRem('banner-img', 'hidden'); 
         } else { 
-            bannerImg.classList.add('hidden'); 
+            sAdd('banner-img', 'hidden'); 
         }
         
-        const rankBadge = document.getElementById('display-rank');
-        rankBadge.innerText = currentUser.rank;
+        sText('display-rank', currentUser.rank);
+
+        const usernameDisplay = safeEl('display-username');
+        const rankBadge = safeEl('display-rank');
 
         if (currentUser.isDev) {
-            usernameDisplay.classList.add('shiny-dev-text');
-            rankBadge.className = 'rank-badge rank-developer';
-            document.getElementById('dev-nav-item').classList.remove('hidden');
+            if(usernameDisplay) usernameDisplay.classList.add('shiny-dev-text');
+            if(rankBadge) rankBadge.className = 'rank-badge rank-developer';
+            sRem('dev-nav-item', 'hidden');
         } else {
-            usernameDisplay.classList.remove('shiny-dev-text');
+            if(usernameDisplay) usernameDisplay.classList.remove('shiny-dev-text');
         }
     }
 
     function updateBadgesAndCounts() {
-        const reqBadge = document.getElementById('req-badge');
-        if (friendRequests.length > 0) {
-            reqBadge.innerText = friendRequests.length;
-            reqBadge.classList.remove('hidden');
-        } else {
-            reqBadge.classList.add('hidden');
+        const reqBadge = safeEl('req-badge');
+        if(reqBadge) {
+            if (friendRequests.length > 0) {
+                reqBadge.innerText = friendRequests.length;
+                reqBadge.classList.remove('hidden');
+            } else {
+                reqBadge.classList.add('hidden');
+            }
         }
-        document.getElementById('total-friends-count').innerText = friends.length;
+        sText('total-friends-count', friends.length);
     }
 
     function renderContacts() {
-        const container = document.getElementById('contact-list-container');
+        const container = safeEl('contact-list-container');
+        if(!container) return;
         container.innerHTML = '';
         
         let displayList = currentChatTab === 'favorite' ? friends.filter(f => f.isFavorite) : friends;
         
         if (displayList.length === 0) {
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">No friends found here.</p>`;
+            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">No nodes found.</p>`;
             return;
         }
         displayList.forEach(friend => {
@@ -658,15 +683,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderRequestSubTabUI() {
-        const container = document.getElementById('contact-list-container');
+        const container = safeEl('contact-list-container');
+        if(!container) return;
         container.innerHTML = '';
-        const acceptBtn = document.getElementById('sub-tab-accept-btn');
-        const sendBtn = document.getElementById('sub-tab-send-btn');
+        
+        const acceptBtn = safeEl('sub-tab-accept-btn');
+        const sendBtn = safeEl('sub-tab-send-btn');
         
         if (currentRequestSubTab === 'accept') {
-            acceptBtn.classList.add('active-sub-tab');
-            sendBtn.classList.remove('active-sub-tab');
-            document.getElementById('search-friend-field-block').classList.add('hidden');
+            if(acceptBtn) acceptBtn.classList.add('active-sub-tab');
+            if(sendBtn) sendBtn.classList.remove('active-sub-tab');
+            sAdd('search-friend-field-block', 'hidden');
             
             if (friendRequests.length === 0) {
                 container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">No inbound verification requests detected.</p>`;
@@ -678,22 +705,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="${req.dp}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                         <b style="font-size:0.9rem;">${req.username}</b>
                         <div class="req-action-btns">
-                            <button class="btn-accept-friend btn-accept" title="Accept Hook"><i class="fas fa-check"></i></button>
-                            <button class="btn-reject-friend btn-reject" title="Reject Hook"><i class="fas fa-times"></i></button>
+                            <button class="btn-accept-friend btn-accept" title="Accept"><i class="fas fa-check"></i></button>
+                            <button class="btn-reject-friend btn-reject" title="Reject"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                 `;
             });
         } else if (currentRequestSubTab === 'send') {
-            acceptBtn.classList.remove('active-sub-tab');
-            sendBtn.classList.add('active-sub-tab');
-            document.getElementById('search-friend-field-block').classList.remove('hidden');
+            if(acceptBtn) acceptBtn.classList.remove('active-sub-tab');
+            if(sendBtn) sendBtn.classList.add('active-sub-tab');
+            sRem('search-friend-field-block', 'hidden');
             container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">Input username text pattern in search field to identify targets.</p>`;
         }
     }
 
     function renderFriendsListModal() {
-        const container = document.getElementById('modal-friend-list-container');
+        const container = safeEl('modal-friend-list-container');
+        if(!container) return;
         container.innerHTML = '';
         if (friends.length === 0) {
             container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px;">0 Synchronized nodes logged.</p>`;
@@ -710,7 +738,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPosts() {
-        const container = document.getElementById('feed-container');
+        const container = safeEl('feed-container');
+        if(!container) return;
         container.innerHTML = '';
         posts.forEach(post => {
             let imgHtml = post.image ? `<img src="${post.image}" class="post-media-img">` : '';
@@ -734,7 +763,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGroups() {
-        const container = document.getElementById('group-list-container');
+        const container = safeEl('group-list-container');
+        if(!container) return;
         container.innerHTML = '';
         groups.forEach(group => {
             let icon = group.icon || `https://ui-avatars.com/api/?name=${group.name}&background=a855f7&color=fff`;
@@ -748,7 +778,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderBandRequests() {
-        const container = document.getElementById('band-incoming-requests');
+        const container = safeEl('band-incoming-requests');
+        if(!container) return;
         container.innerHTML = '';
         if (bandRequests.length === 0) {
             container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">No inbound requests.</p>`;
@@ -765,51 +796,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openChatWindow(username) {
-        document.getElementById('request-profile-preview-pane').classList.add('hidden');
-        document.getElementById('chat-placeholder').classList.add('hidden');
+        sAdd('request-profile-preview-pane', 'hidden');
+        sAdd('chat-placeholder', 'hidden');
         
-        document.getElementById('chat-header').classList.remove('hidden');
-        document.getElementById('messages-area').classList.remove('hidden');
-        document.getElementById('chat-input-area').classList.remove('hidden');
+        sRem('chat-header', 'hidden');
+        sRem('messages-area', 'hidden');
+        sRem('chat-input-area', 'hidden');
         
         activeChatUser = friends.find(f => f.username === username);
-        document.getElementById('current-chat-name').innerText = activeChatUser.username;
-        document.getElementById('current-chat-dp').src = activeChatUser.dp;
-        
-        updateFavoriteButtonUI();
+        if(activeChatUser) {
+            sText('current-chat-name', activeChatUser.username);
+            sSrc('current-chat-dp', activeChatUser.dp);
+            updateFavoriteButtonUI();
+        }
     }
 
     function updateFavoriteButtonUI() {
-        const favBtn = document.getElementById('favorite-user-btn');
-        if (activeChatUser && activeChatUser.isFavorite) {
-            favBtn.classList.add('starred');
-            favBtn.innerHTML = '<i class="fas fa-star"></i>';
-        } else {
-            favBtn.classList.remove('starred');
-            favBtn.innerHTML = '<i class="far fa-star"></i>';
+        const favBtn = safeEl('favorite-user-btn');
+        if(favBtn) {
+            if (activeChatUser && activeChatUser.isFavorite) {
+                favBtn.classList.add('starred');
+                favBtn.innerHTML = '<i class="fas fa-star"></i>';
+            } else {
+                favBtn.classList.remove('starred');
+                favBtn.innerHTML = '<i class="far fa-star"></i>';
+            }
         }
     }
 
     function openRightProfilePreviewPane(userContext) {
-        document.getElementById('chat-placeholder').classList.add('hidden');
-        document.getElementById('chat-header').classList.add('hidden');
-        document.getElementById('messages-area').classList.add('hidden');
-        document.getElementById('chat-input-area').classList.add('hidden');
+        sAdd('chat-placeholder', 'hidden');
+        sAdd('chat-header', 'hidden');
+        sAdd('messages-area', 'hidden');
+        sAdd('chat-input-area', 'hidden');
         
-        const previewPane = document.getElementById('request-profile-preview-pane');
-        previewPane.classList.remove('hidden');
-
-        document.getElementById('preview-search-user-dp').src = userContext.dp;
-        document.getElementById('preview-search-user-name').innerText = userContext.username;
-        document.getElementById('preview-search-user-bio').innerText = userContext.bio;
+        sRem('request-profile-preview-pane', 'hidden');
+        sSrc('preview-search-user-dp', userContext.dp);
+        sText('preview-search-user-name', userContext.username);
+        sText('preview-search-user-bio', userContext.bio);
     }
 
     function resetRightWorkspacePane() {
-        document.getElementById('request-profile-preview-pane').classList.add('hidden');
-        document.getElementById('chat-header').classList.add('hidden');
-        document.getElementById('messages-area').classList.add('hidden');
-        document.getElementById('chat-input-area').classList.add('hidden');
-        document.getElementById('chat-placeholder').classList.remove('hidden');
+        sAdd('request-profile-preview-pane', 'hidden');
+        sAdd('chat-header', 'hidden');
+        sAdd('messages-area', 'hidden');
+        sAdd('chat-input-area', 'hidden');
+        sRem('chat-placeholder', 'hidden');
     }
 
     // DEV MODAL LOGIC
@@ -817,13 +849,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedDevOptionValue = null;
 
     function openDevActionModal(title) {
-        document.getElementById('dev-action-modal').classList.remove('hidden');
-        document.getElementById('action-modal-title').innerText = title;
+        sRem('dev-action-modal', 'hidden');
+        sText('action-modal-title', title);
     }
 
     function generateDevOptionsGrid(type) {
         currentDevActionType = type;
-        const grid = document.getElementById('dev-options-grid');
+        const grid = safeEl('dev-options-grid');
+        if(!grid) return;
         grid.innerHTML = '';
         selectedDevOptionValue = null;
 
@@ -861,26 +894,27 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             grid.appendChild(removeBtn);
         }
-    }
 
-    document.getElementById('confirm-assign-btn')?.addEventListener('click', () => {
-        const targetUser = document.getElementById('dev-target-user').value;
-        if (!targetUser || !selectedDevOptionValue) return alert("System Error: Identify target and parameter payload.");
-        if(targetUser === currentUser.username) {
-            if (currentDevActionType === 'rank') currentUser.rank = selectedDevOptionValue;
-            else if (currentDevActionType === 'theme') currentUser.theme = selectedDevOptionValue;
-            saveData(); updateProfileUI(); applyTheme(); 
+        for (let i = 1; i <= 20; i++) {
+            const box = document.createElement('div');
+            box.style.width = '100%'; box.style.aspectRatio = '1/1'; box.style.borderRadius = '50%'; 
+            box.style.cursor = 'pointer'; box.style.display = 'flex'; box.style.justifyContent = 'center'; 
+            box.style.alignItems = 'center'; box.style.color = 'white'; box.style.fontWeight = 'bold'; box.innerHTML = `${i}`;
+
+            if (type === 'ring') { 
+                box.classList.add(`ring-style-${i}`); 
+                box.style.border = `3px solid hsl(${(i * 18) % 360}, 80%, 60%)`; 
+            } else if (type === 'theme') { 
+                box.style.background = `hsl(${(i * 18) % 360}, 60%, 50%)`; 
+            }
+
+            box.addEventListener('click', () => {
+                Array.from(grid.children).forEach(child => child.style.outline = 'none');
+                box.style.outline = '4px solid var(--primary-color)';
+                selectedDevOptionValue = (type === 'theme') ? `premium-${i}` : i;
+            });
+            grid.appendChild(box);
         }
-        document.getElementById('dev-assign-modal').classList.add('hidden'); 
-        alert(`Core Power Applied: Settings dispatched to vector target: [${targetUser}].`);
-    });
-
-    document.getElementById('confirm-action-btn')?.addEventListener('click', () => {
-        const targetUser = document.getElementById('action-target-user').value;
-        if (!targetUser) return alert("System Error: Identify target node vector identifier.");
-        document.getElementById('dev-action-modal').classList.add('hidden'); 
-        document.getElementById('action-target-user').value = '';
-        alert(`CRITICAL EXECUTION: Action Payload processed on index node target: [${targetUser}].`);
-    });
+    }
 
 });
