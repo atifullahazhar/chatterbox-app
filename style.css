@@ -521,3 +521,45 @@ button:hover {
     .band-connection { width: 100%; margin: 25px 0; }
     .grid-4-cols { grid-template-columns: 1fr !important; }
 }
+/* --- MOBILE UI FIX - CSS ISKO FILE KE NICHE ADD KAREN --- */
+
+@media (max-width: 768px) {
+    /* Dashboard Fix: Fixes the bottom nav and main area height */
+    #main-app {
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        order: 3;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        background: var(--bg-panel);
+        border-top: 1px solid var(--border-color);
+        padding: 5px;
+        z-index: 9999; /* Z-index badha diya taaki ye hamesha upar rahe */
+    }
+
+    #content-area {
+        height: calc(100vh - 70px); /* Screen ki bachi hui height content ko do */
+        padding-bottom: 20px;
+        overflow-y: auto;
+    }
+
+    /* Icons Fix */
+    .nav-text { display: none; }
+    .nav-btn { 
+        width: 50px; 
+        height: 50px; 
+        justify-content: center; 
+        padding: 0; 
+    }
+    .nav-btn i { font-size: 1.5rem !important; margin: 0; }
+}
