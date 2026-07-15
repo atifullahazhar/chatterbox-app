@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. SAFE STATE & LOCAL STORAGE (Database Prep)
+    // 1. SAFE STATE & LOCAL STORAGE (Crash-Proof)
     // ==========================================
     let currentUser = null;
     let registeredUsers = [];
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const storedAppUsers = localStorage.getItem('chatAppUsers');
         if (storedAppUsers) registeredUsers = JSON.parse(storedAppUsers);
     } catch (error) {
-        console.warn("Clearing corrupted local storage.");
+        console.warn("Memory limit exceeded. Clearing corrupted local storage.");
         localStorage.removeItem('chatUser');
         localStorage.removeItem('chatAppUsers');
     }
@@ -30,41 +30,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (currentUser && currentUser.username) { 
-        checkDailyStreak(); // Calculate streak on auto-login
+        checkDailyStreak(); 
         showMainApp(); 
         socket.emit('user-reconnected', currentUser);
     }
 
     // ==========================================
-    // 2. DAILY LOGIN STREAK LOGIC
+    // 2. DAILY LOGIN STREAK & SECURE SAVING
     // ==========================================
     function checkDailyStreak() {
         const today = new Date().toDateString();
         if (!currentUser.lastLoginDate) {
             currentUser.streak = 1;
         } else if (currentUser.lastLoginDate !== today) {
-            // Check if it was exactly yesterday
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             if (currentUser.lastLoginDate === yesterday.toDateString()) {
                 currentUser.streak = (currentUser.streak || 0) + 1;
             } else {
-                currentUser.streak = 1; // Streak broken
+                currentUser.streak = 1; 
             }
         }
         currentUser.lastLoginDate = today;
         saveUserData();
     }
 
+    // 🔴 THE CRASH SHIELD: Prevents PC freeze if storage is full
     function saveUserData() {
-        const index = registeredUsers.findIndex(u => u.username === currentUser.username);
-        if(index > -1) registeredUsers[index] = currentUser;
-        localStorage.setItem('chatUser', JSON.stringify(currentUser));
-        localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+        if(!currentUser || !currentUser.email) return;
+        
+        const index = registeredUsers.findIndex(u => u.email === currentUser.email);
+        if(index > -1) {
+            registeredUsers[index] = currentUser;
+        } else {
+            registeredUsers.push(currentUser);
+        }
+        
+        try {
+            localStorage.setItem('chatUser', JSON.stringify(currentUser));
+            localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+        } catch (error) {
+            alert("🚨 STORAGE FULL! Your image/video exceeds the browser limit. The app has been saved from crashing, but the file wasn't saved. Please use a smaller picture!");
+        }
     }
 
     // ==========================================
-    // 3. THEME & MOBILE SIDEBAR LOGIC
+    // 3. THEME & MOBILE SIDEBAR
     // ==========================================
     const darkModeBtn = document.getElementById('dark-mode-btn');
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -100,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 4. SECURE LOGIN & INITIALIZATION
+    // 4. SECURE LOGIN
     // ==========================================
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -119,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userExists) {
                 if (!userExists.email) {
                     userExists.email = emailInput;
-                    localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+                    try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
                 } else if (userExists.email !== emailInput) {
                     return alert('This username is registered with a different email address!');
                 }
@@ -141,20 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     rank: "Member",
                     userColor: "",
                     mood: "😎",
-                    zodiac: "♈ Aries",
-                    country: "🇮🇳 India",
-                    statusMsg: "Busy building the future...",
+                    statusMsg: "Available",
                     streak: 1,
-                    lastLoginDate: new Date().toDateString(),
-                    visitors: Math.floor(Math.random() * 50) + 1
+                    lastLoginDate: new Date().toDateString()
                 };
-                registeredUsers.push(currentUser);
             } else {
                 currentUser = userExists;
                 currentUser.isDev = isDev; 
                 if(!currentUser.rank) currentUser.rank = "Member";
                 if(!currentUser.mood) currentUser.mood = "😎";
-                if(!currentUser.visitors) currentUser.visitors = Math.floor(Math.random() * 50) + 1;
+                if(!currentUser.statusMsg) currentUser.statusMsg = "Available";
             }
             
             checkDailyStreak();
@@ -163,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. PROFILE UI & MOOD ENGINE
+    // 5. PROFILE UI, MOOD & INSTAGRAM EDIT MODAL
     // ==========================================
     const operatorColors = [
         "#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", 
@@ -179,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rankDisplay = document.getElementById('display-rank');
         const colorSection = document.getElementById('operator-color-section');
         const statusDisplay = document.getElementById('custom-status-text');
-        const visitorTag = document.getElementById('visitor-count');
         const moodEmoji = document.getElementById('mood-emoji');
         const devNavItem = document.getElementById('dev-nav-item');
 
@@ -187,13 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(bioDisplay) bioDisplay.innerText = currentUser.bio;
         if(statusDisplay) statusDisplay.innerText = `"${currentUser.statusMsg || 'Available'}"`;
         if(moodEmoji) moodEmoji.innerText = currentUser.mood || '😎';
-
-        // Update Tags
-        const tags = document.querySelectorAll('.profile-tags .tag');
-        if(tags.length >= 2) {
-            tags[0].innerHTML = currentUser.zodiac || "♈ Aries";
-            tags[1].innerHTML = currentUser.country || "🌍 Earth";
-        }
 
         const rank = currentUser.rank || 'Member';
         if(rankDisplay) {
@@ -225,20 +224,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (colorSection) colorSection.classList.add('hidden');
         }
 
-        // Feature: Hide Visitors for Developers
         if (currentUser.isDev) {
             if(nameDisplay) nameDisplay.classList.add('dev-username-style');
             if(rankDisplay) rankDisplay.innerText = "Developer 👑";
             if(dpWrapper) dpWrapper.classList.add('dev-ring-active');
             if(devNavItem) devNavItem.classList.remove('hidden');
-            if(visitorTag) visitorTag.style.display = 'none'; // Hidden for Devs
         } else {
             if(devNavItem) devNavItem.classList.add('hidden');
             if(dpWrapper) dpWrapper.classList.remove('dev-ring-active');
-            if(visitorTag) {
-                visitorTag.style.display = 'flex';
-                visitorTag.innerHTML = `<i class="fas fa-eye"></i> ${currentUser.visitors} Views`;
-            }
         }
     }
 
@@ -262,30 +255,74 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Interactive Profile Edits
-    const moodEmojiBtn = document.getElementById('mood-emoji');
-    if(moodEmojiBtn) {
-        moodEmojiBtn.addEventListener('click', () => {
-            const newMood = prompt("Enter an emoji for your mood (e.g. 🥳, 😡, 😭):", currentUser.mood);
-            if(newMood) {
-                currentUser.mood = newMood.substring(0, 2); // Keep it short
+    // Interactive Status Edit
+    const statusText = document.getElementById('custom-status-text');
+    if(statusText) {
+        statusText.addEventListener('click', () => {
+            const newStatus = prompt("What's on your mind?", currentUser.statusMsg);
+            if(newStatus !== null) {
+                currentUser.statusMsg = newStatus.substring(0, 30); // 30 character limit
                 saveUserData();
                 loadProfileData();
             }
         });
     }
 
+    // Instagram Style Edit Profile Logic
     const editBtn = document.getElementById('edit-profile-btn');
-    if(editBtn) {
+    const editModal = document.getElementById('edit-profile-modal');
+    const editUserIn = document.getElementById('edit-username-input');
+    const editBioIn = document.getElementById('edit-bio-input');
+
+    if(editBtn && editModal) {
         editBtn.addEventListener('click', () => {
-            const newBio = prompt("Enter new bio:", currentUser.bio);
-            const newStatus = prompt("Enter custom status:", currentUser.statusMsg);
-            if (newBio) currentUser.bio = newBio;
-            if (newStatus) currentUser.statusMsg = newStatus;
-            saveUserData();
-            loadProfileData();
+            editUserIn.value = currentUser.username;
+            editBioIn.value = currentUser.bio;
+            editModal.classList.remove('hidden');
         });
     }
+
+    window.closeEditProfile = () => {
+        if(editModal) editModal.classList.add('hidden');
+    };
+
+    window.saveProfileDetails = () => {
+        const newName = editUserIn.value.trim();
+        if(newName !== '') {
+            if (newName.toLowerCase() !== currentUser.username.toLowerCase()) {
+                const exists = registeredUsers.some(u => u.username.toLowerCase() === newName.toLowerCase());
+                if (exists) return alert("This username is already taken by someone else!");
+            }
+
+            currentUser.username = newName;
+            currentUser.bio = editBioIn.value.trim();
+            saveUserData();
+            loadProfileData();
+            closeEditProfile();
+        }
+    };
+
+    // Safe File Upload Logic (Max 1.5MB to prevent Quota Exceeded Crash)
+    ['banner', 'dp'].forEach(type => {
+        const input = document.getElementById(`${type}-upload-input`);
+        if(input) {
+            input.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    if (file.size > 1500000) { // 1.5MB Limit
+                        return alert("File is too large! Please select an image smaller than 1.5MB to prevent browser crash.");
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentUser[type] = e.target.result;
+                        applyMedia(currentUser[type], type === 'banner' ? 'banner-img' : 'user-dp', type === 'banner' ? 'banner-video' : 'user-dp-video');
+                        saveUserData();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
 
     function applyMedia(dataUrl, imgId, videoId) {
         const imgElement = document.getElementById(imgId);
@@ -312,11 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mainApp.classList.add('active');
         }
         loadProfileData();
-        
-        // Automated Welcome Bot
-        setTimeout(() => {
-            appendMessageToScreen(`🤖 Welcome back to Chatterbox Global, ${currentUser.username}!`, 'world-messages-area', 'system');
-        }, 1000);
     }
 
     // Sidebar View Navigation
@@ -346,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 6. CHAT & WORLD CHAT (Mute & 3s Slow Mode)
+    // 6. CHAT LOGIC & SLOW MODE
     // ==========================================
     let isWorldMuted = false;
     let lastWorldMessageTime = 0;
@@ -366,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = input.value.trim();
         
         if (text !== "") {
-            // Feature: 3s Slow Mode
+            // 3s Slow Mode for non-dev users
             if (areaId === 'world-messages-area') {
                 const now = Date.now();
                 if (now - lastWorldMessageTime < 3000 && !currentUser.isDev) {
@@ -410,10 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on("receive_message", (data) => {
         if(data.sender === currentUser.username) return;
-        
-        // Feature: World Chat Mute Logic
         if(data.area === 'world-messages-area' && isWorldMuted) return; 
-
         appendMessageToScreen(data.text, data.area, 'other');
     });
 
@@ -431,41 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
     // ==========================================
-    // 7. BUG FIX: GROUP CREATION
-    // ==========================================
-    const createGroupBtn = document.getElementById('create-group-btn');
-    if (createGroupBtn) {
-        createGroupBtn.addEventListener('click', () => {
-            const groupName = prompt("Enter a name for the new group:");
-            if (groupName && groupName.trim() !== "") {
-                const groupList = document.getElementById('group-list-container');
-                const newGroup = document.createElement('div');
-                newGroup.className = 'dummy-item';
-                newGroup.innerHTML = `<div class="contact-avatar"><span>👥</span></div><b>${groupName}</b>`;
-                newGroup.onclick = () => window.openGroup(groupName);
-                groupList.appendChild(newGroup);
-            }
-        });
-    }
-
-    window.openChat = function (name) {
-        document.getElementById('chat-placeholder')?.classList.add('hidden');
-        document.getElementById('chat-header')?.classList.remove('hidden');
-        document.getElementById('messages-area')?.classList.remove('hidden');
-        document.getElementById('chat-input-area')?.classList.remove('hidden');
-        if(document.getElementById('current-chat-name')) document.getElementById('current-chat-name').innerText = name;
-    };
-
-    window.openGroup = function (name) {
-        document.getElementById('group-placeholder')?.classList.add('hidden');
-        document.getElementById('group-header')?.classList.remove('hidden');
-        document.getElementById('group-messages-area')?.classList.remove('hidden');
-        document.getElementById('group-input-area')?.classList.remove('hidden');
-        if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = name;
-    };
-
-    // ==========================================
-    // 8. DEVELOPER DASHBOARD LOGIC
+    // 7. DEVELOPER DASHBOARD LOGIC
     // ==========================================
     let currentDevAction = "";
     let selectedDevOption = null;
@@ -560,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetObj = registeredUsers.find(u => u.username.toLowerCase() === targetUser.toLowerCase());
                 if(targetObj) {
                     targetObj.rank = selectedDevOption;
-                    localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers));
+                    try { localStorage.setItem('chatAppUsers', JSON.stringify(registeredUsers)); } catch(e){}
                     alert(`Rank updated! ${targetObj.username} is now ${selectedDevOption}`);
                     if(targetUser.toLowerCase() === currentUser.username.toLowerCase()) {
                         currentUser.rank = selectedDevOption;

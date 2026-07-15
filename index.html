@@ -64,8 +64,7 @@
                         <img src="" id="banner-img" class="hidden" alt="">
                         <video id="banner-video" class="hidden" autoplay loop muted playsinline></video>
                     </div>
-                    <input type="file" id="banner-upload-input" accept="image/*,video/*" class="hidden">
-                    <button id="change-banner-btn" title="Change Background"><i class="fas fa-camera"></i></button>
+                    <input type="file" id="banner-upload-input" accept="image/*" class="hidden">
                 </div>
 
                 <div class="profile-info-container">
@@ -74,8 +73,7 @@
                             <img src="default-dp.png" alt="Profile Picture" id="user-dp">
                             <video id="user-dp-video" class="hidden" autoplay loop muted playsinline></video>
                         </div>
-                        <input type="file" id="dp-upload-input" accept="image/*,video/*" class="hidden">
-                        <button id="change-dp-btn" title="Upload new DP"><i class="fas fa-pen"></i></button>
+                        <input type="file" id="dp-upload-input" accept="image/*" class="hidden">
                     </div>
 
                     <div class="username-wrapper">
@@ -84,13 +82,8 @@
                     </div>
                     
                     <div id="display-rank" class="rank-badge rank-member">Member</div>
-                    <div class="custom-status" id="custom-status-text">"Busy building the future..."</div>
-
-                    <div class="profile-tags">
-                        <span class="tag zodiac-tag">♈ Aries</span>
-                        <span class="tag country-tag">🇮🇳 India</span>
-                        <span class="tag visitor-tag" id="visitor-count" title="Profile Visitors"><i class="fas fa-eye"></i> 0</span>
-                    </div>
+                    
+                    <div class="custom-status clickable-status" id="custom-status-text" title="Click to edit">"Available"</div>
 
                     <div class="stats"><span id="friend-count">0 friends</span></div>
                     <p id="user-bio">Hallo World</p>
@@ -367,6 +360,32 @@
             </section>
 
         </main>
+    </div>
+
+    <div id="edit-profile-modal" class="modal-overlay hidden">
+        <div class="dev-modal-content">
+            <h2>Edit Profile</h2>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
+                <button class="action-btn" onclick="document.getElementById('dp-upload-input').click()"><i class="fas fa-camera"></i> Change Logo</button>
+                <button class="action-btn" onclick="document.getElementById('banner-upload-input').click()"><i class="fas fa-image"></i> Change Banner</button>
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 10px;">
+                <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Nickname</label>
+                <input type="text" id="edit-username-input" class="dev-input" placeholder="Your Name" style="margin-top: 5px;">
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 10px;">
+                <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Description (Bio)</label>
+                <textarea id="edit-bio-input" class="dev-input" placeholder="Write something about yourself..." style="height: 100px; resize: none; margin-top: 5px;"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="danger-btn" onclick="closeEditProfile()">Cancel</button>
+                <button class="primary-btn" onclick="saveProfileDetails()">Save Changes</button>
+            </div>
+        </div>
     </div>
 
     <div id="dev-assign-modal" class="modal-overlay hidden">
