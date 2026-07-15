@@ -7,19 +7,24 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Static files (HTML, CSS, JS) serve karne ke liye
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// ⚡ Socket.io Real-time Logic
 io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+    console.log('🟢 User connected:', socket.id);
 
+    // World Chat Message Broadcast
     socket.on('send_message', (data) => {
-        io.emit('receive_message', data);
+        // Jisne bheja usko chhod kar sabko message bhej do
+        socket.broadcast.emit('receive_message', data);
     });
 
+    // Typing Indicators
     socket.on('typing', (data) => {
         socket.broadcast.emit('typing', data); 
     });
@@ -28,12 +33,13 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('stop_typing', data);
     });
 
+    // User Disconnect
     socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
+        console.log('🔴 User disconnected:', socket.id);
     });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Node Server is running smoothly on port ${PORT}`);
+    console.log(`🚀 Chatterbox Backend Server is running smoothly on port ${PORT}`);
 });

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Atif Chat App - Ultimate Edition</title>
     <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name=C&background=8b5cf6&color=fff">
     <link rel="stylesheet" href="style.css">
@@ -39,27 +39,17 @@
 
         <nav id="sidebar">
             <div class="nav-logo">Chatterbox</div>
-            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn"><i class="fas fa-times"></i>
-                Close</button>
+            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn"><i class="fas fa-times"></i> Close</button>
             <ul class="nav-links">
-                <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user"></i>
-                        Profile</button></li>
-                <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comment-dots"></i> Chat</button>
-                </li>
-                <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-users"></i> Group
-                        Chat</button></li>
-                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-handshake"></i> Friendship
-                        Band</button></li>
-                <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe-americas"></i> World
-                        Chat</button></li>
-                <li><button class="nav-btn" data-target="post-section"><i class="fas fa-images"></i> Post Feed</button>
-                </li>
-                <li><button class="nav-btn" data-target="games-section"><i class="fas fa-gamepad"></i> Mini
-                        Games</button></li>
-                <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-cog"></i> Settings</button>
-                </li>
-                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn"
-                        data-target="dev-section-view"><i class="fas fa-crown"></i> Developer</button></li>
+                <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user"></i> <span class="nav-text">Profile</span></button></li>
+                <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comment-dots"></i> <span class="nav-text">Chat</span></button></li>
+                <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-users"></i> <span class="nav-text">Group Chat</span></button></li>
+                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-handshake"></i> <span class="nav-text">Friendship Band</span></button></li>
+                <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe-americas"></i> <span class="nav-text">World Chat</span></button></li>
+                <li><button class="nav-btn" data-target="post-section"><i class="fas fa-images"></i> <span class="nav-text">Post Feed</span></button></li>
+                <li><button class="nav-btn" data-target="games-section"><i class="fas fa-gamepad"></i> <span class="nav-text">Mini Games</span></button></li>
+                <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-cog"></i> <span class="nav-text">Settings</span></button></li>
+                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn" data-target="dev-section-view"><i class="fas fa-crown"></i> <span class="nav-text">Developer</span></button></li>
             </ul>
         </nav>
 
@@ -75,8 +65,7 @@
                 <div class="profile-info-container">
                     <div class="dp-wrapper-main">
                         <div class="dp-container" id="dp-wrapper">
-                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6"
-                                alt="Profile Picture" id="user-dp">
+                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Profile Picture" id="user-dp">
                             <video id="user-dp-video" class="hidden" autoplay loop muted playsinline></video>
                         </div>
                         <input type="file" id="dp-upload-input" accept="image/*" class="hidden">
@@ -86,21 +75,17 @@
                         <h2 id="display-username" class="username-display">Username</h2>
                     </div>
                     <div id="display-rank" class="rank-badge rank-member">Member</div>
-                    <div class="custom-status clickable-status" id="custom-status-text" title="Click to edit">
-                        "Available"</div>
+                    <div class="custom-status clickable-status" id="custom-status-text" title="Click to edit">"Available"</div>
                     <div class="profile-badges">
-                        <span title="Early Adopter">🌟</span><span title="Chatterbox Pro">💎</span><span
-                            title="Friendly Neighbor">🤝</span>
+                        <span title="Early Adopter">🌟</span><span title="Chatterbox Pro">💎</span><span title="Friendly Neighbor">🤝</span>
                     </div>
                     <p id="user-bio">Hallo World</p>
-                    <div class="social-links-bar"><i class="fab fa-instagram"></i><i class="fab fa-github"></i><i
-                            class="fab fa-youtube"></i></div>
+                    <div class="social-links-bar"><i class="fab fa-instagram"></i><i class="fab fa-github"></i><i class="fab fa-youtube"></i></div>
                     <button id="edit-profile-btn" class="primary-btn">Edit Profile</button>
-                    <div id="operator-color-section" class="settings-card hidden"
-                        style="margin-top:30px; width:100%; max-width:400px;">
+                    
+                    <div id="operator-color-section" class="settings-card hidden" style="margin-top:30px; width:100%; max-width:400px;">
                         <h3>Operator Animation Color</h3>
-                        <div id="operator-color-grid" class="options-grid"
-                            style="grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));"></div>
+                        <div id="operator-color-grid" class="options-grid" style="grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));"></div>
                     </div>
                 </div>
             </section>
@@ -109,32 +94,43 @@
                 <div class="chat-layout">
                     <div class="chat-sidebar">
                         <div class="chat-tabs">
-                            <button class="tab-btn active" data-tab="favorite">Favorite</button>
-                            <button class="tab-btn" data-tab="general">General</button>
-                            <button class="tab-btn" data-tab="requests">Requests</button>
+                            <button class="tab-btn active" data-tab="general">General</button>
+                            <button class="tab-btn" data-tab="favorite">Favorite</button>
+                            <button class="tab-btn" data-tab="requests">Requests <span id="req-badge" class="hidden" style="background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">0</span></button>
                         </div>
-                        <div class="search-bar"><input type="text" placeholder="Search..."></div>
-                        <div class="contact-list" id="contact-list-container"></div>
+                        
+                        <div class="search-bar" id="chat-search-bar"><input type="text" id="search-friends-input" placeholder="Search friends..."></div>
+                        
+                        <div id="friend-request-area" class="hidden" style="padding: 15px; border-bottom: 1px solid var(--border-color); background: var(--bg-panel);">
+                            <h4 style="margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Send Friend Request</h4>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="text" id="add-friend-input" placeholder="Enter username..." style="flex:1; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-main); color: var(--text-main); outline: none;">
+                                <button id="send-friend-req-btn" class="primary-btn" style="padding: 10px 15px; border-radius: 8px;"><i class="fas fa-user-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="contact-list" id="contact-list-container">
+                            </div>
                     </div>
+
                     <div class="active-chat-window">
                         <div id="chat-placeholder" class="empty-state">
-                            <p>Select a chat to start messaging</p>
+                            <p>Select a friend to start messaging</p>
                         </div>
                         <div class="chat-header hidden" id="chat-header">
-                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6"
-                                alt="Chat User" id="current-chat-dp">
+                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Chat User" id="current-chat-dp">
                             <div class="chat-header-info">
-                                <h3 id="current-chat-name">User</h3><span class="status-text">Online • typing...</span>
+                                <h3 id="current-chat-name">User</h3><span class="status-text">Online</span>
                             </div>
-                            <button id="block-user-btn" class="danger-btn"><i class="fas fa-ban"></i></button>
+                            <button id="favorite-user-btn" class="action-btn" title="Add to Favorites"><i class="far fa-star"></i></button>
+                            <button id="block-user-btn" class="danger-btn" title="Block User"><i class="fas fa-ban"></i></button>
                         </div>
                         <div class="messages-container hidden" id="messages-area"></div>
                         <div class="chat-input-area hidden" id="chat-input-area">
                             <button id="attach-btn" title="Attach File"><i class="fas fa-paperclip"></i></button>
                             <button id="emoji-btn" title="Emojis"><i class="far fa-smile"></i></button>
                             <input type="text" placeholder="Type a message..." id="message-input" autocomplete="off">
-                            <button id="voice-note-btn" title="Hold to record"><i
-                                    class="fas fa-microphone"></i></button>
+                            <button id="voice-note-btn" title="Hold to record"><i class="fas fa-microphone"></i></button>
                             <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
@@ -145,8 +141,7 @@
                 <div class="chat-layout">
                     <div class="chat-sidebar">
                         <div class="sidebar-header">
-                            <h2>Groups <button id="create-group-btn" class="add-icon-btn"><i
-                                        class="fas fa-plus"></i></button></h2>
+                            <h2>Groups <button id="create-group-btn" class="add-icon-btn"><i class="fas fa-plus"></i></button></h2>
                         </div>
                         <div class="group-list" id="group-list-container"></div>
                     </div>
@@ -155,16 +150,13 @@
                             <p>Select a group to start messaging</p>
                         </div>
                         <div class="chat-header hidden" id="group-header">
-                            <img src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff"
-                                id="group-header-img" alt="Group Icon">
-                            <h3 id="current-group-name">Group</h3><button id="group-settings-btn" class="action-btn"><i
-                                    class="fas fa-cog"></i></button>
+                            <img src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" id="group-header-img" alt="Group Icon">
+                            <h3 id="current-group-name">Group</h3><button id="group-settings-btn" class="action-btn"><i class="fas fa-cog"></i></button>
                         </div>
                         <div class="messages-container hidden" id="group-messages-area"></div>
                         <div class="chat-input-area hidden" id="group-input-area">
                             <button id="group-attach-btn"><i class="fas fa-plus"></i></button>
-                            <input type="text" placeholder="Type a message..." id="group-message-input"
-                                autocomplete="off">
+                            <input type="text" placeholder="Type a message..." id="group-message-input" autocomplete="off">
                             <button id="group-send-btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
@@ -179,9 +171,7 @@
                     </div>
                     <div class="band-status-card">
                         <div class="duo-display">
-                            <div class="duo-member"><img
-                                    src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Me"
-                                    id="fb-my-dp"><span>Me</span></div>
+                            <div class="duo-member"><img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Me" id="fb-my-dp"><span>Me</span></div>
                             <div class="band-connection">
                                 <span id="band-level">Level 0</span>
                                 <div class="duo-streak" title="Duo Streak">🔥 0 Days</div>
@@ -191,20 +181,14 @@
                                 <span id="time-remaining">Not connected yet</span>
                             </div>
                             <div class="duo-member">
-                                <div class="empty-duo-slot" id="fb-partner-dp-slot">?</div><span
-                                    id="fb-partner-name">Partner</span>
+                                <div class="empty-duo-slot" id="fb-partner-dp-slot">?</div><span id="fb-partner-name">Partner</span>
                             </div>
                         </div>
                     </div>
                     <div class="band-actions-container">
                         <div class="send-request-box">
-                            <h3>Invite a Friend</h3>
-                            <div class="input-group"><input type="text" id="band-request-input"
-                                    placeholder="Enter username..."><button id="send-band-req-btn">Send</button></div>
-                        </div>
-                        <div class="pending-requests-box">
-                            <h3>Pending Requests</h3>
-                            <div id="requests-list"></div>
+                            <h3>Invite a Partner</h3>
+                            <div class="input-group"><input type="text" id="band-request-input" placeholder="Enter username..."><button id="send-band-req-btn">Send</button></div>
                         </div>
                     </div>
                 </div>
@@ -217,15 +201,15 @@
                             <h2>🌍 World Chat</h2>
                             <p>Global slow mode: 3s</p>
                         </div>
-                        <button id="world-mute-btn" class="danger-btn big-mute-btn"><i class="fas fa-volume-mute"></i>
-                            Mute Chat</button>
+                        <button id="world-mute-btn" class="danger-btn big-mute-btn"><i class="fas fa-volume-mute"></i> Mute</button>
                     </div>
                     <div class="messages-container" id="world-messages-area">
                         <div class="message-bubble system-msg">🤖 Welcome to Chatterbox Global! Be respectful.</div>
                     </div>
-                    <div class="chat-input-area"><input type="text" placeholder="Say hello to the world..."
-                            id="world-message-input" autocomplete="off"><button id="world-send-btn"><i
-                                class="fas fa-paper-plane"></i></button></div>
+                    <div class="chat-input-area">
+                        <input type="text" placeholder="Say hello to the world..." id="world-message-input" autocomplete="off">
+                        <button id="world-send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </section>
 
@@ -242,8 +226,7 @@
                             <div class="post-tools">
                                 <button id="post-image-btn" title="Add Image"><i class="fas fa-image"></i></button>
                                 <button id="post-gif-btn" title="Add GIF"><i class="fas fa-icons"></i></button>
-                                <button id="post-meme-btn" title="Make Meme"><i
-                                        class="fas fa-grin-squint-tears"></i></button>
+                                <button id="post-meme-btn" title="Make Meme"><i class="fas fa-grin-squint-tears"></i></button>
                             </div>
                             <button id="submit-post-btn" class="primary-btn">Post</button>
                         </div>
@@ -258,13 +241,11 @@
                     <div class="games-grid">
                         <div class="game-card">
                             <h3>Tic-Tac-Toe</h3>
-                            <p>Challenge your Friend to a quick game.</p><button class="action-btn"
-                                id="tictactoe-btn">Play Now</button>
+                            <p>Challenge your Friend to a quick game.</p><button class="action-btn" id="tictactoe-btn">Play Now</button>
                         </div>
                         <div class="game-card">
                             <h3>Coin Flip</h3>
-                            <p>Bet virtual coins with friends.</p><button class="action-btn" id="coinflip-btn">Flip
-                                Coin</button>
+                            <p>Bet virtual coins with friends.</p><button class="action-btn" id="coinflip-btn">Flip Coin</button>
                         </div>
                     </div>
                 </div>
@@ -275,16 +256,12 @@
                     <h2 class="settings-title">App Settings</h2>
                     <div class="settings-group">
                         <h3><i class="fas fa-paint-brush"></i> Appearance</h3>
-                        <div class="setting-item"><span>Dark Mode</span><label class="toggle-switch"><input
-                                    type="checkbox" id="settings-dark-mode-toggle"><span class="slider"></span></label>
-                        </div>
+                        <div class="setting-item"><span>Dark Mode</span><label class="toggle-switch"><input type="checkbox" id="settings-dark-mode-toggle"><span class="slider"></span></label></div>
                     </div>
                     <div class="settings-group">
                         <h3><i class="fas fa-bell"></i> Notifications</h3>
-                        <div class="setting-item"><span>Message Alerts</span><label class="toggle-switch"><input
-                                    type="checkbox" checked><span class="slider"></span></label></div>
-                        <div class="setting-item"><span>In-App Sounds</span><label class="toggle-switch"><input
-                                    type="checkbox" checked><span class="slider"></span></label></div>
+                        <div class="setting-item"><span>Message Alerts</span><label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                        <div class="setting-item"><span>In-App Sounds</span><label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label></div>
                     </div>
                 </div>
             </section>
@@ -296,42 +273,15 @@
                         <p>With great power comes great responsibility.</p>
                     </div>
                     <div class="dev-cards-grid grid-4-cols">
-                        <div class="dev-card golden-card" onclick="openDevModal('rank')">
-                            <div class="card-icon">🎖️</div>
-                            <h3>Assign Rank</h3>
-                        </div>
-                        <div class="dev-card golden-card" onclick="openDevModal('ring')">
-                            <div class="card-icon">⭕</div>
-                            <h3>Assign Ring</h3>
-                        </div>
-                        <div class="dev-card golden-card" onclick="openDevModal('theme')">
-                            <div class="card-icon">🎨</div>
-                            <h3>Assign Theme</h3>
-                        </div>
-                        <div class="dev-card purple-card" onclick="openDevAction('shadowban')">
-                            <div class="card-icon">👻</div>
-                            <h3>Shadowban User</h3>
-                        </div>
-                        <div class="dev-card purple-card" onclick="executeDevDirect('global_mute')">
-                            <div class="card-icon">🤐</div>
-                            <h3>Global Mute</h3>
-                        </div>
-                        <div class="dev-card red-card" onclick="openDevAction('ban')">
-                            <div class="card-icon">🔨</div>
-                            <h3>Ban User</h3>
-                        </div>
-                        <div class="dev-card green-card" onclick="openDevAction('unban')">
-                            <div class="card-icon">✅</div>
-                            <h3>Unban User</h3>
-                        </div>
-                        <div class="dev-card dark-red-card" onclick="executeDevDirect('wipe')">
-                            <div class="card-icon">☢️</div>
-                            <h3>Server Wipe</h3>
-                        </div>
-                        <div class="dev-card orange-card" onclick="executeDevDirect('maintenance')">
-                            <div class="card-icon">🚧</div>
-                            <h3>Maintenance Mode</h3>
-                        </div>
+                        <div class="dev-card golden-card" onclick="openDevModal('rank')"><div class="card-icon">🎖️</div><h3>Assign Rank</h3></div>
+                        <div class="dev-card golden-card" onclick="openDevModal('ring')"><div class="card-icon">⭕</div><h3>Assign Ring</h3></div>
+                        <div class="dev-card golden-card" onclick="openDevModal('theme')"><div class="card-icon">🎨</div><h3>Assign Theme</h3></div>
+                        <div class="dev-card purple-card" onclick="openDevAction('shadowban')"><div class="card-icon">👻</div><h3>Shadowban User</h3></div>
+                        <div class="dev-card purple-card" onclick="executeDevDirect('global_mute')"><div class="card-icon">🤐</div><h3>Global Mute</h3></div>
+                        <div class="dev-card red-card" onclick="openDevAction('ban')"><div class="card-icon">🔨</div><h3>Ban User</h3></div>
+                        <div class="dev-card green-card" onclick="openDevAction('unban')"><div class="card-icon">✅</div><h3>Unban User</h3></div>
+                        <div class="dev-card dark-red-card" onclick="executeDevDirect('wipe')"><div class="card-icon">☢️</div><h3>Server Wipe</h3></div>
+                        <div class="dev-card orange-card" onclick="executeDevDirect('maintenance')"><div class="card-icon">🚧</div><h3>Maintenance Mode</h3></div>
                     </div>
                 </div>
             </section>
@@ -342,20 +292,16 @@
         <div class="dev-modal-content">
             <h2>Create New Group</h2>
             <div class="dp-container profile-modal-dp" style="margin: 0 auto 15px auto; width: 100px; height: 100px;">
-                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff"
-                    style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
             </div>
-            <button class="action-btn" onclick="document.getElementById('new-group-icon-input').click()"><i
-                    class="fas fa-camera"></i> Group Icon</button>
+            <button class="action-btn" onclick="document.getElementById('new-group-icon-input').click()"><i class="fas fa-camera"></i> Group Icon</button>
             <input type="file" id="new-group-icon-input" accept="image/*" class="hidden">
             <div style="text-align: left; margin-top: 20px;">
                 <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Group Name</label>
-                <input type="text" id="new-group-name" class="dev-input" placeholder="Enter group name..."
-                    style="margin-top: 5px;">
+                <input type="text" id="new-group-name" class="dev-input" placeholder="Enter group name..." style="margin-top: 5px;">
             </div>
             <div class="modal-actions">
-                <button class="danger-btn"
-                    onclick="document.getElementById('create-group-modal').classList.add('hidden')">Cancel</button>
+                <button class="danger-btn" onclick="document.getElementById('create-group-modal').classList.add('hidden')">Cancel</button>
                 <button class="primary-btn" id="confirm-create-group-btn">Create Group</button>
             </div>
         </div>
@@ -365,20 +311,16 @@
         <div class="dev-modal-content">
             <h2>Edit Profile</h2>
             <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
-                <button class="action-btn" onclick="document.getElementById('dp-upload-input').click()"><i
-                        class="fas fa-camera"></i> Change Logo</button>
-                <button class="action-btn" onclick="document.getElementById('banner-upload-input').click()"><i
-                        class="fas fa-image"></i> Change Banner</button>
+                <button class="action-btn" onclick="document.getElementById('dp-upload-input').click()"><i class="fas fa-camera"></i> Change Logo</button>
+                <button class="action-btn" onclick="document.getElementById('banner-upload-input').click()"><i class="fas fa-image"></i> Change Banner</button>
             </div>
             <div style="text-align: left; margin-bottom: 10px;">
                 <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Nickname</label>
-                <input type="text" id="edit-username-input" class="dev-input" placeholder="Your Name"
-                    style="margin-top: 5px;">
+                <input type="text" id="edit-username-input" class="dev-input" placeholder="Your Name" style="margin-top: 5px;">
             </div>
             <div style="text-align: left; margin-bottom: 10px;">
                 <label style="font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Description (Bio)</label>
-                <textarea id="edit-bio-input" class="dev-input" placeholder="Write something about yourself..."
-                    style="height: 100px; resize: none; margin-top: 5px;"></textarea>
+                <textarea id="edit-bio-input" class="dev-input" placeholder="Write something about yourself..." style="height: 100px; resize: none; margin-top: 5px;"></textarea>
             </div>
             <div class="modal-actions">
                 <button class="danger-btn" onclick="closeEditProfile()">Cancel</button>
@@ -390,13 +332,11 @@
     <div id="dev-assign-modal" class="modal-overlay hidden">
         <div class="dev-modal-content golden-border" style="border: 2px solid #fbbf24;">
             <h2 id="dev-modal-title">Assign Feature</h2>
-            <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal"
-                autocomplete="off">
+            <input type="text" id="dev-target-user" class="dev-input" placeholder="e.g. Nauras Daniyal" autocomplete="off">
             <div id="dev-options-grid" class="options-grid"></div>
             <div class="modal-actions">
                 <button class="action-btn" onclick="closeDevModal()">Cancel</button>
-                <button class="gold-btn" id="confirm-assign-btn" style="background:#fbbf24; color:#000;">Apply
-                    Power</button>
+                <button class="gold-btn" id="confirm-assign-btn" style="background:#fbbf24; color:#000;">Apply Power</button>
             </div>
         </div>
     </div>
@@ -404,8 +344,7 @@
     <div id="dev-action-modal" class="modal-overlay hidden">
         <div class="dev-modal-content" id="dev-action-box">
             <h2 id="action-modal-title">Take Action</h2>
-            <input type="text" id="action-target-user" class="dev-input" placeholder="Enter username..."
-                autocomplete="off">
+            <input type="text" id="action-target-user" class="dev-input" placeholder="Enter username..." autocomplete="off">
             <div class="modal-actions">
                 <button class="action-btn" onclick="closeDevModal()">Cancel</button>
                 <button class="danger-btn" id="confirm-action-btn">Execute</button>
