@@ -5,8 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atif Chat App - Ultimate Edition</title>
+    <!-- Favicon fix to stop 404 error -->
+    <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name=C&background=8b5cf6&color=fff">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
 </head>
 
 <body>
@@ -58,6 +63,7 @@
 
         <main id="content-area">
 
+            <!-- PROFILE -->
             <section id="profile-section" class="content-view active">
                 <div class="profile-banner-wrapper">
                     <div class="profile-banner" id="user-banner-container">
@@ -70,7 +76,7 @@
                 <div class="profile-info-container">
                     <div class="dp-wrapper-main">
                         <div class="dp-container" id="dp-wrapper">
-                            <img src="default-dp.png" alt="Profile Picture" id="user-dp">
+                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Profile Picture" id="user-dp">
                             <video id="user-dp-video" class="hidden" autoplay loop muted playsinline></video>
                         </div>
                         <input type="file" id="dp-upload-input" accept="image/*" class="hidden">
@@ -103,6 +109,7 @@
                 </div>
             </section>
 
+            <!-- PRIVATE CHAT -->
             <section id="chat-section" class="content-view hidden">
                 <div class="chat-layout">
                     <div class="chat-sidebar">
@@ -121,7 +128,7 @@
                         </div>
 
                         <div class="chat-header hidden" id="chat-header">
-                            <img src="default-dp.png" alt="Chat User" id="current-chat-dp">
+                            <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Chat User" id="current-chat-dp">
                             <div class="chat-header-info">
                                 <h3 id="current-chat-name">User</h3>
                                 <span class="status-text">Online • typing...</span>
@@ -146,6 +153,7 @@
                 </div>
             </section>
 
+            <!-- GROUP CHAT -->
             <section id="group-chat-section" class="content-view hidden">
                 <div class="chat-layout">
                     <div class="chat-sidebar">
@@ -159,7 +167,7 @@
                             <p>Select a group to start messaging</p>
                         </div>
                         <div class="chat-header hidden" id="group-header">
-                            <img src="group-default.png" alt="Group Icon">
+                            <img src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" alt="Group Icon">
                             <h3 id="current-group-name">Group</h3>
                             <button id="group-settings-btn" class="action-btn"><i class="fas fa-cog"></i></button>
                         </div>
@@ -174,6 +182,7 @@
                 </div>
             </section>
 
+            <!-- FRIENDSHIP BAND -->
             <section id="friendship-section" class="content-view hidden">
                 <div class="friendship-wrapper">
                     <div class="friendship-header">
@@ -183,7 +192,7 @@
                     <div class="band-status-card">
                         <div class="duo-display">
                             <div class="duo-member">
-                                <img src="default-dp.png" alt="Me" id="fb-my-dp">
+                                <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Me" id="fb-my-dp">
                                 <span>Me</span>
                             </div>
                             <div class="band-connection">
@@ -216,6 +225,7 @@
                 </div>
             </section>
 
+            <!-- WORLD CHAT -->
             <section id="world-chat-section" class="content-view hidden">
                 <div class="active-chat-window global-chat">
                     <div class="chat-header world-header">
@@ -239,6 +249,7 @@
                 </div>
             </section>
 
+            <!-- POST FEED -->
             <section id="post-section" class="content-view hidden">
                 <div class="feed-wrapper">
                     
@@ -247,7 +258,7 @@
                             <div class="story-avatar"><i class="fas fa-plus"></i></div>
                             <span>Add Status</span>
                         </div>
-                        </div>
+                    </div>
 
                     <div class="create-post-card">
                         <textarea id="post-input" placeholder="What's on your mind?"></textarea>
@@ -262,10 +273,12 @@
                     </div>
 
                     <div id="feed-container">
-                        </div>
+                        <!-- JS injects posts here -->
+                    </div>
                 </div>
             </section>
 
+            <!-- GAMES -->
             <section id="games-section" class="content-view hidden">
                 <div class="games-wrapper">
                     <h2 style="text-align:center; margin: 30px 0;">🎮 Game Zone</h2>
@@ -284,6 +297,7 @@
                 </div>
             </section>
 
+            <!-- SETTINGS -->
             <section id="settings-section" class="content-view hidden">
                 <div class="settings-wrapper">
                     <h2 class="settings-title">App Settings</h2>
@@ -314,6 +328,7 @@
                 </div>
             </section>
 
+            <!-- DEV DASHBOARD -->
             <section id="dev-section-view" class="content-view hidden">
                 <div id="dev-dashboard-wrapper">
                     <div class="dev-header">
@@ -362,6 +377,7 @@
         </main>
     </div>
 
+    <!-- MODALS -->
     <div id="edit-profile-modal" class="modal-overlay hidden">
         <div class="dev-modal-content">
             <h2>Edit Profile</h2>
@@ -415,7 +431,7 @@
         <div class="public-modal-content">
             <button class="close-modal-btn" onclick="closePublicProfile()"><i class="fas fa-times"></i></button>
             <div class="dp-container profile-modal-dp">
-                <img id="public-profile-dp" src="default-dp.png">
+                <img id="public-profile-dp" src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6">
             </div>
             <h2 id="public-profile-name">Username</h2>
             <div id="public-profile-rank" class="rank-badge">Member</div>
@@ -427,6 +443,16 @@
         </div>
     </div>
 
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker Registered!'))
+                    .catch(err => console.log('Service Worker Failed:', err));
+            });
+        }
+    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>

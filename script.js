@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. SAFE STATE & LOCAL STORAGE (Crash-Proof)
+    // 1. SAFE STATE & LOCAL STORAGE
     // ==========================================
     let currentUser = null;
     let registeredUsers = [];
+    
+    // Fallback Image API to prevent 404 errors
+    const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
     
     try {
         const storedUser = localStorage.getItem('chatUser');
@@ -55,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
         saveUserData();
     }
 
-    // 🔴 THE CRASH SHIELD: Prevents PC freeze if storage is full
     function saveUserData() {
         if(!currentUser || !currentUser.email) return;
         
@@ -147,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     email: emailInput,
                     isDev: isDev,
                     bio: "Hallo World",
-                    dp: "default-dp.png",
+                    dp: `https://ui-avatars.com/api/?name=${usernameInput}&background=eaddff&color=8b5cf6`,
                     banner: "",
                     rank: "Member",
                     userColor: "",
@@ -162,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(!currentUser.rank) currentUser.rank = "Member";
                 if(!currentUser.mood) currentUser.mood = "😎";
                 if(!currentUser.statusMsg) currentUser.statusMsg = "Available";
+                if(currentUser.dp === "default-dp.png") currentUser.dp = `https://ui-avatars.com/api/?name=${currentUser.username}&background=eaddff&color=8b5cf6`;
             }
             
             checkDailyStreak();
@@ -170,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. PROFILE UI, MOOD & INSTAGRAM EDIT MODAL
+    // 5. PROFILE UI & EDIT MODAL
     // ==========================================
     const operatorColors = [
         "#FF0000", "#FF1493", "#8A2BE2", "#0000FF", "#1E90FF", "#00FFFF", 
@@ -204,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyMedia(currentUser.banner, 'banner-img', 'banner-video');
         
         const fbMyDp = document.getElementById('fb-my-dp');
-        if (fbMyDp) fbMyDp.src = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : 'default-dp.png';
+        if (fbMyDp) fbMyDp.src = (currentUser.dp && !currentUser.dp.startsWith('data:video')) ? currentUser.dp : DEFAULT_DP;
 
         if(nameDisplay) {
             nameDisplay.className = 'username-display'; 
@@ -255,20 +258,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Interactive Status Edit
     const statusText = document.getElementById('custom-status-text');
     if(statusText) {
         statusText.addEventListener('click', () => {
             const newStatus = prompt("What's on your mind?", currentUser.statusMsg);
             if(newStatus !== null) {
-                currentUser.statusMsg = newStatus.substring(0, 30); // 30 character limit
+                currentUser.statusMsg = newStatus.substring(0, 30); 
                 saveUserData();
                 loadProfileData();
             }
         });
     }
 
-    // Instagram Style Edit Profile Logic
     const editBtn = document.getElementById('edit-profile-btn');
     const editModal = document.getElementById('edit-profile-modal');
     const editUserIn = document.getElementById('edit-username-input');
@@ -302,15 +303,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Safe File Upload Logic (Max 1.5MB to prevent Quota Exceeded Crash)
     ['banner', 'dp'].forEach(type => {
         const input = document.getElementById(`${type}-upload-input`);
         if(input) {
             input.addEventListener('change', function () {
                 const file = this.files[0];
                 if (file) {
-                    if (file.size > 1500000) { // 1.5MB Limit
-                        return alert("File is too large! Please select an image smaller than 1.5MB to prevent browser crash.");
+                    if (file.size > 1500000) { 
+                        return alert("File is too large! Please select an image smaller than 1.5MB.");
                     }
                     const reader = new FileReader();
                     reader.onload = function (e) {
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const imgElement = document.getElementById(imgId);
         const videoElement = document.getElementById(videoId);
         if (!dataUrl || dataUrl === 'default-dp.png' || dataUrl === '') {
-            if (imgElement) { imgElement.src = 'default-dp.png'; imgElement.classList.remove('hidden'); }
+            if (imgElement) { imgElement.src = DEFAULT_DP; imgElement.classList.remove('hidden'); }
             if (videoElement) videoElement.classList.add('hidden');
             return;
         }
@@ -351,7 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadProfileData();
     }
 
-    // Sidebar View Navigation
     const navButtons = document.querySelectorAll('.nav-btn');
     const contentViews = document.querySelectorAll('.content-view');
     navButtons.forEach(btn => {
@@ -378,10 +377,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 6. CHAT LOGIC & SLOW MODE
+    // 6. CHAT, SOUND & MUTE LOGIC (BUG FIXED)
     // ==========================================
     let isWorldMuted = false;
     let lastWorldMessageTime = 0;
+    
+    // Notification Sound
+    const notifySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
     const muteWorldBtn = document.getElementById('world-mute-btn');
     if(muteWorldBtn) {
@@ -398,7 +400,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = input.value.trim();
         
         if (text !== "") {
-            // 3s Slow Mode for non-dev users
             if (areaId === 'world-messages-area') {
                 const now = Date.now();
                 if (now - lastWorldMessageTime < 3000 && !currentUser.isDev) {
@@ -433,6 +434,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if(text.includes('@' + currentUser.username) || text.includes('@everyone')) {
             msgDiv.classList.add('mentioned-msg');
             formattedText = text.replace(new RegExp(`(@${currentUser.username}|@everyone)`, 'g'), `<span class="mention-highlight">$1</span>`);
+            
+            // Special ping sound for mentions
+            if(senderType === 'other' && !isWorldMuted) {
+                notifySound.play().catch(e=>{});
+            }
         }
         
         msgDiv.innerHTML = formattedText;
@@ -442,7 +448,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on("receive_message", (data) => {
         if(data.sender === currentUser.username) return;
+        
         if(data.area === 'world-messages-area' && isWorldMuted) return; 
+        
+        // Play sound if message received and not muted
+        if (!isWorldMuted) {
+            notifySound.currentTime = 0;
+            notifySound.play().catch(e => console.log('Audio blocked by browser.'));
+        }
+
         appendMessageToScreen(data.text, data.area, 'other');
     });
 
@@ -460,7 +474,64 @@ document.addEventListener('DOMContentLoaded', () => {
     setupInput('group-message-input', 'group-messages-area', 'group-send-btn');
 
     // ==========================================
-    // 7. DEVELOPER DASHBOARD LOGIC
+    // 7. MISSING BUTTONS FIXED (Groups & Posts)
+    // ==========================================
+
+    // Fix 1: Add Group Button
+    const createGroupBtn = document.getElementById('create-group-btn');
+    if (createGroupBtn) {
+        createGroupBtn.addEventListener('click', () => {
+            const groupName = prompt("Enter a name for the new group:");
+            if (groupName && groupName.trim() !== "") {
+                const groupList = document.getElementById('group-list-container');
+                const newGroup = document.createElement('div');
+                newGroup.className = 'dummy-item';
+                newGroup.innerHTML = `<div class="contact-avatar"><i class="fas fa-users"></i></div><b>${groupName}</b>`;
+                newGroup.onclick = () => {
+                    document.getElementById('group-placeholder')?.classList.add('hidden');
+                    document.getElementById('group-header')?.classList.remove('hidden');
+                    document.getElementById('group-messages-area')?.classList.remove('hidden');
+                    document.getElementById('group-input-area')?.classList.remove('hidden');
+                    if(document.getElementById('current-group-name')) document.getElementById('current-group-name').innerText = groupName;
+                };
+                groupList.appendChild(newGroup);
+            }
+        });
+    }
+
+    // Fix 2: Submit Post Button
+    const submitPostBtn = document.getElementById('submit-post-btn');
+    if (submitPostBtn) {
+        submitPostBtn.addEventListener('click', () => {
+            const postInput = document.getElementById('post-input');
+            const text = postInput.value.trim();
+            if (text !== "") {
+                const feedContainer = document.getElementById('feed-container');
+                const newPost = document.createElement('div');
+                newPost.className = 'feed-post';
+                newPost.innerHTML = `
+                    <div class="post-header">
+                        <img src="${currentUser.dp || DEFAULT_DP}" alt="DP">
+                        <div>
+                            <b>${currentUser.username}</b>
+                            <span class="rank-badge rank-${(currentUser.rank || 'member').toLowerCase()}" style="font-size: 0.6rem; padding: 2px 6px; margin-left: 5px;">${currentUser.rank || 'Member'}</span>
+                        </div>
+                        <span>• Just now</span>
+                    </div>
+                    <div class="post-content">${text}</div>
+                    <div class="post-footer">
+                        <button class="like-btn" onclick="this.style.color='#ef4444'"><i class="far fa-heart"></i> Like</button>
+                        <button class="comment-btn"><i class="far fa-comment"></i> Comment</button>
+                    </div>
+                `;
+                feedContainer.prepend(newPost);
+                postInput.value = "";
+            }
+        });
+    }
+
+    // ==========================================
+    // 8. DEVELOPER DASHBOARD LOGIC
     // ==========================================
     let currentDevAction = "";
     let selectedDevOption = null;
