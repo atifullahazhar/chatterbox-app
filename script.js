@@ -1,4 +1,4 @@
-console.log("🔥 CHATTERBOX VIP ECOSYSTEM OS - PYTHON AI INTEGRATED ENGINE V14 🔥");
+console.log("🔥 CHATTERBOX VIP ECOSYSTEM OS - PYTHON AI INTEGRATED ENGINE V15 🔥");
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 2. PRIMARY AUTHENTICATION PROCESS REGISTRY HOOKS
+    // 2. PRIMARY AUTHENTICATION PROCESS REGISTRY HOOKS (LOGIN LOGIC)
     // =========================================================================
     function performLoginProcess() {
         const username = gVal('username-input');
@@ -172,35 +172,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. 🤖 PYTHON AI INTEGRATION ASYNC FUNCTIONS (SENTIMENT & SPAM) 🤖
     // =========================================================================
 
-    // PYTHON AI: Direct Chat Message Processing Engine
     async function processAndSendDirectMessage() {
         const inputFieldTextElementPointer = safeEl('message-input');
         let messagePacketStringText = gVal('message-input');
         
         if (messagePacketStringText !== "" && activeChatUser) {
-            
-            // --- 🐍 PYTHON FASTAPI AI SENTIMENT ANALYSIS INTERCEPTOR 🐍 ---
             try {
-                // Calling your local Python Server
                 const aiResponse = await fetch('http://127.0.0.1:8000/api/ai/sentiment-analysis', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: messagePacketStringText, sender: currentUser.username })
                 });
-                
                 const aiData = await aiResponse.json();
-                
-                // Check if Python AI flagged this as toxic
                 if (aiData.classification && aiData.classification.is_toxic) {
                     alert(`🚨 PYTHON AI SECURITY SHIELD: Toxic language detected! (Toxicity Confidence: ${aiData.classification.toxicity_rating}). Transmission Blocked automatically by Server to prevent shadowban.`);
-                    return; // Stop execution, block message!
+                    return; 
                 }
             } catch (err) {
                 console.warn("Python AI Engine not reachable. Ensure uvicorn is running. Bypassing AI filter.", err);
             }
-            // -----------------------------------------------------------------
 
-            // Proceed with rendering the safe message
             const messagesAreaCanvasGridOutputOutlet = safeEl('messages-area');
             const singleMessageBubbleRowWrapperDiv = document.createElement('div');
             singleMessageBubbleRowWrapperDiv.className = "message-bubble my-msg";
@@ -226,15 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // PYTHON AI: Post Feed Submission Spam Processing Engine
     async function processAndPublishFeedPost() {
         const contentText = gVal('post-input');
         const privacySelect = safeEl('post-privacy-scope-configuration-level-toggle-select');
         const privacyScopeStr = privacySelect ? privacySelect.value : 'public';
 
         if (contentText !== "" || attachedPostImage) {
-            
-            // --- 🐍 PYTHON FASTAPI AI SPAM DETECTION INTERCEPTOR 🐍 ---
             if (contentText !== "") {
                 try {
                     const spamResponse = await fetch('http://127.0.0.1:8000/api/ai/spam-detection', {
@@ -242,18 +230,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ text: contentText, sender: currentUser.username })
                     });
-                    
                     const spamData = await spamResponse.json();
-                    
                     if (spamData.verdict && spamData.verdict.is_spam) {
                         alert(`🚨 PYTHON AI ANTI-SPAM ENGINE: This post looks like automated bot spam! (Spam Score: ${spamData.verdict.spam_probability_score}%). \n\nTriggers: ${spamData.verdict.trigger_reasons_identified.join(', ')}. \n\nPost Injection Rejected!`);
-                        return; // Stop execution, block post!
+                        return; 
                     }
                 } catch (err) {
                     console.warn("Python AI Spam Engine offline. Bypassing.", err);
                 }
             }
-            // -----------------------------------------------------------------
 
             const hashTagsFoundArray = contentText.match(/#\w+/g) || [];
             
@@ -282,7 +267,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = e.target;
         if (!target) return;
 
-        if (target.closest('#join-btn')) { performLoginProcess(); return; }
+        // --- LOGIN & OTP BUTTON TRIGGERS ---
+        if (target.closest('#join-btn')) { 
+            performLoginProcess(); 
+            return; 
+        }
+
+        if (target.closest('#action-switch-to-otp-mode-btn')) {
+            const otpBlock = safeEl('otp-login-verification-block');
+            const otpBtn = target.closest('#action-switch-to-otp-mode-btn');
+            if (otpBlock) {
+                if (otpBlock.classList.contains('hidden')) {
+                    otpBlock.classList.remove('hidden');
+                    otpBtn.innerText = "Cancel OTP Verification Process";
+                    otpBtn.style.background = "#ef4444";
+                    otpBtn.style.color = "#fff";
+                } else {
+                    otpBlock.classList.add('hidden');
+                    otpBtn.innerText = "Verify via Secure Mobile SMS OTP Channel Port";
+                    otpBtn.style.background = "var(--bg-panel)";
+                    otpBtn.style.color = "var(--text-main)";
+                }
+            }
+            return;
+        }
+
         if (target.closest('#trigger-view-tos-modal')) { sRem('tos-documentation-framework-overlay-modal', 'hidden'); return; }
 
         const navBtn = target.closest('.nav-btn');
@@ -417,7 +426,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.closest('#post-image-btn')) { const input = safeEl('post-image-upload-input'); if(input) input.click(); return; }
         if (target.closest('#action-remove-attached-post-file-buffer')) { attachedPostImage = null; sAdd('post-media-attachment-status-preview', 'hidden'); sVal('post-image-upload-input', ''); return; }
 
-        // TRIGGER PYTHON AI SPAM LOGIC 
         if (target.closest('#submit-post-btn')) {
             processAndPublishFeedPost();
             return;
@@ -512,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (target.closest('#break-band-btn')) {
-            if (confirm("DESTRUCTIVE ACTION ADVISORY: Are you completely certain you intend to forcefully split, terminate, and sever the current synchronization coordinate alignment bounds vectors?")) {
+            if (confirm("DESTRUCTIVE ACTION ADVISORY: Are you completely certain you intend to forcefully split, terminate, and sever the current synchronization coordinate alignment bounds vectors? This will destroy stream statistics calculations rows.")) {
                 sHtml('fb-partner-dp-slot', '?');
                 sText('fb-partner-name', "Partner Node Space");
                 sText('band-level', "Synchronization Tier Level 0");
@@ -526,7 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // TRIGGER PYTHON AI SENTIMENT LOGIC FOR DIRECT CHAT
         if (target.closest('#send-btn')) {
             processAndSendDirectMessage();
             return;
@@ -538,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (toggleClockBtnPointer) {
                 if (activeDisappearingMessagesMode) {
                     toggleClockBtnPointer.style.color = "#fbbf24";
-                    alert("CONFIGURATION ADJUSTMENT: Ephemeral Volatile Disappearing Packet Modes activated. Subsequent payloads will disintegrate in 10 seconds.");
+                    alert("CONFIGURATION ADJUSTMENT: Ephemeral Volatile Disappearing Packet Modes activated. Subsequent message block payloads will disintegrate 10 seconds post injection lifecycle frame grids loops.");
                 } else {
                     toggleClockBtnPointer.style.color = "var(--text-muted)";
                     alert("CONFIGURATION ADJUSTMENT: Epappearing Message Constraints detached. Standard historical records storage parameters re-engaged.");
@@ -560,9 +567,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveData();
                 renderDeveloperBugReportsAggregationPanelList();
                 sAdd('bug-report-modal', 'hidden');
-                alert(`BUG REPORTING SECURED: Trace payload ID [${packagedBugReportJsonObjectNodeRecord.id}] dispatched directly to Supreme Admin Control dashboards.`);
+                alert(`BUG REPORTING SECURED: Algorithmic defect index packaging verified and logged. Packet ID allocated: [${packagedBugReportJsonObjectNodeRecord.id}] dispatched directly to Supreme Admin Control dashboards pipelines grids.`);
             } else {
-                alert("COMPILATION FAILURE: Bug trace narrative summary field value data cannot occupy null space.");
+                alert("COMPILATION FAILURE: Bug trace narrative summary field value data cannot occupy null space records rows entries arrays.");
             }
             return;
         }
@@ -576,19 +583,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (target.closest('#action-clear-cache-btn')) {
-            if (confirm("CACHE CLEANUP INITIATION: Are you certain you desire to execute memory buffer deallocation routines?")) {
+            if (confirm("CACHE CLEANUP INITIATION: Are you certain you desire to execute memory buffer deallocation routine parameters switches controls flags rules maps rows tables index loops?")) {
                 localStorage.removeItem('chatPosts');
                 posts = [];
                 renderPosts();
-                alert("STORAGE ENGINE LOG: Cache segment arrays blocks unlinked. Local system space optimized.");
+                alert("STORAGE ENGINE LOG: Cache segment arrays blocks tables unlinked and garbage collection sequences parsed safely. Local system space optimized rows layers cleared metrics charts.");
             }
             return;
         }
 
-        // L. DEVELOPER DASHBOARD Toggles
         if (target.closest('#dev-assign-rank-btn')) { sText('dev-modal-title', "Modify Security Privileges Framework (Rank Selection)"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('rank'); return; }
         if (target.closest('#dev-assign-ring-btn')) { sText('dev-modal-title', "Modify Visual Profile Avatar Particle Geometry Ring Border"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('ring'); return; }
-        if (target.closest('#dev-assign-theme-btn')) { sText('dev-modal-title', "Modify Application Environment Interface Color Spectrum"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('theme'); return; }
+        if (target.closest('#dev-assign-theme-btn')) { sText('dev-modal-title', "Modify Application Environment Interface Color Spectrum Stylesheet CSS Themes Sheets"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('theme'); return; }
         if (target.closest('#dev-ban-user-execution-btn')) { openDevActionModal('Execute Account Authorization Revocation Protocol (Permanent Ban)'); return; }
         if (target.closest('#dev-unban-user-execution-btn')) { openDevActionModal('Execute Suspended clearance Credentials Restoration Vector (Reverse Profile Unban)'); return; }
         
@@ -604,10 +610,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = safeEl('dev-shadowban-icon-display');
             if (devStates.shadowban) {
                 if(btn) btn.style.borderColor = '#ef4444'; if(icon) icon.style.textShadow = '0 0 20px #ef4444';
-                sHtml('dev-shadowban-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: SHADOWBAN FILTERS ENGAGED</b>');
+                sHtml('dev-shadowban-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: SHADOWBAN ISOLATION FILTERS ENGAGED</b> // Targeted profiles outbound packet parsing indices routes are secretly drops.');
             } else {
                 if(btn) btn.style.borderColor = '#a855f7'; if(icon) icon.style.textShadow = '0 0 15px #a855f7';
-                sText('dev-shadowban-desc-display', 'CURRENT STATUS MODE: RUNNING MONITORING SAFE SYSTEM NORMAL.');
+                sText('dev-shadowban-desc-display', 'CURRENT STATUS MODE: RUNNING MONITORING SAFE SYSTEM NORMAL // Execute silent transmission routing filter isolation layer over target handle entries parameters.');
             }
             return;
         }
@@ -618,10 +624,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = safeEl('dev-global-mute-icon-display');
             if (devStates.globalMute) {
                 if(btn) btn.style.borderColor = '#ef4444'; if(icon) { icon.style.textShadow = '0 0 20px #ef4444'; icon.innerText = '🔇'; }
-                sHtml('dev-global-mute-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: GLOBAL MUTE LOCK</b>');
+                sHtml('dev-global-mute-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: GLOBAL BROADS SPACE CHANNEL TRANSMISSIONS FROZEN MUTE LOCK</b> // Global chat inputs stream strings are blocked.');
             } else {
                 if(btn) btn.style.borderColor = '#a855f7'; if(icon) { icon.style.textShadow = '0 0 15px #a855f7'; icon.innerText = '🤐'; }
-                sText('dev-global-mute-desc-display', 'CURRENT STATUS MODE: TRANSMISSIONS OPEN UNRESTRICTED.');
+                sText('dev-global-mute-desc-display', 'CURRENT STATUS MODE: TRANSMISSIONS OPEN UNRESTRICTED // Freeze or activate packet line parsing pipelines processes across all client transmission data systems slots buffers.');
             }
             return;
         }
@@ -632,10 +638,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = safeEl('dev-maintenance-icon-display');
             if (devStates.maintenance) {
                 if(btn) btn.style.borderColor = '#ef4444'; if(icon) icon.style.textShadow = '0 0 20px #ef4444';
-                sHtml('dev-maintenance-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: MAINTENANCE STACK TIERS MODE</b>');
+                sHtml('dev-maintenance-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: ECOSYSTEM ARCHITECTURE ISOLATED IN MAINTENANCE STACK TIERS MODE</b> // Traffic redirected completely.');
             } else {
                 if(btn) btn.style.borderColor = '#f97316'; if(icon) icon.style.textShadow = '0 0 15px #f97316';
-                sText('dev-maintenance-desc-display', 'CURRENT STATUS MODE: SYSTEM LIVE OPERATIONAL.');
+                sText('dev-maintenance-desc-display', 'CURRENT STATUS MODE: SYSTEM LIVE OPERATIONAL // Shut down client view screens pipelines displays layers and redirect target incoming traffic to architecture error grids blocks layouts windows items fields framework.');
             }
             return;
         }
@@ -670,10 +676,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderFriendsListModal() {
         const container = safeEl('modal-friend-list-container');
-        if (!container) return; container.innerHTML = '';
+        if (!container) return;
+        container.innerHTML = '';
         
         if (friends.length === 0) {
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:1.05rem; padding: 20px; font-weight: bold;">You have no friends added to your profile list yet. Connect with other users through the Request tab.</p>`;
+            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:1.05rem; padding: 20px; font-weight: bold; font-family: inherit;">You have no friends added to your profile list yet. Connect with other users through the Request tab to populate your contact roster directory rows logs entries layers models maps frames grids cells tabs elements.</p>`;
             return;
         }
         
@@ -693,10 +700,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDeveloperBugReportsAggregationPanelList() {
         const targetOutletListWrapperDivPointerElement = safeEl('dev-bug-reports-list-target-outlet-wrapper');
         const overlayDashboardViewContainerListPointerElement = safeEl('dev-bug-reports-container');
+        
         let constructedHtmlPayloadRowsBlocksSequenceString = "";
         
         if (systemBugReports.length === 0) {
-            constructedHtmlPayloadRowsBlocksSequenceString = `<p style="text-align: center; color: #64748b; font-family: monospace; padding: 20px;">[ROUTING TRACE STATUS LOGS: QUEUE BUFFER EMPTY // NO ACTIVE SYSTEM DEFECT PACKETS DISPATCHED]</p>`;
+            constructedHtmlPayloadRowsBlocksSequenceString = `<p style="text-align: center; color: #64748b; font-family: monospace; padding: 20px;">[ROUTING TRACE STATUS LOGS: QUEUE BUFFER EMPTY // NO ACTIVE SYSTEM DEFECT PACKETS DISPATCHED IN STACK MATRIX RECORDS ROWS]</p>`;
         } else {
             systemBugReports.forEach(report => {
                 constructedHtmlPayloadRowsBlocksSequenceString += `
@@ -717,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 5. FILE UPLOADS PARSING SYSTEM STACK PORT ENTRY PORTS
+    // 5. FILE UPLOADS PARSING SYSTEM STACK PORT ENTRY PORTS INTERFACES PIPELINES
     // =========================================================================
     function setupFileInput(id, callback) {
         const el = safeEl(id);
@@ -753,15 +761,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     };
+    handleEnterKeypressRoutingPort('username-input', 'join-btn');
+    handleEnterKeypressRoutingPort('email-input', 'join-btn');
+    handleEnterKeypressRoutingPort('dev-code', 'join-btn');
     handleEnterKeypressRoutingPort('message-input', 'send-btn');
     handleEnterKeypressRoutingPort('world-message-input', 'world-send-btn');
     handleEnterKeypressRoutingPort('chat-sidebar-search-input', 'sidebar-action-search-trigger');
 
     // =========================================================================
-    // 7. CORE COMPONENT PRESENTATION DOM DATA RENDERING FLOW SCHEMAS
+    // 7. CORE COMPONENT PRESENTATION DOM DATA RENDERING FLOW SCHEMAS (STANDARDS METHODS)
     // =========================================================================
-    
-    // Trigger Python AI checks on Global Chat as well!
     async function sendWorldMessage() {
         const inputVal = gVal('world-message-input');
         if (inputVal !== "") {
@@ -776,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const aiData = await aiRes.json();
                 if (aiData.classification && aiData.classification.is_toxic) {
                     alert("⚠️ PYTHON AI FIREWALL: Toxic language detected in Global Chat. Packet Dropped!");
-                    return; // Stop execution
+                    return; 
                 }
             } catch (err) {
                 console.warn("Python AI Server offline, proceeding without AI filtering.");
@@ -874,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sAdd('search-friend-field-block', 'hidden');
             
             if (friendRequests.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">No inbound verification requests detected inside local repository cache.</p>`;
+                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">No inbound verification requests detected inside local repository cache table frames grids rows lines data nodes.</p>`;
                 return;
             }
             friendRequests.forEach(req => {
