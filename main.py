@@ -21,7 +21,7 @@ from textblob import TextBlob
 app = FastAPI(
     title="Chatterbox VIP AI Core Ecosystem Engine",
     description="Distributed Realtime Intelligence Routing Grid for System Matrix Overrides",
-    version="13.0.0"
+    version="14.0.0"
 )
 
 # Configure Cross-Origin Resource Sharing (CORS) so Node.js/Frontend can talk to Python
@@ -63,6 +63,22 @@ class BackupPayload(BaseModel):
 
 
 # =========================================================================
+# 0. ROOT HEALTH CHECK (CRITICAL FOR RENDER/LIVE DEPLOYMENT STATUS)
+# =========================================================================
+@app.get("/", status_code=status.HTTP_200_OK)
+async def system_root_health_check_endpoint():
+    """
+    Live cloud providers (like Render) require a root endpoint to verify the service is running.
+    """
+    return {
+        "status": "ONLINE", 
+        "service": "Chatterbox VIP AI Matrix Engine",
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "message": "Supreme AI Backend is actively routing data correctly."
+    }
+
+
+# =========================================================================
 # 1. AI FEATURE LAYER: REALTIME SENTIMENT ANALYSIS (TOXIC FILTER ENGINE)
 # =========================================================================
 @app.post("/api/ai/sentiment-analysis", status_code=status.HTTP_200_OK)
@@ -94,7 +110,8 @@ async def analyze_packet_sentiment_and_toxicity(payload: TextPayload):
             if toxicity_confidence_rating > 1.0: toxicity_confidence_rating = 1.0
         elif text_polarity_score < -0.4:
             is_toxic_flag = True
-            toxicity_confidence_rating = abs(text_polarity_score)
+            # FIX: Properly cap the absolute rating
+            toxicity_confidence_rating = min(abs(text_polarity_score), 1.0)
             
         system_action_recommendation = "ALLOW_TRANSMISSION"
         if is_toxic_flag:
@@ -275,6 +292,10 @@ async def generate_chat_log_summary_essence(payload: ChatLogPayload):
             
         combined_full_text_buffer_string = " ".join(chat_logs_array_list)
         
+        # FIX: Guarding against division by zero if string is completely empty spaces
+        if len(combined_full_text_buffer_string.strip()) == 0:
+             return {"summary": "Empty textual payload received.", "sentences_processed": 0, "compression_ratio_percentage": 0.0}
+        
         # Tokenize paragraph blocks into sentences strings array lists lines using regex patterns matching
         sentences_tokenized_list = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', combined_full_text_buffer_string)
         total_tokenized_sentences_count = len(sentences_tokenized_list)
@@ -439,10 +460,12 @@ async def automate_system_storage_dump_backup(payload: BackupPayload):
 
 
 # =========================================================================
-# SYSTEM RUNTIME EXECUTION ROUTER ENTRYPORT (LOCAL SANDBOX DEVELOPMENT DETACH)
+# SYSTEM RUNTIME EXECUTION ROUTER ENTRYPORT (RENDER / LIVE SERVER READY)
 # =========================================================================
 if __name__ == "__main__":
     import uvicorn
-    # Boots up local development host interface port mapping loop variables parameters values
-    # Accessible via address context target link pipeline: http://127.0.0.1:8000
-    uvicorn.run("main.py:app", host="127.0.0.1", port=8000, reload=True)
+    # FIX: Live Deployment Binding. 
+    # Switched from Localhost "127.0.0.1" to "0.0.0.0" so Render can publicly expose the port.
+    # Reads dynamically assigned port from the environment, defaults to 8000.
+    live_server_port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main.py:app", host="0.0.0.0", port=live_server_port, reload=True)
