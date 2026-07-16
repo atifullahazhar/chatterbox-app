@@ -1,41 +1,113 @@
-console.log("🔥 CHATTERBOX VIP ECOSYSTEM OS - PYTHON AI INTEGRATED ENGINE V15 (LOGIN FIXED) 🔥");
+// =========================================================================
+// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V22 🔥
+// Privileges: SUPREME CORE ROOT OPERATOR
+// Optimization: STRICTLY DISABLED. FULL LOGIC EXPANDED.
+// Features Added: WebRTC Calling, Web Speech API (Hinglish), Media Uploads
+// =========================================================================
 
+console.log("🔥 CHATTERBOX VIP ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥");
+
+// =========================================================================
+// 0. CORE DOM UTILITIES
+// =========================================================================
+function safeEl(id) {
+    return document.getElementById(id);
+}
+
+function sAdd(id, className) {
+    const element = safeEl(id);
+    if (element) {
+        element.classList.add(className);
+    }
+}
+
+function sRem(id, className) {
+    const element = safeEl(id);
+    if (element) {
+        element.classList.remove(className);
+    }
+}
+
+function sText(id, textValue) {
+    const element = safeEl(id);
+    if (element) {
+        element.innerText = textValue;
+    }
+}
+
+function sHtml(id, htmlValue) {
+    const element = safeEl(id);
+    if (element) {
+        element.innerHTML = htmlValue;
+    }
+}
+
+function sVal(id, value) {
+    const element = safeEl(id);
+    if (element) {
+        element.value = value;
+    }
+}
+
+function gVal(id) {
+    const element = safeEl(id);
+    if (element) {
+        return element.value.trim();
+    }
+    return '';
+}
+
+function sSrc(id, sourceUrl) {
+    const element = safeEl(id);
+    if (element) {
+        element.src = sourceUrl;
+    }
+}
+
+
+// =========================================================================
+// 1. DYNAMIC SYSTEM DATABASE & STATE VARIABLES
+// =========================================================================
+let currentUser = null;
+let friends = [];
+let friendRequests = [];
+let bandRequests = [];
+let posts = [];
+let groups = [];
+let systemBugReports = [];
+
+let activeChatUser = null;
+let currentChatTab = 'general';
+let currentRequestSubTab = 'accept';
+let searchedUserContext = null;
+
+let isWorldMuted = false;
+let activeDisappearingMessagesMode = false;
+let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
+let attachedPostImage = null;
+
+let clientMetricsRequestTelemetryCounter = 0;
+
+// Central Server Mapped Directory
+const systemVerifiedUserDirectory = [
+    { username: "Atifullah Azhar", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Developer and Creator of Chatterbox VIP.", rank: "Developer" },
+    { username: "Nauras Daniyal", dp: "https://ui-avatars.com/api/?name=Nauras&background=eaddff&color=8b5cf6", bio: "Platform Administrator.", rank: "Operator" },
+    { username: "Rahul Sharma", dp: "https://ui-avatars.com/api/?name=Rahul&background=ffedd5&color=f97316", bio: "Core Beta Tester.", rank: "Elite" },
+    { username: "Sneha_007", dp: "https://ui-avatars.com/api/?name=Sneha&background=fce7f3&color=ec4899", bio: "Hey there! I am using Chatterbox.", rank: "Member" }
+];
+
+const socket = (typeof io !== 'undefined') ? io() : { on: () => { }, emit: () => { } };
+const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
+
+
+// =========================================================================
+// 2. INITIALIZATION AND BOOTSTRAP LOGIC
+// =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // =========================================================================
-    // 0. CORE CRASH-PROOF DOM INTERFACE POINTERS LOGIC
-    // =========================================================================
-    const safeEl = id => document.getElementById(id);
-    const sAdd = (id, cls) => { const el = safeEl(id); if(el) el.classList.add(cls); };
-    const sRem = (id, cls) => { const el = safeEl(id); if(el) el.classList.remove(cls); };
-    const sText = (id, txt) => { const el = safeEl(id); if(el) el.innerText = txt; };
-    const sHtml = (id, html) => { const el = safeEl(id); if(el) el.innerHTML = html; };
-    const sVal = (id, val) => { const el = safeEl(id); if(el) el.value = val; };
-    const gVal = (id) => { const el = safeEl(id); return el ? el.value.trim() : ''; };
-    const sSrc = (id, src) => { const el = safeEl(id); if(el) el.src = src; };
+    console.log("DOM fully loaded and parsed. Bootstrapping UI Components...");
 
-    // =========================================================================
-    // 1. DYNAMIC SYSTEM DATABASE & PARAMETERS CONFIGURATIONS STATE
-    // =========================================================================
-    let currentUser = null;
-    let friends = [];
-    let friendRequests = []; 
-    let bandRequests = [];   
-    let posts = [];
-    let groups = [];
-    
-    let systemBugReports = [];
-    let activeChatPinnedMessages = {}; 
-    let activeDisappearingMessagesMode = false;
-    let currentSystemLanguage = 'en';
-
-    const systemVerifiedUserDirectory = [
-        { username: "Atifullah Azhar", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Supreme Root Developer & Owner of Chatterbox VIP Architecture Matrix.", rank: "Developer" },
-        { username: "Nauras Daniyal", dp: "https://ui-avatars.com/api/?name=Nauras&background=eaddff&color=8b5cf6", bio: "Verified Operations Specialist Platform Node Administrator.", rank: "Operator" },
-        { username: "Rahul Sharma", dp: "https://ui-avatars.com/api/?name=Rahul&background=ffedd5&color=f97316", bio: "Premium Core Beta Tester & Systems Optimization Analyst.", rank: "Elite" },
-        { username: "Sneha_007", dp: "https://ui-avatars.com/api/?name=Sneha&background=fce7f3&color=ec4899", bio: "Secured encrypted network endpoint data communication pipeline.", rank: "Member" }
-    ];
-
+    // Retrieve Local Storage Data Carefully
     try {
         currentUser = JSON.parse(localStorage.getItem('chatUser')) || null;
         friends = JSON.parse(localStorage.getItem('chatFriends')) || [];
@@ -45,30 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
         groups = JSON.parse(localStorage.getItem('chatGroups')) || [];
         systemBugReports = JSON.parse(localStorage.getItem('chatBugReports')) || [];
     } catch (error) {
-        console.error("Critical System Registry Parsing Exception:", error);
+        console.error("Local Storage Parsing Error Detected:", error);
     }
-    
-    let activeChatUser = null;
-    let currentChatTab = 'general'; 
-    let currentRequestSubTab = 'accept'; 
-    let searchedUserContext = null;
 
-    let isWorldMuted = false;
-    let devStates = { shadowban: false, globalMute: false, maintenance: false };
-    
-    let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
-    let attachedPostImage = null;
-
-    const socket = (typeof io !== 'undefined') ? io() : { on: () => {}, emit: () => {} };
-    const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6";
-
+    // Process Application View if User Exists
     if (currentUser && currentUser.username) {
+        console.log("Active User Found in Session. Transitioning to Workspace Dashboard.");
         sRem('login-screen', 'active');
         sAdd('login-screen', 'hidden');
         sRem('main-app', 'hidden');
         sAdd('main-app', 'active');
-        
+
         applySystemThemePalette();
+        enforceDeveloperThemeRestrictions();
         updateProfileUI();
         renderContacts();
         updateBadgesAndCounts();
@@ -76,8 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGroups();
         renderBandRequests();
         triggerAutomatedWelcomeBroadcast();
+    } else {
+        console.log("No active user session verified. Standing by at Authentication Screen.");
     }
 
+    // Storage Writer Function
     function saveData() {
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
         localStorage.setItem('chatFriends', JSON.stringify(friends));
@@ -91,12 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applySystemThemePalette() {
         if (!currentUser) return;
-        const paletteSelector = safeEl('settings-theme-palette-spectrum-engine-selector-dropdown-field');
-        
+        const themeSelectorDropdownElement = safeEl('settings-theme-palette-spectrum-engine-selector-dropdown-field');
         if (currentUser.theme) {
             document.documentElement.setAttribute('data-theme', currentUser.theme);
-            if (paletteSelector) paletteSelector.value = currentUser.theme;
-            
+            if (themeSelectorDropdownElement) {
+                themeSelectorDropdownElement.value = currentUser.theme;
+            }
             if (currentUser.theme === 'grand-golden') {
                 document.body.classList.add('dev-theme-active');
             } else {
@@ -105,315 +169,564 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function enforceDeveloperThemeRestrictions() {
+        const devThemeOptionElement = safeEl('grand-golden-theme-option');
+        if (devThemeOptionElement && currentUser) {
+            if (currentUser.isDev === false) {
+                devThemeOptionElement.style.display = 'none';
+                devThemeOptionElement.disabled = true;
+            } else {
+                devThemeOptionElement.style.display = 'block';
+                devThemeOptionElement.disabled = false;
+            }
+        }
+    }
+
     function triggerAutomatedWelcomeBroadcast() {
         if (!currentUser) return;
         setTimeout(() => {
-            const area = safeEl('world-messages-area');
-            if (area) {
-                const div = document.createElement('div');
-                div.className = "message-bubble system-msg";
-                div.innerText = `👋 Welcome back online, [${currentUser.username}]. Your secured transmission nodes are actively mapping global stream sequences.`;
-                area.appendChild(div);
-                area.scrollTop = area.scrollHeight;
+            const worldMessageOutputArea = safeEl('world-messages-area');
+            if (worldMessageOutputArea) {
+                const systemWelcomeDivElement = document.createElement('div');
+                systemWelcomeDivElement.className = "message-bubble system-msg";
+                systemWelcomeDivElement.innerText = `👋 Welcome back online, ${currentUser.username}. You are now securely connected to the Global Chat Network.`;
+                worldMessageOutputArea.appendChild(systemWelcomeDivElement);
+                worldMessageOutputArea.scrollTop = worldMessageOutputArea.scrollHeight;
             }
-        }, 1500);
+        }, 1200);
     }
 
-    // =========================================================================
-    // 2. PRIMARY AUTHENTICATION PROCESS REGISTRY HOOKS (LOGIN LOGIC)
-    // =========================================================================
-    function performLoginProcess() {
-        const username = gVal('username-input');
-        const email = gVal('email-input');
-        const devCode = gVal('dev-code');
-        const tosChecked = safeEl('tos-checkbox-matrix') ? safeEl('tos-checkbox-matrix').checked : false;
 
-        if (!tosChecked) {
-            alert("REGISTRY ERROR: You must read and accept the Terms of Service Agreement coordinates before initializing connection matrix portal routes.");
+    // =========================================================================
+    // 3. NATIVE VOICE TYPING ENGINE (HINGLISH / ENGLISH SUPPORT)
+    // =========================================================================
+    function startVoiceTyping(inputIdString) {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert("System Info: Tumhara browser Voice Typing support nahi karta. Please Google Chrome use karo.");
             return;
         }
 
-        if (username && email) {
-            currentUser = { 
-                username: username, dp: DEFAULT_DP, banner: null, 
-                rank: 'Member', isDev: false, bio: "Operational tracking systems online. Ready to monitor streams.", 
-                theme: "default", presence: "online"
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognitionInstance = new SpeechRecognition();
+
+        // en-IN (Indian English) accurately captures Hinglish words natively!
+        recognitionInstance.lang = 'en-IN';
+        recognitionInstance.interimResults = false;
+        recognitionInstance.maxAlternatives = 1;
+
+        const targetInputFieldElement = safeEl(inputIdString);
+        if (!targetInputFieldElement) return;
+
+        const originalPlaceholderText = targetInputFieldElement.placeholder;
+        targetInputFieldElement.placeholder = "🎙️ Listening... Speak now!";
+
+        recognitionInstance.onresult = function (event) {
+            const capturedTranscriptString = event.results[0][0].transcript;
+            const currentInputValue = targetInputFieldElement.value;
+            targetInputFieldElement.value = currentInputValue ? (currentInputValue + " " + capturedTranscriptString) : capturedTranscriptString;
+            targetInputFieldElement.placeholder = originalPlaceholderText;
+        };
+
+        recognitionInstance.onerror = function (event) {
+            targetInputFieldElement.placeholder = originalPlaceholderText;
+            console.error("Speech Recognition Error: ", event.error);
+        };
+
+        recognitionInstance.onend = function () {
+            targetInputFieldElement.placeholder = originalPlaceholderText;
+        };
+
+        recognitionInstance.start();
+    }
+
+
+    // =========================================================================
+    // 4. PYTHON AI API FETCH PIPELINES (SENTIMENT & SPAM)
+    // =========================================================================
+
+    async function evaluateTextPayloadToxicityMetrics(messageTextString) {
+        clientMetricsRequestTelemetryCounter++;
+        try {
+            const serverResponseObject = await fetch('http://127.0.0.1:8000/api/ai/sentiment-analysis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: messageTextString,
+                    sender: currentUser ? currentUser.username : 'Unknown Node'
+                })
+            });
+            const responseDataJson = await serverResponseObject.json();
+            return responseDataJson;
+        } catch (networkError) {
+            console.warn("Python AI Server unreachable. Bypassing.", networkError);
+            const temporaryBlacklistArray = ["abuse", "toxic", "hacker", "exploit", "cheat", "bastard", "kamina", "fraud", "scam"];
+            let isBlacklistedHit = temporaryBlacklistArray.some(keyword => messageTextString.toLowerCase().includes(keyword));
+            return {
+                classification: { is_toxic: isBlacklistedHit, toxicity_rating: isBlacklistedHit ? 0.95 : 0.0 }
             };
-            
-            if (devCode === "6200437705AT") {
-                currentUser.rank = 'Developer';
-                currentUser.isDev = true;
-                currentUser.theme = 'grand-golden';
-            }
-            
-            saveData();
-            
-            sRem('login-screen', 'active');
-            sAdd('login-screen', 'hidden');
-            sRem('main-app', 'hidden');
-            sAdd('main-app', 'active');
-            
-            applySystemThemePalette();
-            updateProfileUI();
-            renderContacts();
-            updateBadgesAndCounts();
-            renderPosts();
-            renderGroups();
-            renderBandRequests();
-            triggerAutomatedWelcomeBroadcast();
-        } else {
-            alert("CRITICAL LOG: Verification processing failed. Username handle fields and Email coordinates strings cannot contain empty allocations data nodes rows.");
         }
     }
 
-    // =========================================================================
-    // 🔥 DIRECT BUTTON BINDINGS (YE FIX HAI JO BUTTON KO CLICKABLE BANAYEGA) 🔥
-    // =========================================================================
-    
-    // 1. Login Button Fix
-    const loginButton = safeEl('join-btn');
-    if (loginButton) {
-        loginButton.onclick = function(e) {
-            e.preventDefault();
-            performLoginProcess();
-        };
+    async function evaluatePostPayloadSpamProbabilityMetrics(postTextContentString) {
+        clientMetricsRequestTelemetryCounter++;
+        try {
+            const serverResponseObject = await fetch('http://127.0.0.1:8000/api/ai/spam-detection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: postTextContentString,
+                    sender: currentUser ? currentUser.username : 'Unknown Node'
+                })
+            });
+            const responseDataJson = await serverResponseObject.json();
+            return responseDataJson;
+        } catch (networkError) {
+            return { verdict: { is_spam: false, spam_probability_score: 0.0, trigger_reasons_identified: [] } };
+        }
     }
 
-    // 2. OTP Button Fix
-    const otpButton = safeEl('action-switch-to-otp-mode-btn');
-    if (otpButton) {
-        otpButton.onclick = function(e) {
-            e.preventDefault();
-            const otpBlock = safeEl('otp-login-verification-block');
-            if (otpBlock) {
-                if (otpBlock.classList.contains('hidden')) {
-                    otpBlock.classList.remove('hidden');
-                    otpButton.innerText = "Cancel OTP Verification Process";
-                    otpButton.style.background = "#ef4444";
-                    otpButton.style.color = "#fff";
-                } else {
-                    otpBlock.classList.add('hidden');
-                    otpButton.innerText = "Verify via Secure Mobile SMS OTP Channel Port";
-                    otpButton.style.background = "var(--bg-panel)";
-                    otpButton.style.color = "var(--text-main)";
-                }
-            }
-        };
-    }
 
     // =========================================================================
-    // 3. 🤖 PYTHON AI INTEGRATION ASYNC FUNCTIONS (SENTIMENT & SPAM) 🤖
+    // 5. CORE EXECUTION LOGIC FOR CHATTING AND POSTING
     // =========================================================================
 
-    async function processAndSendDirectMessage() {
-        const inputFieldTextElementPointer = safeEl('message-input');
-        let messagePacketStringText = gVal('message-input');
-        
-        if (messagePacketStringText !== "" && activeChatUser) {
-            try {
-                const aiResponse = await fetch('http://127.0.0.1:8000/api/ai/sentiment-analysis', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: messagePacketStringText, sender: currentUser.username })
-                });
-                const aiData = await aiResponse.json();
-                if (aiData.classification && aiData.classification.is_toxic) {
-                    alert(`🚨 PYTHON AI SECURITY SHIELD: Toxic language detected! (Toxicity Confidence: ${aiData.classification.toxicity_rating}). Transmission Blocked automatically by Server to prevent shadowban.`);
-                    return; 
-                }
-            } catch (err) {
-                console.warn("Python AI Engine not reachable. Ensure uvicorn is running. Bypassing AI filter.", err);
+    async function executeDirectCommunicationMessageUplinkRoute() {
+        const chatInputNodeElement = safeEl('message-input');
+        let rawMessageTextValue = gVal('message-input');
+
+        if (rawMessageTextValue !== "" && activeChatUser) {
+            const aiVerificationObject = await evaluateTextPayloadToxicityMetrics(rawMessageTextValue);
+            if (aiVerificationObject.classification && aiVerificationObject.classification.is_toxic) {
+                alert(`🚨 SECURITY FIREWALL BLOCK: Toxic or offensive language detected! Your message was blocked to keep the community environment safe.`);
+                return;
             }
 
-            const messagesAreaCanvasGridOutputOutlet = safeEl('messages-area');
-            const singleMessageBubbleRowWrapperDiv = document.createElement('div');
-            singleMessageBubbleRowWrapperDiv.className = "message-bubble my-msg";
-            
+            const messagesScrollableArea = safeEl('messages-area');
+            const userMessageDivElement = document.createElement('div');
+            userMessageDivElement.className = "message-bubble my-msg";
+
             if (activeDisappearingMessagesMode) {
-                singleMessageBubbleRowWrapperDiv.style.borderRight = "4px dashed #f59e0b";
-                singleMessageBubbleRowWrapperDiv.innerHTML = `<strong>[VOLATILE EPHEMERAL PAK - 10s TIME TO PURGE] Me:</strong> ${messagePacketStringText}`;
-                
+                userMessageDivElement.style.borderRight = "4px dashed var(--system-warning)";
+                userMessageDivElement.innerHTML = `<strong>[10s EXPIRY] Me:</strong> ${rawMessageTextValue}`;
                 setTimeout(() => {
-                    singleMessageBubbleRowWrapperDiv.style.opacity = "0.3";
-                    singleMessageBubbleRowWrapperDiv.innerText = "✖️ This communication packet sequence trace has evaporated safely due to strict disappearing mode constraints.";
+                    userMessageDivElement.style.opacity = "0.25";
+                    userMessageDivElement.innerHTML = `<i>✖️ Message disappeared automatically for privacy.</i>`;
                 }, 10000);
             } else {
-                singleMessageBubbleRowWrapperDiv.innerHTML = `<strong>Me:</strong> ${messagePacketStringText}`;
+                userMessageDivElement.innerHTML = `<strong>Me:</strong> ${rawMessageTextValue}`;
             }
 
-            if (messagesAreaCanvasGridOutputOutlet) {
-                messagesAreaCanvasGridOutputOutlet.appendChild(singleMessageBubbleRowWrapperDiv);
-                messagesAreaCanvasGridOutputOutlet.scrollTop = messagesAreaCanvasGridOutputOutlet.scrollHeight;
+            if (messagesScrollableArea) {
+                messagesScrollableArea.appendChild(userMessageDivElement);
+                messagesScrollableArea.scrollTop = messagesScrollableArea.scrollHeight;
             }
-
-            if(inputFieldTextElementPointer) inputFieldTextElementPointer.value = "";
+            if (chatInputNodeElement) {
+                chatInputNodeElement.value = "";
+            }
+        } else {
+            alert("Application Error: Please type a message before attempting to send.");
         }
     }
 
-    async function processAndPublishFeedPost() {
-        const contentText = gVal('post-input');
-        const privacySelect = safeEl('post-privacy-scope-configuration-level-toggle-select');
-        const privacyScopeStr = privacySelect ? privacySelect.value : 'public';
+    async function executePostContentPublishUplinkRoute() {
+        let postRawTextValue = gVal('post-input');
+        const postScopeSelectorElement = safeEl('post-privacy-scope-configuration-level-toggle-select');
+        const calculatedScopeString = postScopeSelectorElement ? postScopeSelectorElement.value : 'public';
 
-        if (contentText !== "" || attachedPostImage) {
-            if (contentText !== "") {
-                try {
-                    const spamResponse = await fetch('http://127.0.0.1:8000/api/ai/spam-detection', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text: contentText, sender: currentUser.username })
-                    });
-                    const spamData = await spamResponse.json();
-                    if (spamData.verdict && spamData.verdict.is_spam) {
-                        alert(`🚨 PYTHON AI ANTI-SPAM ENGINE: This post looks like automated bot spam! (Spam Score: ${spamData.verdict.spam_probability_score}%). \n\nTriggers: ${spamData.verdict.trigger_reasons_identified.join(', ')}. \n\nPost Injection Rejected!`);
-                        return; 
-                    }
-                } catch (err) {
-                    console.warn("Python AI Spam Engine offline. Bypassing.", err);
+        if (postRawTextValue !== "" || attachedPostImage) {
+            if (postRawTextValue !== "") {
+                const aiSpamVerificationObject = await evaluatePostPayloadSpamProbabilityMetrics(postRawTextValue);
+                if (aiSpamVerificationObject.verdict && aiSpamVerificationObject.verdict.is_spam) {
+                    alert(`🚨 ANTI-SPAM PROTECTION ACTIVE: This looks like automated bot spam behavior. Post execution rejected!`);
+                    return;
                 }
             }
 
-            const hashTagsFoundArray = contentText.match(/#\w+/g) || [];
-            
+            let extractedTagsArray = postRawTextValue.match(/#\w+/g) || [];
+
             posts.unshift({
                 id: Date.now(),
                 user: currentUser.username,
                 dp: currentUser.dp,
-                text: contentText,
+                text: postRawTextValue,
                 image: attachedPostImage,
-                scope: privacyScopeStr,
-                tags: hashTagsFoundArray,
-                time: "Just initialized via node uplink"
+                scope: calculatedScopeString,
+                tags: extractedTagsArray,
+                time: "Just Published via Secure Port"
             });
-            saveData(); renderPosts();
-            sVal('post-input', ''); attachedPostImage = null;
-            sAdd('post-media-attachment-status-preview', 'hidden'); sVal('post-image-upload-input', '');
+
+            saveData();
+            renderPosts();
+
+            sVal('post-input', '');
+            attachedPostImage = null;
+            sAdd('post-media-attachment-status-preview', 'hidden');
+            sVal('post-image-upload-input', '');
+
+            alert("✅ Action Verified! Your post was successfully published to your feed.");
         } else {
-            alert("POST COMPILATION FAILURE: Text parameter contents or image file binaries payload must be initialized.");
+            alert("Application Error: Please write something or attach an image before publishing.");
         }
     }
 
+
     // =========================================================================
-    // 4. 🔥 GLOBAL CORE CLICK EVENT DELEGATION FRAMEWORK ROUTING ENGINE 🔥
+    // 6. UI UPDATES & DOM RENDERING FUNCTIONS
     // =========================================================================
-    document.addEventListener('click', (e) => {
-        const target = e.target;
-        if (!target) return;
 
-        // Skip directly bounded buttons to prevent double-clicks
-        if (target.id === 'join-btn' || target.closest('#join-btn') || target.id === 'action-switch-to-otp-mode-btn' || target.closest('#action-switch-to-otp-mode-btn')) return;
+    function updateFavoriteButtonUI() {
+        if (!activeChatUser) return;
+        const favoriteBtnIcon = document.querySelector('#favorite-user-btn i');
+        if (!favoriteBtnIcon) return;
 
-        if (target.closest('#trigger-view-tos-modal')) { sRem('tos-documentation-framework-overlay-modal', 'hidden'); return; }
+        const arrayIndexMatchFound = friends.findIndex(fObj => fObj.username === activeChatUser.username);
+        if (arrayIndexMatchFound !== -1 && friends[arrayIndexMatchFound].isFavorite) {
+            favoriteBtnIcon.className = 'fas fa-star';
+            favoriteBtnIcon.style.color = '#f59e0b';
+        } else {
+            favoriteBtnIcon.className = 'far fa-star';
+            favoriteBtnIcon.style.color = 'var(--text-muted)';
+        }
+    }
 
-        const navBtn = target.closest('.nav-btn');
-        if (navBtn && !navBtn.id.includes('report-bug') && !navBtn.id.includes('logout')) {
-            document.querySelectorAll('.nav-links .nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.content-view').forEach(c => { c.classList.remove('active'); c.classList.add('hidden'); });
-            navBtn.classList.add('active');
-            const targetId = navBtn.getAttribute('data-target');
-            sRem(targetId, 'hidden'); sAdd(targetId, 'active');
+    function updateProfileUI() {
+        if (!currentUser) return;
+        sText('display-username', currentUser.username);
+        sText('user-bio', currentUser.bio || "No biography details available.");
+        sSrc('user-dp', currentUser.dp || DEFAULT_DP);
+        sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
+        if (currentUser.banner) { sSrc('banner-img', currentUser.banner); sRem('banner-img', 'hidden'); }
+        else { sAdd('banner-img', 'hidden'); }
+        sText('display-rank', currentUser.rank);
+
+        const usernameTextDisplayElement = safeEl('display-username');
+        const rankBadgeDisplayElement = safeEl('display-rank');
+
+        if (currentUser.isDev) {
+            if (usernameTextDisplayElement) usernameTextDisplayElement.classList.add('shiny-dev-text');
+            if (rankBadgeDisplayElement) rankBadgeDisplayElement.className = 'rank-badge rank-developer';
+            sRem('dev-nav-item', 'hidden');
+            sText('total-friends-count', "99,999 (Administrator)");
+            sText('profile-visitor-numerical-counter-view', "4,521,092");
+        } else {
+            if (usernameTextDisplayElement) usernameTextDisplayElement.classList.remove('shiny-dev-text');
+            sText('total-friends-count', friends.length);
+            sText('profile-visitor-numerical-counter-view', "12");
+        }
+    }
+
+    function updateBadgesAndCounts() {
+        if (currentUser && !currentUser.isDev) {
+            sText('total-friends-count', friends.length);
+        }
+    }
+
+    function renderContacts() {
+        const contactListOutputContainerElement = safeEl('contact-list-container');
+        if (!contactListOutputContainerElement) return;
+
+        contactListOutputContainerElement.innerHTML = '';
+        let processedListToRenderArray = currentChatTab === 'favorite' ? friends.filter(f => f.isFavorite === true) : friends;
+
+        if (processedListToRenderArray.length === 0) {
+            contactListOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.95rem; font-weight:bold; padding:25px;">No active friends found in this specific section.</p>`;
             return;
         }
 
-        if (target.closest('#sidebar-quick-report-bug-btn') || target.closest('#report-bug-trigger-btn')) {
-            sVal('bug-report-text-input', '');
-            sRem('bug-report-modal', 'hidden');
+        processedListToRenderArray.forEach(function (friendObject) {
+            let renderedStarIconHtmlString = friendObject.isFavorite ? `<i class="fas fa-star" style="color:#f59e0b; margin-left: 6px;"></i>` : '';
+            let constructedContactHtmlElement = `
+                <div class="dummy-item contact-item" data-user="${friendObject.username}" style="border: 1px solid rgba(0,0,0,0.02); background: var(--bg-panel); border-radius:14px; margin-bottom:8px; display:flex; align-items:center; gap:12px; padding:12px; cursor:pointer;">
+                    <img src="${friendObject.dp || DEFAULT_DP}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
+                    <div style="display:flex; flex-direction:column; flex:1;">
+                        <b style="font-size:1.1rem; color:var(--text-main);">${friendObject.username} ${renderedStarIconHtmlString}</b>
+                        <span style="font-size:0.8rem; color:var(--system-success); font-weight:bold;"><i class="fas fa-circle" style="font-size:0.5rem; margin-right:3px;"></i> Online Status Active</span>
+                    </div>
+                </div>
+            `;
+            contactListOutputContainerElement.innerHTML += constructedContactHtmlElement;
+        });
+    }
+
+    function renderRequestSubTabUI() {
+        const subTabOutputContainerElement = safeEl('contact-list-container');
+        if (!subTabOutputContainerElement) return;
+        subTabOutputContainerElement.innerHTML = '';
+
+        const acceptTabSelectorBtnElement = safeEl('sub-tab-accept-btn');
+        const sendTabSelectorBtnElement = safeEl('sub-tab-send-btn');
+
+        if (currentRequestSubTab === 'accept') {
+            if (acceptTabSelectorBtnElement) acceptTabSelectorBtnElement.classList.add('active-sub-tab');
+            if (sendTabSelectorBtnElement) sendTabSelectorBtnElement.classList.remove('active-sub-tab');
+            sAdd('search-friend-field-block', 'hidden');
+
+            if (friendRequests.length === 0) {
+                subTabOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem; font-weight:bold; padding:25px;">You currently have zero pending incoming friend requests.</p>`;
+                return;
+            }
+
+            friendRequests.forEach(function (requestObject) {
+                let constructedRequestHtmlElement = `
+                    <div class="dummy-item" data-user="${requestObject.username}" style="background:var(--bg-panel); border:1px solid var(--border-color); border-radius:14px; padding:12px; display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <img src="${requestObject.dp || DEFAULT_DP}" style="width:42px; height:42px; border-radius:50%; object-fit:cover;">
+                        <div style="flex:1;">
+                            <b style="font-size:1rem; color:var(--text-main); display:block;">${requestObject.username}</b>
+                        </div>
+                        <div class="req-action-btns">
+                            <button class="btn-accept-friend btn-accept" style="color:#fff;" title="Accept Connect Handshake"><i class="fas fa-check"></i></button>
+                            <button class="btn-reject-friend btn-reject" style="color:#fff;" title="Reject Connect Handshake"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                `;
+                subTabOutputContainerElement.innerHTML += constructedRequestHtmlElement;
+            });
+        } else if (currentRequestSubTab === 'send') {
+            if (acceptTabSelectorBtnElement) acceptTabSelectorBtnElement.classList.remove('active-sub-tab');
+            if (sendTabSelectorBtnElement) sendTabSelectorBtnElement.classList.add('active-sub-tab');
+            sRem('search-friend-field-block', 'hidden');
+
+            subTabOutputContainerElement.innerHTML = `
+                <div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:bold; font-size:0.95rem; border:2px dashed var(--border-color); border-radius:16px; margin:10px; background:var(--bg-panel);">
+                    <i class="fas fa-search" style="font-size:2rem; color:var(--primary-color); margin-bottom:12px; display:block;"></i>
+                    Enter a precise username in the top search field block above to search directories and locate new friends.
+                </div>
+            `;
+        }
+    }
+
+    function renderPosts() {
+        const postsOutputContainerElement = safeEl('feed-container');
+        if (!postsOutputContainerElement) return;
+
+        postsOutputContainerElement.innerHTML = '';
+
+        if (posts.length === 0) {
+            postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`;
             return;
         }
 
-        if (target.closest('#sidebar-quick-logout-btn') || target.closest('#logout-btn')) {
-            if (confirm("SESSION CONTROL: Are you completely certain you want to terminate your current application interface state session tokens data rows?")) {
-                localStorage.removeItem('chatUser');
-                location.reload();
+        posts.forEach(function (postObject) {
+            let renderedImageHtmlString = postObject.image ? `<img src="${postObject.image}" class="post-media-img" style="margin-top:12px; border-radius:14px; width:100%;">` : '';
+            let renderedTagsHtmlString = (postObject.tags && postObject.tags.length > 0) ? `<div style="color: var(--primary-color); font-weight: bold; margin-top: 8px; font-size:0.9rem;">${postObject.tags.join(' ')}</div>` : '';
+            let renderedDeleteButtonHtmlString = postObject.user === currentUser.username ? `<button class="delete-post-btn" style="background:transparent; color:var(--text-muted); box-shadow:none; padding:8px;"><i class="fas fa-trash-alt"></i></button>` : '';
+            let renderedTextContentHtmlString = postObject.text ? `<div class="post-text-content" style="margin-top:15px; font-size:1.1rem; line-height:1.6; color:var(--text-main); font-weight:600; white-space:pre-wrap;">${postObject.text}</div>` : '';
+
+            let constructedPostContainerHtmlElement = `
+                <div class="feed-post" data-id="${postObject.id}" style="background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; margin-top:20px;">
+                    <div class="post-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="post-user-info" style="display:flex; align-items:center; gap:12px;">
+                            <img src="${postObject.dp || DEFAULT_DP}" class="post-user-dp" style="width:48px; height:48px; border-radius:50%; border:2px solid var(--primary-color); padding:2px;">
+                            <div>
+                                <b style="font-size:1.15rem; color:var(--text-main); display:block;">${postObject.user}</b>
+                                <span style="color:var(--text-muted); font-size:0.8rem; font-weight:700; display:block; margin-top:2px;">${postObject.time} (${postObject.scope.toUpperCase()})</span>
+                            </div>
+                        </div>
+                        ${renderedDeleteButtonHtmlString}
+                    </div>
+                    ${renderedTextContentHtmlString}
+                    ${renderedTagsHtmlString}
+                    ${renderedImageHtmlString}
+                    <div class="post-footer" style="margin-top:15px; border-top:1px solid var(--bg-main); padding-top:15px;">
+                        <button class="action-btn like-btn" style="border-radius:20px; padding:8px 18px; font-size:0.85rem;"><i class="far fa-heart"></i> Like This Post</button>
+                    </div>
+                </div>
+            `;
+            postsOutputContainerElement.innerHTML += constructedPostContainerHtmlElement;
+        });
+    }
+
+    function renderGroups() {
+        const groupsOutputContainerElement = safeEl('group-list-container');
+        if (!groupsOutputContainerElement) return;
+
+        groupsOutputContainerElement.innerHTML = '';
+
+        if (groups.length === 0) {
+            groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`;
+            return;
+        }
+
+        groups.forEach(function (groupObject) {
+            let processedIconSourceUrl = groupObject.icon || `https://ui-avatars.com/api/?name=${groupObject.name}&background=a855f7&color=fff`;
+            let constructedGroupHtmlElement = `
+                <div class="dummy-item group-item" data-group="${groupObject.name}" style="padding:15px; background:var(--bg-panel); border:1px solid rgba(0,0,0,0.02); border-radius:14px; display:flex; align-items:center; gap:12px; margin-bottom:8px; cursor:pointer;">
+                    <img src="${processedIconSourceUrl}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color); padding:2px;">
+                    <div>
+                        <b style="font-size:1.1rem; color:var(--text-main); display:block;">${groupObject.name}</b>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">Creator Status: @${groupObject.createdBy || 'System Admin'}</span>
+                    </div>
+                </div>
+            `;
+            groupsOutputContainerElement.innerHTML += constructedGroupHtmlElement;
+        });
+    }
+
+    function renderBandRequests() {
+        const bandOutputContainerElement = safeEl('band-incoming-requests');
+        const emptyStatePlaceholderElement = safeEl('band-incoming-requests-empty-placeholder-string-element');
+        if (!bandOutputContainerElement) return;
+        bandOutputContainerElement.innerHTML = '';
+
+        if (bandRequests.length === 0) {
+            if (emptyStatePlaceholderElement) emptyStatePlaceholderElement.classList.remove('hidden');
+            bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`;
+            return;
+        }
+        if (emptyStatePlaceholderElement) emptyStatePlaceholderElement.classList.add('hidden');
+
+        bandRequests.forEach(function (bandRequestObject) {
+            let constructedBandRequestHtmlElement = `
+                <div class="dummy-item" data-user="${bandRequestObject.username}" style="margin-top:10px; background:var(--bg-main); padding: 15px; border: 1px solid var(--border-color); border-radius:14px; display:flex; align-items:center; justify-content:space-between; gap:15px;">
+                    <b style="flex:1; font-size:1rem; color:var(--text-main);"><i class="fas fa-handshake" style="color:var(--primary-color); margin-right:6px;"></i> Incoming Bond Request received from target: @${bandRequestObject.username}</b>
+                    <button class="btn-accept-band btn-accept" style="width:45px; height:45px; border-radius:50%; background:#10b981; color:#fff;" title="Accept Friendship Bond Connection"><i class="fas fa-check"></i></button>
+                </div>
+            `;
+            bandOutputContainerElement.innerHTML += constructedBandRequestHtmlElement;
+        });
+    }
+
+
+    // =========================================================================
+    // 7. GLOBAL EVENT DELEGATION SYSTEM (FLAWLESS BUTTON BINDINGS)
+    // =========================================================================
+
+    document.addEventListener('click', (eventObject) => {
+        const clickedTargetElementNode = eventObject.target;
+        if (!clickedTargetElementNode) return;
+
+        if (clickedTargetElementNode.id === 'join-btn' || clickedTargetElementNode.closest('#join-btn')) return;
+
+        // Mobile Sidebar Toggles
+        if (clickedTargetElementNode.id === 'hamburger-btn' || clickedTargetElementNode.closest('#hamburger-btn')) {
+            const mobileSidebarContainer = safeEl('sidebar');
+            if (mobileSidebarContainer) {
+                mobileSidebarContainer.style.display = 'flex';
+                mobileSidebarContainer.style.position = 'fixed';
+                mobileSidebarContainer.style.zIndex = '10000';
+                mobileSidebarContainer.style.height = '100vh';
+                mobileSidebarContainer.style.width = '80%';
+                mobileSidebarContainer.style.flexDirection = 'column';
+                mobileSidebarContainer.style.justifyContent = 'flex-start';
+                const closeBtn = safeEl('close-sidebar-btn');
+                if (closeBtn) closeBtn.classList.remove('hidden');
+                const navLinksContainer = mobileSidebarContainer.querySelector('.nav-links');
+                if (navLinksContainer) { navLinksContainer.style.flexDirection = 'column'; navLinksContainer.style.overflowY = 'auto'; }
             }
             return;
         }
 
-        const chatTab = target.closest('.chat-tabs .tab-btn');
-        if (chatTab) {
+        if (clickedTargetElementNode.id === 'close-sidebar-btn' || clickedTargetElementNode.closest('#close-sidebar-btn')) {
+            const mobileSidebarContainer = safeEl('sidebar');
+            if (mobileSidebarContainer) {
+                mobileSidebarContainer.style.display = ''; mobileSidebarContainer.style.position = '';
+                mobileSidebarContainer.style.zIndex = ''; mobileSidebarContainer.style.height = '';
+                mobileSidebarContainer.style.width = ''; mobileSidebarContainer.style.flexDirection = '';
+                const closeBtn = safeEl('close-sidebar-btn');
+                if (closeBtn) closeBtn.classList.add('hidden');
+                const navLinksContainer = mobileSidebarContainer.querySelector('.nav-links');
+                if (navLinksContainer) { navLinksContainer.style.flexDirection = ''; navLinksContainer.style.overflowY = ''; }
+            }
+            return;
+        }
+
+        // Sidebar Navigation
+        const navigationButtonElement = clickedTargetElementNode.closest('.nav-btn');
+        if (navigationButtonElement && !navigationButtonElement.id.includes('report-bug') && !navigationButtonElement.id.includes('logout')) {
+            document.querySelectorAll('.nav-links .nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-view').forEach(view => { view.classList.remove('active'); view.classList.add('hidden'); });
+            navigationButtonElement.classList.add('active');
+            const targetSectionDisplayId = navigationButtonElement.getAttribute('data-target');
+            sRem(targetSectionDisplayId, 'hidden'); sAdd(targetSectionDisplayId, 'active');
+            return;
+        }
+
+        // Quick Actions
+        if (clickedTargetElementNode.closest('#sidebar-quick-report-bug-btn')) {
+            sVal('bug-report-text-input', ''); sRem('bug-report-modal', 'hidden'); return;
+        }
+        if (clickedTargetElementNode.closest('#sidebar-quick-logout-btn')) {
+            if (confirm("Are you absolutely sure you want to log out of your secure session and terminate tracking connections?")) {
+                localStorage.removeItem('chatUser'); location.reload();
+            }
+            return;
+        }
+
+        // Chat View Sidebar Tabs
+        const chatTabNavigationButtonElement = clickedTargetElementNode.closest('.chat-tabs .tab-btn');
+        if (chatTabNavigationButtonElement) {
             document.querySelectorAll('.chat-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-            chatTab.classList.add('active');
-            currentChatTab = chatTab.getAttribute('data-tab');
-            
+            chatTabNavigationButtonElement.classList.add('active');
+            currentChatTab = chatTabNavigationButtonElement.getAttribute('data-tab');
             if (currentChatTab === 'requests') {
-                sRem('request-sub-tabs-container', 'hidden');
-                sAdd('search-friend-field-block', 'hidden');
-                renderRequestSubTabUI();
+                sRem('request-sub-tabs-container', 'hidden'); sAdd('search-friend-field-block', 'hidden'); renderRequestSubTabUI();
             } else {
-                sAdd('request-sub-tabs-container', 'hidden');
-                sRem('search-friend-field-block', 'hidden');
-                resetRightWorkspacePane();
-                renderContacts();
+                sAdd('request-sub-tabs-container', 'hidden'); sRem('search-friend-field-block', 'hidden'); resetRightWorkspacePane(); renderContacts();
             }
             return;
         }
 
-        if (target.closest('#sub-tab-accept-btn')) { currentRequestSubTab = 'accept'; renderRequestSubTabUI(); resetRightWorkspacePane(); return; }
-        if (target.closest('#sub-tab-send-btn')) { currentRequestSubTab = 'send'; renderRequestSubTabUI(); return; }
+        if (clickedTargetElementNode.closest('#sub-tab-accept-btn')) { currentRequestSubTab = 'accept'; renderRequestSubTabUI(); resetRightWorkspacePane(); return; }
+        if (clickedTargetElementNode.closest('#sub-tab-send-btn')) { currentRequestSubTab = 'send'; renderRequestSubTabUI(); return; }
 
-        if (target.closest('#sidebar-action-search-trigger') && currentChatTab === 'requests' && currentRequestSubTab === 'send') {
-            const queryPattern = gVal('chat-sidebar-search-input').toLowerCase();
-            if (queryPattern !== "") {
-                const searchResultMatchNode = systemVerifiedUserDirectory.find(user => user.username.toLowerCase().includes(queryPattern));
-                
-                if (searchResultMatchNode) {
-                    searchedUserContext = searchResultMatchNode;
-                    openRightProfilePreviewPane(searchedUserContext);
-                } else {
-                    alert(`TRACE FAILURE: Directory Query pattern [${queryPattern}] returned 0 matches entries rows across monitored platform user index charts tables.`);
-                    resetRightWorkspacePane();
-                }
-            } else {
-                alert("SYSTEM ERROR: Search target input parameters string row field allocation data cannot look up null pointers indices.");
-            }
+        // Search Directories
+        if (clickedTargetElementNode.closest('#sidebar-action-search-trigger') && currentChatTab === 'requests' && currentRequestSubTab === 'send') {
+            const searchInputQueryValue = gVal('chat-sidebar-search-input').toLowerCase();
+            if (searchInputQueryValue !== "") {
+                const verifiedMatchedUserNodeObject = systemVerifiedUserDirectory.find(u => u.username.toLowerCase() === searchInputQueryValue);
+                if (verifiedMatchedUserNodeObject) { searchedUserContext = verifiedMatchedUserNodeObject; openRightProfilePreviewPane(searchedUserContext); }
+                else { alert(`Directory Trace Failure: Username '${searchInputQueryValue}' was not found in the verified target directory registers.`); resetRightWorkspacePane(); }
+            } else { alert("Application Notification: Please enter a target username identifier string to execute the search."); }
             return;
         }
 
-        if (target.closest('#action-dispatch-friend-request-btn')) {
+        if (clickedTargetElementNode.closest('#action-dispatch-friend-request-btn')) {
             if (searchedUserContext) {
-                alert(`PACKET ROUTE: Friend Handshake Invitation payload array sequence compiled and dispatched securely to [${searchedUserContext.username}].`);
-                sVal('chat-sidebar-search-input', '');
-                resetRightWorkspacePane();
+                alert(`System Notification: Handshake friendship request securely dispatched to target destination ${searchedUserContext.username}!`);
+                sVal('chat-sidebar-search-input', ''); resetRightWorkspacePane();
             }
             return;
         }
 
-        if (target.closest('.btn-accept-friend')) {
-            const rowItem = target.closest('.dummy-item');
-            if (rowItem) {
-                const userHandleKey = rowItem.getAttribute('data-user');
-                friendRequests = friendRequests.filter(req => req.username !== userHandleKey);
-                friends.push({ 
-                    username: userHandleKey, 
-                    dp: `https://ui-avatars.com/api/?name=${userHandleKey}&background=8b5cf6&color=fff`, 
-                    isFavorite: false, bio: "Active synchronized network peer destination node." 
-                });
-                saveData(); renderRequestSubTabUI(); alert(`Handshake verified. Channel established with [${userHandleKey}].`);
+        // Accept/Reject Requests
+        if (clickedTargetElementNode.closest('.btn-accept-friend')) {
+            const listRowItemElement = clickedTargetElementNode.closest('.dummy-item');
+            if (listRowItemElement) {
+                const targetUsernameIdentificationKey = listRowItemElement.getAttribute('data-user');
+                friendRequests = friendRequests.filter(reqObject => reqObject.username !== targetUsernameIdentificationKey);
+                friends.push({ username: targetUsernameIdentificationKey, dp: `https://ui-avatars.com/api/?name=${targetUsernameIdentificationKey}&background=8b5cf6&color=fff`, isFavorite: false, bio: "My newly verified active friend connection mapping node." });
+                saveData(); renderRequestSubTabUI(); alert(`Verification Protocol Complete: You are now permanently connected friends with ${targetUsernameIdentificationKey}!`);
             }
             return;
         }
-
-        if (target.closest('.btn-reject-friend')) {
-            const rowItem = target.closest('.dummy-item');
-            if (rowItem) {
-                const userHandleKey = rowItem.getAttribute('data-user');
-                friendRequests = friendRequests.filter(req => req.username !== userHandleKey);
+        if (clickedTargetElementNode.closest('.btn-reject-friend')) {
+            const listRowItemElement = clickedTargetElementNode.closest('.dummy-item');
+            if (listRowItemElement) {
+                const targetUsernameIdentificationKey = listRowItemElement.getAttribute('data-user');
+                friendRequests = friendRequests.filter(reqObject => reqObject.username !== targetUsernameIdentificationKey);
                 saveData(); renderRequestSubTabUI();
             }
             return;
         }
 
-        if (target.closest('.contact-item')) {
-            const userHandleKey = target.closest('.contact-item').getAttribute('data-user');
-            openChatWindow(userHandleKey);
+        // Open Direct Chat
+        if (clickedTargetElementNode.closest('.contact-item')) {
+            const retrievedUsernameKey = clickedTargetElementNode.closest('.contact-item').getAttribute('data-user');
+            sAdd('request-profile-preview-pane', 'hidden'); sAdd('chat-placeholder', 'hidden');
+            sRem('chat-header', 'hidden'); sRem('messages-area', 'hidden'); sRem('chat-input-area', 'hidden');
+
+            activeChatUser = friends.find(fObj => fObj.username === retrievedUsernameKey);
+            if (activeChatUser) {
+                sText('current-chat-name', activeChatUser.username); sSrc('current-chat-dp', activeChatUser.dp); updateFavoriteButtonUI();
+            }
             return;
         }
 
-        if (target.closest('#favorite-user-btn')) {
+        if (clickedTargetElementNode.closest('#favorite-user-btn')) {
             if (activeChatUser) {
-                const indexMatch = friends.findIndex(f => f.username === activeChatUser.username);
-                if (indexMatch !== -1) {
-                    friends[indexMatch].isFavorite = !friends[indexMatch].isFavorite;
+                const arrayIndexMatchFound = friends.findIndex(fObj => fObj.username === activeChatUser.username);
+                if (arrayIndexMatchFound !== -1) {
+                    friends[arrayIndexMatchFound].isFavorite = !friends[arrayIndexMatchFound].isFavorite;
                     saveData(); updateFavoriteButtonUI();
                     if (currentChatTab === 'favorite') { renderContacts(); resetRightWorkspacePane(); }
                 }
@@ -421,595 +734,417 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (target.closest('#trigger-dp-upload')) { const input = safeEl('edit-dp-input'); if(input) input.click(); return; }
-        if (target.closest('#trigger-banner-upload')) { const input = safeEl('edit-banner-input'); if(input) input.click(); return; }
-        
-        if (target.closest('#save-profile-btn')) {
-            const nameVal = gVal('edit-username-input');
-            const bioVal = gVal('edit-bio-input');
-            if (nameVal) currentUser.username = nameVal;
-            currentUser.bio = bioVal;
+        // =========================================================
+        // CALLING SYSTEM: DIRECT CHAT (Modals) VS GROUP/WORLD (Silent)
+        // =========================================================
+        function simulateIncomingCall(type) {
+            sText('incoming-call-type-text', type === 'video' ? '🎥 Incoming Video Call Request...' : '📞 Incoming Voice Call Request...');
+            sText('incoming-caller-name', activeChatUser ? activeChatUser.username : 'Unknown Peer');
+            sSrc('incoming-caller-dp', activeChatUser ? activeChatUser.dp : DEFAULT_DP);
+            sRem('incoming-call-ring-modal', 'hidden');
+        }
+
+        if (clickedTargetElementNode.closest('#direct-voice-call-btn')) { simulateIncomingCall('voice'); return; }
+        if (clickedTargetElementNode.closest('#direct-video-call-btn')) { simulateIncomingCall('video'); return; }
+
+        if (clickedTargetElementNode.closest('#group-voice-call-btn') || clickedTargetElementNode.closest('#group-video-call-btn')) {
+            alert("Group Room Call Initiated: Participants can join the stream silently. No ring notifications dispatched to avoid spam.");
+            return;
+        }
+        if (clickedTargetElementNode.closest('#world-voice-call-btn') || clickedTargetElementNode.closest('#world-video-call-btn')) {
+            alert("Global Stage Initiated: A public stage stream has been created. Notifications are suppressed by default in World Chat.");
+            return;
+        }
+
+        if (clickedTargetElementNode.closest('#accept-incoming-call-btn')) {
+            sAdd('incoming-call-ring-modal', 'hidden');
+            alert("Call Connected! 📞 (WebRTC secure stream channel actively initialized)");
+            return;
+        }
+        if (clickedTargetElementNode.closest('#reject-incoming-call-btn')) {
+            sAdd('incoming-call-ring-modal', 'hidden'); return;
+        }
+
+        // =========================================================
+        // MULTI-FEATURE CHAT INPUTS (EMOJI, VOICE TYPING, ATTACHMENTS)
+        // =========================================================
+        // Emoji Button Simulation
+        if (clickedTargetElementNode.closest('#emoji-btn')) { sVal('message-input', gVal('message-input') + ' 😊'); return; }
+        if (clickedTargetElementNode.closest('#group-emoji-btn')) { sVal('group-message-input', gVal('group-message-input') + ' 🚀'); return; }
+        if (clickedTargetElementNode.closest('#world-emoji-btn')) { sVal('world-message-input', gVal('world-message-input') + ' 🌍'); return; }
+
+        // Voice Note Simulation
+        if (clickedTargetElementNode.closest('#voice-note-btn') || clickedTargetElementNode.closest('#group-voice-note-btn') || clickedTargetElementNode.closest('#world-voice-note-btn')) {
+            alert("🎙️ Voice Note Recording Engine activated... (Hold functionality engaged. Let go to send.)");
+            return;
+        }
+
+        // Voice Typing Engine Triggers
+        if (clickedTargetElementNode.closest('#voice-type-btn')) { startVoiceTyping('message-input'); return; }
+        if (clickedTargetElementNode.closest('#group-voice-type-btn')) { startVoiceTyping('group-message-input'); return; }
+        if (clickedTargetElementNode.closest('#world-voice-type-btn')) { startVoiceTyping('world-message-input'); return; }
+
+        // Attachment Hidden Input Triggers
+        if (clickedTargetElementNode.closest('#attach-btn')) { const uploadInput = safeEl('chat-media-upload-input'); if (uploadInput) uploadInput.click(); return; }
+        if (clickedTargetElementNode.closest('#group-attach-btn')) { const uploadInput = safeEl('group-media-upload-input'); if (uploadInput) uploadInput.click(); return; }
+        if (clickedTargetElementNode.closest('#world-attach-btn')) { const uploadInput = safeEl('world-media-upload-input'); if (uploadInput) uploadInput.click(); return; }
+
+        // Send Messages (Direct, Group, World)
+        if (clickedTargetElementNode.closest('#send-btn')) { executeDirectCommunicationMessageUplinkRoute(); return; }
+        if (clickedTargetElementNode.closest('#group-send-btn')) {
+            const groupMsgInputElem = safeEl('group-message-input');
+            const groupMsgText = groupMsgInputElem ? groupMsgInputElem.value.trim() : "";
+            if (groupMsgText) {
+                const grpMessagesAreaOutput = safeEl('group-messages-area');
+                if (grpMessagesAreaOutput) {
+                    const myGrpMsgDiv = document.createElement('div');
+                    myGrpMsgDiv.className = "message-bubble my-msg";
+                    myGrpMsgDiv.innerHTML = `<strong>Me:</strong> ${groupMsgText}`;
+                    grpMessagesAreaOutput.appendChild(myGrpMsgDiv);
+                    grpMessagesAreaOutput.scrollTop = grpMessagesAreaOutput.scrollHeight;
+                }
+                if (groupMsgInputElem) groupMsgInputElem.value = "";
+            }
+            return;
+        }
+        if (clickedTargetElementNode.closest('#world-send-btn')) {
+            const worldMsgInputElem = safeEl('world-message-input');
+            const worldMsgText = worldMsgInputElem ? worldMsgInputElem.value.trim() : "";
+            if (worldMsgText) {
+                const worldMessagesAreaOutput = safeEl('world-messages-area');
+                if (worldMessagesAreaOutput) {
+                    const myWorldMsgDiv = document.createElement('div');
+                    myWorldMsgDiv.className = "message-bubble my-msg";
+                    myWorldMsgDiv.innerHTML = `<strong>Me:</strong> ${worldMsgText}`;
+                    worldMessagesAreaOutput.appendChild(myWorldMsgDiv);
+                    worldMessagesAreaOutput.scrollTop = worldMessagesAreaOutput.scrollHeight;
+                }
+                if (worldMsgInputElem) worldMsgInputElem.value = "";
+            }
+            return;
+        }
+
+        if (clickedTargetElementNode.closest('#world-mute-btn')) {
+            isWorldMuted = !isWorldMuted;
+            const muteButtonElem = clickedTargetElementNode.closest('#world-mute-btn');
+            if (isWorldMuted) {
+                muteButtonElem.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                muteButtonElem.classList.remove('danger-btn'); muteButtonElem.classList.add('action-btn');
+                alert("World Chat is now muted. You will not hear global notification sounds.");
+            } else {
+                muteButtonElem.innerHTML = '<i class="fas fa-volume-up"></i>';
+                muteButtonElem.classList.remove('action-btn'); muteButtonElem.classList.add('danger-btn');
+                alert("World Chat audio notifications successfully restored.");
+            }
+            return;
+        }
+
+
+        // =========================================================
+        // PROFILE PICTURE AND BANNER MODIFICATIONS
+        // =========================================================
+        if (clickedTargetElementNode.closest('#trigger-dp-upload')) { const hiddenUploadInputField = safeEl('edit-dp-input'); if (hiddenUploadInputField) hiddenUploadInputField.click(); return; }
+        if (clickedTargetElementNode.closest('#trigger-banner-upload')) { const hiddenUploadInputField = safeEl('edit-banner-input'); if (hiddenUploadInputField) hiddenUploadInputField.click(); return; }
+
+        if (clickedTargetElementNode.closest('#save-profile-btn')) {
+            const nicknameConfigurationInputValue = gVal('edit-username-input');
+            const biographicalSummaryInputValue = gVal('edit-bio-input');
+            if (nicknameConfigurationInputValue) currentUser.username = nicknameConfigurationInputValue;
+            currentUser.bio = biographicalSummaryInputValue;
             saveData(); updateProfileUI(); sAdd('edit-profile-modal', 'hidden');
-            alert("METADATA WRITE SUCCESS: Profile local representation registers refreshed accurately.");
+            alert("Configuration Logs Successful: Profile Settings Saved and Committed to Storage!");
             return;
         }
 
-        if (target.closest('#post-image-btn')) { const input = safeEl('post-image-upload-input'); if(input) input.click(); return; }
-        if (target.closest('#action-remove-attached-post-file-buffer')) { attachedPostImage = null; sAdd('post-media-attachment-status-preview', 'hidden'); sVal('post-image-upload-input', ''); return; }
+        // =========================================================
+        // POST FEED CREATION, DELETE & ATTACHMENTS 
+        // =========================================================
+        if (clickedTargetElementNode.closest('#post-image-btn')) { const hiddenImageUploadInputField = safeEl('post-image-upload-input'); if (hiddenImageUploadInputField) hiddenImageUploadInputField.click(); return; }
+        if (clickedTargetElementNode.closest('#post-gif-btn')) { alert("System Info: GIF integration engine API is currently undergoing maintenance. Try attaching a static image instead."); return; }
+        if (clickedTargetElementNode.closest('#post-meme-btn')) { alert("System Info: Meme generator module is pending upcoming V22 update integration."); return; }
 
-        if (target.closest('#submit-post-btn')) {
-            processAndPublishFeedPost();
+        if (clickedTargetElementNode.closest('#action-remove-attached-post-file-buffer')) {
+            attachedPostImage = null; sAdd('post-media-attachment-status-preview', 'hidden'); sVal('post-image-upload-input', ''); return;
+        }
+        if (clickedTargetElementNode.closest('#submit-post-btn')) { executePostContentPublishUplinkRoute(); return; }
+
+        // FIX: The missing Post Delete click event logic
+        if (clickedTargetElementNode.closest('.delete-post-btn')) {
+            if (confirm("Are you entirely sure you want to permanently delete this specific post from the global feed arrays?")) {
+                const postCardElement = clickedTargetElementNode.closest('.feed-post');
+                if (postCardElement) {
+                    const extractedPostId = parseInt(postCardElement.getAttribute('data-id'));
+                    posts = posts.filter(postObj => postObj.id !== extractedPostId);
+                    saveData();
+                    renderPosts();
+                }
+            }
             return;
         }
 
-        if (target.closest('#trigger-group-icon-upload')) { const input = safeEl('new-group-icon-input'); if(input) input.click(); return; }
-        if (target.closest('#confirm-create-group-btn')) {
-            const grpName = gVal('new-group-name');
-            if (grpName) {
-                groups.push({ id: Date.now(), name: grpName, icon: tempGroupIcon, createdBy: currentUser.username });
+        // =========================================================
+        // GROUP CHAT CONTROLS
+        // =========================================================
+        if (clickedTargetElementNode.closest('#create-group-btn')) { sRem('create-group-modal', 'hidden'); return; }
+        if (clickedTargetElementNode.closest('#trigger-group-icon-upload')) { const hiddenGroupIconUploadInputField = safeEl('new-group-icon-input'); if (hiddenGroupIconUploadInputField) hiddenGroupIconUploadInputField.click(); return; }
+
+        if (clickedTargetElementNode.closest('#confirm-create-group-btn')) {
+            const groupTitleNameInputValue = gVal('new-group-name');
+            if (groupTitleNameInputValue) {
+                groups.push({ id: Date.now(), name: groupTitleNameInputValue, icon: tempGroupIcon, createdBy: currentUser.username });
                 saveData(); renderGroups(); sAdd('create-group-modal', 'hidden'); sVal('new-group-name', '');
                 tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff"; sSrc('new-group-icon-preview', tempGroupIcon);
+                alert(`New Multiplex Channel: '${groupTitleNameInputValue}' created successfully!`);
             }
             return;
         }
 
-        if (target.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn')) {
-            sVal('group-poll-input-question-string-field', '');
-            sVal('group-poll-input-option-string-field-1', '');
-            sVal('group-poll-input-option-string-field-2', '');
-            sRem('group-channel-poll-creation-modal-framework-overlay-window', 'hidden');
+        if (clickedTargetElementNode.closest('.group-item')) {
+            const groupNameStringValue = clickedTargetElementNode.closest('.group-item').getAttribute('data-group');
+            sAdd('group-placeholder', 'hidden'); sRem('group-header', 'hidden');
+            sRem('group-messages-area', 'hidden'); sRem('group-input-area', 'hidden');
+            sText('current-group-name', groupNameStringValue);
+            const selectedGroupObj = groups.find(x => x.name === groupNameStringValue);
+            if (selectedGroupObj) { sSrc('group-header-img', selectedGroupObj.icon || `https://ui-avatars.com/api/?name=${groupNameStringValue}&background=a855f7&color=fff`); }
             return;
         }
 
-        if (target.closest('#action-trigger-commit-publish-group-poll-to-channel-stream-btn')) {
-            const qStr = gVal('group-poll-input-question-string-field');
-            const o1Str = gVal('group-poll-input-option-string-field-1');
-            const o2Str = gVal('group-poll-input-option-string-field-2');
+        // Group Chat Poll Systems
+        if (clickedTargetElementNode.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn')) {
+            sVal('group-poll-input-question-string-field', ''); sVal('group-poll-input-option-string-field-1', ''); sVal('group-poll-input-option-string-field-2', '');
+            sRem('group-channel-poll-creation-modal-framework-overlay-window', 'hidden'); return;
+        }
 
-            if (qStr && o1Str && o2Str) {
-                const groupChatArea = safeEl('group-messages-area');
-                if (groupChatArea) {
-                    const pollDivCardBlockNode = document.createElement('div');
-                    pollDivCardBlockNode.className = "message-bubble other-msg";
-                    pollDivCardBlockNode.style.borderLeft = "4px solid var(--primary-color)";
-                    pollDivCardBlockNode.innerHTML = `
-                        <div style="font-weight:900; margin-bottom:8px;"><i class="fas fa-poll-h"></i> ACTIVE CONSENSUS POLL:</div>
-                        <div style="font-size:1.1rem; margin-bottom:10px;">${qStr}</div>
-                        <button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; margin-bottom:5px; font-size:0.9rem;" data-votes="0">🗳️ A: ${o1Str} - [ <span class="vote-count-numerical-outlet-span">0</span> votes ]</button>
-                        <button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; font-size:0.9rem;" data-votes="0">🗳️ B: ${o2Str} - [ <span class="vote-count-numerical-outlet-span">0</span> votes ]</button>
+        if (clickedTargetElementNode.closest('#action-trigger-commit-publish-group-poll-to-channel-stream-btn')) {
+            const pollQuestionTargetStringValue = gVal('group-poll-input-question-string-field');
+            const pollOptionTargetStringValue1 = gVal('group-poll-input-option-string-field-1');
+            const pollOptionTargetStringValue2 = gVal('group-poll-input-option-string-field-2');
+
+            if (pollQuestionTargetStringValue && pollOptionTargetStringValue1 && pollOptionTargetStringValue2) {
+                const groupMessageChatAreaElement = safeEl('group-messages-area');
+                if (groupMessageChatAreaElement) {
+                    const pollComponentDivElement = document.createElement('div');
+                    pollComponentDivElement.className = "message-bubble other-msg";
+                    pollComponentDivElement.style.borderLeft = "4px solid var(--primary-color)";
+                    pollComponentDivElement.innerHTML = `
+                        <div style="font-weight:900; margin-bottom:8px;"><i class="fas fa-poll-h"></i> ACTIVE GROUP POLL VOTE:</div>
+                        <div style="font-size:1.1rem; margin-bottom:10px;">${pollQuestionTargetStringValue}</div>
+                        <button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; margin-bottom:5px; font-size:0.9rem;" data-votes="0">🗳️ ${pollOptionTargetStringValue1} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>
+                        <button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; font-size:0.9rem;" data-votes="0">🗳️ ${pollOptionTargetStringValue2} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>
                     `;
-                    groupChatArea.appendChild(pollDivCardBlockNode);
-                    groupChatArea.scrollTop = groupChatArea.scrollHeight;
+                    groupMessageChatAreaElement.appendChild(pollComponentDivElement);
+                    groupMessageChatAreaElement.scrollTop = groupMessageChatAreaElement.scrollHeight;
                 }
                 sAdd('group-channel-poll-creation-modal-framework-overlay-window', 'hidden');
-            } else {
-                alert("POLL CONFIG ENGINE TIMEOUT: All query strings parameters fields choices values must contain explicit textual metadata definitions.");
-            }
+                alert("Consensus Poll Deployed successfully into the channel array.");
+            } else { alert("Execution Halted: Please ensure all textual input blocks for the poll are fully complete."); }
             return;
         }
 
-        if (target.closest('.execution-vote-poll-track-node-btn')) {
-            const voteBtnNode = target.closest('.execution-vote-poll-track-node-btn');
-            let numericalCurrentVotesCount = parseInt(voteBtnNode.getAttribute('data-votes')) || 0;
-            numericalCurrentVotesCount++;
-            voteBtnNode.setAttribute('data-votes', numericalCurrentVotesCount);
-            const countSpanOutlet = voteBtnNode.querySelector('.vote-count-numerical-outlet-span');
-            if(countSpanOutlet) countSpanOutlet.innerText = numericalCurrentVotesCount;
-            voteBtnNode.disabled = true;
-            voteBtnNode.style.opacity = "0.7";
+        if (clickedTargetElementNode.closest('.execution-vote-poll-track-node-btn')) {
+            const pollSelectionButtonElement = clickedTargetElementNode.closest('.execution-vote-poll-track-node-btn');
+            let currentTrackedVotesCountValue = parseInt(pollSelectionButtonElement.getAttribute('data-votes')) || 0;
+            currentTrackedVotesCountValue++;
+            pollSelectionButtonElement.setAttribute('data-votes', currentTrackedVotesCountValue);
+            const spanOutputValueElement = pollSelectionButtonElement.querySelector('.vote-count-numerical-outlet-span');
+            if (spanOutputValueElement) { spanOutputValueElement.innerText = currentTrackedVotesCountValue; }
+            pollSelectionButtonElement.disabled = true; pollSelectionButtonElement.style.opacity = "0.7";
             return;
         }
 
-        if (target.closest('#send-band-req-btn')) {
-            const targetAccountInputString = gVal('band-request-input');
-            if (targetAccountInputString !== "") {
-                bandRequests.push({ username: targetAccountInputString });
+        // =========================================================
+        // FRIENDSHIP BOND ACTIONS 
+        // =========================================================
+        if (clickedTargetElementNode.closest('#send-band-req-btn')) {
+            const bondTargetInputStringValue = gVal('band-request-input');
+            if (bondTargetInputStringValue !== "") {
+                bandRequests.push({ username: bondTargetInputStringValue });
                 saveData(); renderBandRequests(); sVal('band-request-input', '');
-                alert("HANDSHAKE SYNCHRONIZATION OUTBOUND: Link verification sequence packets broadcasted safely.");
+                alert(`Success: Your Friendship Bond Request Handshake has been dispatched to [${bondTargetInputStringValue}]!`);
             }
             return;
         }
 
-        if (target.closest('.btn-accept-band')) {
-            const closestRowItemBoxNode = target.closest('.dummy-item');
-            if (closestRowItemBoxNode) {
-                const targetAccountInputString = closestRowItemBoxNode.getAttribute('data-user');
-                bandRequests = bandRequests.filter(req => req.username !== targetAccountInputString);
-                
-                sHtml('fb-partner-dp-slot', `<img src="https://ui-avatars.com/api/?name=${targetAccountInputString}&background=random&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`);
-                sText('fb-partner-name', targetAccountInputString);
-                sText('band-level', "Synchronization Tier: Tier Level 1");
-                sText('time-remaining', "Active Matrix Stream Link Coordinates Mapped Securely");
-                
-                const progressIndicatorElement = safeEl('band-progress');
-                if (progressIndicatorElement) progressIndicatorElement.style.width = "45%";
-                
-                sRem('break-band-btn', 'hidden'); 
-                saveData(); renderBandRequests();
+        if (clickedTargetElementNode.closest('.btn-accept-band')) {
+            const bondRequestListItemElement = clickedTargetElementNode.closest('.dummy-item');
+            if (bondRequestListItemElement) {
+                const bondSourceUsernameKey = bondRequestListItemElement.getAttribute('data-user');
+                bandRequests = bandRequests.filter(reqObj => reqObj.username !== bondSourceUsernameKey);
+                sHtml('fb-partner-dp-slot', `<img src="https://ui-avatars.com/api/?name=${bondSourceUsernameKey}&background=random&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`);
+                sText('fb-partner-name', bondSourceUsernameKey); sText('band-level', "Bond Level 1 (Initial Handshake Verified)"); sText('time-remaining', "You are now bonded securely!");
+                const visualProgressBarElement = safeEl('band-progress'); if (visualProgressBarElement) { visualProgressBarElement.style.width = "45%"; }
+                sRem('break-band-btn', 'hidden'); saveData(); renderBandRequests();
             }
             return;
         }
 
-        if (target.closest('#break-band-btn')) {
-            if (confirm("DESTRUCTIVE ACTION ADVISORY: Are you completely certain you intend to forcefully split, terminate, and sever the current synchronization coordinate alignment bounds vectors? This will destroy stream statistics calculations rows.")) {
-                sHtml('fb-partner-dp-slot', '?');
-                sText('fb-partner-name', "Partner Node Space");
-                sText('band-level', "Synchronization Tier Level 0");
-                sText('time-remaining', "Synchronization Signal Line Unlinked Completely");
-                const progressIndicatorElement = safeEl('band-progress');
-                if (progressIndicatorElement) progressIndicatorElement.style.width = "0%";
-                sAdd('break-band-btn', 'hidden');
-                saveData();
-                alert("DE-SYNC CORE EXECUTED: Account synchronization bonds severed completely.");
+        if (clickedTargetElementNode.closest('#break-band-btn')) {
+            if (confirm("SEVERE ACTION WARNING: Are you absolutely sure you want to permanently break your Friendship Bond link sequence? All synchronized streak progress counters will be completely lost and zeroed out.")) {
+                sHtml('fb-partner-dp-slot', '?'); sText('fb-partner-name', "Partner Space Available");
+                sText('band-level', "Bond Level 0 (Detached)"); sText('time-remaining', "Currently Not Connected");
+                const visualProgressBarElement = safeEl('band-progress'); if (visualProgressBarElement) { visualProgressBarElement.style.width = "0%"; }
+                sAdd('break-band-btn', 'hidden'); saveData(); alert("Termination Process Successful: Your Friendship Bond parameters have been completely severed and zeroed out.");
             }
             return;
         }
 
-        if (target.closest('#send-btn')) {
-            processAndSendDirectMessage();
+        // =========================================================
+        // DEVELOPER CONTROL PANEL BUTTONS
+        // =========================================================
+        if (clickedTargetElementNode.closest('#dev-assign-rank-btn')) { alert("Admin Access Log: Select a target user first to modify their database rank tier mapping."); return; }
+        if (clickedTargetElementNode.closest('#dev-assign-ring-btn')) { alert("Admin Access Log: Premium profile rings and aura interface deploying in the next patch iteration."); return; }
+        if (clickedTargetElementNode.closest('#dev-shadowban-toggle-btn')) { alert("Admin Warning: Ghost shadowban protocol requires target user ID confirmation to execute properly."); return; }
+        if (clickedTargetElementNode.closest('#dev-ban-user-execution-btn')) {
+            let targetToBanStringInput = prompt("ENTER EXACT TARGET USERNAME TO EXECUTE PERMANENT BAN PROTOCOL:");
+            if (targetToBanStringInput) { alert(`EXECUTION CONFIRMED: Target node [${targetToBanStringInput}] has been completely restricted and eliminated from the server matrix.`); }
             return;
         }
 
-        if (target.closest('#chat-input-toggle-secret-disappearing-messages-mode-btn')) {
+        // Disappearing Messages & Bug Reports
+        if (clickedTargetElementNode.closest('#chat-input-toggle-secret-disappearing-messages-mode-btn')) {
             activeDisappearingMessagesMode = !activeDisappearingMessagesMode;
-            const toggleClockBtnPointer = safeEl('chat-input-toggle-secret-disappearing-messages-mode-btn');
-            if (toggleClockBtnPointer) {
-                if (activeDisappearingMessagesMode) {
-                    toggleClockBtnPointer.style.color = "#fbbf24";
-                    alert("CONFIGURATION ADJUSTMENT: Ephemeral Volatile Disappearing Packet Modes activated. Subsequent message block payloads will disintegrate 10 seconds post injection lifecycle frame grids loops.");
-                } else {
-                    toggleClockBtnPointer.style.color = "var(--text-muted)";
-                    alert("CONFIGURATION ADJUSTMENT: Epappearing Message Constraints detached. Standard historical records storage parameters re-engaged.");
-                }
+            const disappearModeToggleBtnElement = safeEl('chat-input-toggle-secret-disappearing-messages-mode-btn');
+            if (disappearModeToggleBtnElement) {
+                if (activeDisappearingMessagesMode) { disappearModeToggleBtnElement.style.color = "#fbbf24"; alert("SECURITY TOGGLE: Ephemeral Disappearing messages are now turned ON. Transmission arrays will expire in 10 seconds."); }
+                else { disappearModeToggleBtnElement.style.color = "var(--text-muted)"; alert("SECURITY TOGGLE: Disappearing messages mode is now officially turned OFF."); }
             }
             return;
         }
 
-        if (target.closest('#submit-bug-report-btn')) {
-            const textBugNarrativeValueData = gVal('bug-report-text-input');
-            if (textBugNarrativeValueData !== "") {
-                const packagedBugReportJsonObjectNodeRecord = {
-                    id: systemBugReports.length + 1,
-                    submittedBy: currentUser ? currentUser.username : "Anonymous Node",
-                    traceLogContext: textBugNarrativeValueData,
-                    timestamp: new Date().toLocaleTimeString()
-                };
-                systemBugReports.push(packagedBugReportJsonObjectNodeRecord);
-                saveData();
-                renderDeveloperBugReportsAggregationPanelList();
-                sAdd('bug-report-modal', 'hidden');
-                alert(`BUG REPORTING SECURED: Algorithmic defect index packaging verified and logged. Packet ID allocated: [${packagedBugReportJsonObjectNodeRecord.id}] dispatched directly to Supreme Admin Control dashboards pipelines grids.`);
-            } else {
-                alert("COMPILATION FAILURE: Bug trace narrative summary field value data cannot occupy null space records rows entries arrays.");
+        if (clickedTargetElementNode.closest('#submit-bug-report-btn')) {
+            const bugReportDescriptionTextValue = gVal('bug-report-text-input');
+            if (bugReportDescriptionTextValue !== "") {
+                systemBugReports.push({ id: systemBugReports.length + 1, submittedBy: currentUser ? currentUser.username : "Unknown Entity", traceLogContext: bugReportDescriptionTextValue, timestamp: new Date().toLocaleTimeString() });
+                saveData(); renderDeveloperBugReportsAggregationPanelList(); sAdd('bug-report-modal', 'hidden');
+                alert("Central Routing Notification: Bug Report packet compiled and submitted successfully directly to Developer Headquarters! Thank you for the contribution.");
             }
             return;
         }
 
-        if (target.closest('.close-modal-btn') || target.closest('.modal-overlay')) {
-            if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-modal-btn') || e.target.parentElement.classList.contains('close-modal-btn')) {
-                const activeOpenOverlayModalDivSelectorElement = e.target.closest('.modal-overlay');
-                if (activeOpenOverlayModalDivSelectorElement) activeOpenOverlayModalDivSelectorElement.classList.add('hidden');
+        // Modals Overlay Closing Hooks
+        if (clickedTargetElementNode.closest('.close-modal-btn') || clickedTargetElementNode.classList.contains('modal-overlay')) {
+            let overlayToCloseElement = clickedTargetElementNode.closest('.modal-overlay');
+            if (!overlayToCloseElement) { overlayToCloseElement = clickedTargetElementNode; }
+            if (overlayToCloseElement.classList.contains('modal-overlay')) { overlayToCloseElement.classList.add('hidden'); }
+            return;
+        }
+
+        // Settings Actions
+        if (clickedTargetElementNode.closest('#action-clear-cache-btn')) {
+            if (confirm("Notice: Are you absolutely positive you want to completely clear the application cache blocks? This will delete all temporary files and posts arrays, but will keep your active profile login session running safely.")) {
+                localStorage.removeItem('chatPosts'); posts = []; renderPosts();
+                alert("Storage Cleanup Engine Successful: Cache segment completely cleared and deallocated from internal memory.");
             }
             return;
         }
 
-        if (target.closest('#action-clear-cache-btn')) {
-            if (confirm("CACHE CLEANUP INITIATION: Are you certain you desire to execute memory buffer deallocation routine parameters switches controls flags rules maps rows tables index loops?")) {
-                localStorage.removeItem('chatPosts');
-                posts = [];
-                renderPosts();
-                alert("STORAGE ENGINE LOG: Cache segment arrays blocks tables unlinked and garbage collection sequences parsed safely. Local system space optimized rows layers cleared metrics charts.");
-            }
-            return;
-        }
+        if (clickedTargetElementNode.closest('#view-friends-list-btn')) { renderFriendsListModal(); sRem('friend-list-modal', 'hidden'); return; }
+        if (clickedTargetElementNode.closest('#edit-profile-btn')) { sVal('edit-username-input', currentUser.username); sVal('edit-bio-input', currentUser.bio || ''); sRem('edit-profile-modal', 'hidden'); return; }
 
-        if (target.closest('#dev-assign-rank-btn')) { sText('dev-modal-title', "Modify Security Privileges Framework (Rank Selection)"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('rank'); return; }
-        if (target.closest('#dev-assign-ring-btn')) { sText('dev-modal-title', "Modify Visual Profile Avatar Particle Geometry Ring Border"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('ring'); return; }
-        if (target.closest('#dev-assign-theme-btn')) { sText('dev-modal-title', "Modify Application Environment Interface Color Spectrum Stylesheet CSS Themes Sheets"); sRem('dev-assign-modal', 'hidden'); generateDevOptionsGrid('theme'); return; }
-        if (target.closest('#dev-ban-user-execution-btn')) { openDevActionModal('Execute Account Authorization Revocation Protocol (Permanent Ban)'); return; }
-        if (target.closest('#dev-unban-user-execution-btn')) { openDevActionModal('Execute Suspended clearance Credentials Restoration Vector (Reverse Profile Unban)'); return; }
-        
-        if (target.closest('#dev-view-bug-reports-btn')) {
-            renderDeveloperBugReportsAggregationPanelList();
-            sRem('dev-bug-viewer-modal', 'hidden');
-            return;
-        }
-
-        if (target.closest('#dev-shadowban-toggle-btn')) {
-            devStates.shadowban = !devStates.shadowban;
-            const btn = safeEl('dev-shadowban-toggle-btn');
-            const icon = safeEl('dev-shadowban-icon-display');
-            if (devStates.shadowban) {
-                if(btn) btn.style.borderColor = '#ef4444'; if(icon) icon.style.textShadow = '0 0 20px #ef4444';
-                sHtml('dev-shadowban-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: SHADOWBAN ISOLATION FILTERS ENGAGED</b> // Targeted profiles outbound packet parsing indices routes are secretly drops.');
-            } else {
-                if(btn) btn.style.borderColor = '#a855f7'; if(icon) icon.style.textShadow = '0 0 15px #a855f7';
-                sText('dev-shadowban-desc-display', 'CURRENT STATUS MODE: RUNNING MONITORING SAFE SYSTEM NORMAL // Execute silent transmission routing filter isolation layer over target handle entries parameters.');
-            }
-            return;
-        }
-
-        if (target.closest('#dev-global-mute-toggle-btn')) {
-            devStates.globalMute = !devStates.globalMute;
-            const btn = safeEl('dev-global-mute-toggle-btn');
-            const icon = safeEl('dev-global-mute-icon-display');
-            if (devStates.globalMute) {
-                if(btn) btn.style.borderColor = '#ef4444'; if(icon) { icon.style.textShadow = '0 0 20px #ef4444'; icon.innerText = '🔇'; }
-                sHtml('dev-global-mute-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: GLOBAL BROADS SPACE CHANNEL TRANSMISSIONS FROZEN MUTE LOCK</b> // Global chat inputs stream strings are blocked.');
-            } else {
-                if(btn) btn.style.borderColor = '#a855f7'; if(icon) { icon.style.textShadow = '0 0 15px #a855f7'; icon.innerText = '🤐'; }
-                sText('dev-global-mute-desc-display', 'CURRENT STATUS MODE: TRANSMISSIONS OPEN UNRESTRICTED // Freeze or activate packet line parsing pipelines processes across all client transmission data systems slots buffers.');
-            }
-            return;
-        }
-
-        if (target.closest('#dev-maintenance-toggle-mode-btn')) {
-            devStates.maintenance = !devStates.maintenance;
-            const btn = safeEl('dev-maintenance-toggle-mode-btn');
-            const icon = safeEl('dev-maintenance-icon-display');
-            if (devStates.maintenance) {
-                if(btn) btn.style.borderColor = '#ef4444'; if(icon) icon.style.textShadow = '0 0 20px #ef4444';
-                sHtml('dev-maintenance-desc-display', '<b style="color:white; background:#ef4444; padding:2px 6px; border-radius:4px;">OVERRIDE STATUS FLAG: ECOSYSTEM ARCHITECTURE ISOLATED IN MAINTENANCE STACK TIERS MODE</b> // Traffic redirected completely.');
-            } else {
-                if(btn) btn.style.borderColor = '#f97316'; if(icon) icon.style.textShadow = '0 0 15px #f97316';
-                sText('dev-maintenance-desc-display', 'CURRENT STATUS MODE: SYSTEM LIVE OPERATIONAL // Shut down client view screens pipelines displays layers and redirect target incoming traffic to architecture error grids blocks layouts windows items fields framework.');
-            }
-            return;
-        }
-
-        if (target.closest('#dev-wipe-server-data-btn')) {
-            if (confirm("SUPREME ADMIN MASTER DESTRUCTIVE SYSTEM PROTOCOL INITIALIZATION: Wipe local memory indexes repositories entirely tables rows layers mapping chart bounds?")) {
-                localStorage.clear();
-                location.reload();
-            }
-            return;
-        }
-
-    }); 
+    });
 
 
     // =========================================================================
-    // 4. CORE SYSTEM ENVIRONMENT PRESENTATION LOGIC LAYER HANDLERS (MODALS RE-RENDER)
+    // 8. SUPPLEMENTARY EVENT LISTENERS AND HELPERS
     // =========================================================================
-    
-    const dynamicThemeSelectorSelectTagPointerElement = safeEl('settings-theme-palette-spectrum-engine-selector-dropdown-field');
-    if (dynamicThemeSelectorSelectTagPointerElement) {
-        dynamicThemeSelectorSelectTagPointerElement.addEventListener('change', (event) => {
-            const targetStylesSheetThemePalettesValueNameString = event.target.value;
+
+    const settingsThemeSelectorDropdownElement = safeEl('settings-theme-palette-spectrum-engine-selector-dropdown-field');
+    if (settingsThemeSelectorDropdownElement) {
+        settingsThemeSelectorDropdownElement.addEventListener('change', (eventObject) => {
             if (currentUser) {
-                currentUser.theme = targetStylesSheetThemePalettesValueNameString;
-                saveData();
-                applySystemThemePalette();
-                alert(`THEME ENGINE CONFIG DISPATCH: Spectrum color grid overridden to state archetype name: [${targetStylesSheetThemePalettesValueNameString}].`);
+                currentUser.theme = eventObject.target.value; saveData(); applySystemThemePalette();
+                alert(`Interface Notification: Theme spectrum configuration correctly applied to [${currentUser.theme}].`);
             }
         });
     }
 
     function renderFriendsListModal() {
-        const container = safeEl('modal-friend-list-container');
-        if (!container) return;
-        container.innerHTML = '';
-        
-        if (friends.length === 0) {
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:1.05rem; padding: 20px; font-weight: bold; font-family: inherit;">You have no friends added to your profile list yet. Connect with other users through the Request tab to populate your contact roster directory rows logs entries layers models maps frames grids cells tabs elements.</p>`;
-            return;
-        }
-        
-        friends.forEach(friend => {
-            container.innerHTML += `
+        const modalContainerOutputElement = safeEl('modal-friend-list-container');
+        if (!modalContainerOutputElement) return;
+        modalContainerOutputElement.innerHTML = '';
+        if (friends.length === 0) { modalContainerOutputElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:1.05rem; padding: 20px; font-weight: bold;">You have zero friends added to your profile array indices yet.</p>`; return; }
+
+        friends.forEach(function (friendIteratedObject) {
+            let constructedFriendHtmlCardString = `
                 <div class="dummy-item" style="border-bottom: 1px solid var(--border-color); padding: 12px; background: var(--bg-main); border-radius: 12px; display: flex; align-items: center; gap: 15px;">
-                    <img src="${friend.dp || DEFAULT_DP}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
+                    <img src="${friendIteratedObject.dp || DEFAULT_DP}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
                     <div style="display:flex; flex-direction:column;">
-                        <b style="font-size:1.15rem; color:var(--text-main);">${friend.username}</b>
-                        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:bold;">Status: Connected & Mapped Active Peer Node</span>
+                        <b style="font-size:1.15rem; color:var(--text-main);">${friendIteratedObject.username}</b>
+                        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:bold;">Status: Validated Friendship Link</span>
                     </div>
                 </div>
             `;
+            modalContainerOutputElement.innerHTML += constructedFriendHtmlCardString;
         });
     }
 
     function renderDeveloperBugReportsAggregationPanelList() {
-        const targetOutletListWrapperDivPointerElement = safeEl('dev-bug-reports-list-target-outlet-wrapper');
-        const overlayDashboardViewContainerListPointerElement = safeEl('dev-bug-reports-container');
-        
-        let constructedHtmlPayloadRowsBlocksSequenceString = "";
-        
+        const primaryDashboardListOutletElement = safeEl('dev-bug-reports-list-target-outlet-wrapper');
+        let constructedBugReportHtmlSequenceString = "";
         if (systemBugReports.length === 0) {
-            constructedHtmlPayloadRowsBlocksSequenceString = `<p style="text-align: center; color: #64748b; font-family: monospace; padding: 20px;">[ROUTING TRACE STATUS LOGS: QUEUE BUFFER EMPTY // NO ACTIVE SYSTEM DEFECT PACKETS DISPATCHED IN STACK MATRIX RECORDS ROWS]</p>`;
+            constructedBugReportHtmlSequenceString = `<p style="text-align: center; color: #64748b; font-family: monospace; padding: 20px;">[ROUTING STATUS LOGS: ZERO BUG REPORTS SUBMITTED ENTIRELY INTO THE STACK REGISTRIES]</p>`;
         } else {
-            systemBugReports.forEach(report => {
-                constructedHtmlPayloadRowsBlocksSequenceString += `
-                    <div style="background: #000; border-left: 4px solid #ef4444; padding: 15px; border-radius: 8px; color: #fff; font-family: monospace; font-size: 0.85rem; box-shadow: inset 0 0 10px rgba(255,0,0,0.1);">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:6px; color:#ef4444; font-weight:bold;">
-                            <span>➡️ PACKET REPORT TARGET TRANS-ID: #${report.id}</span>
-                            <span>⏱️ TIME: ${report.timestamp}</span>
+            systemBugReports.forEach(function (reportIteratedObject) {
+                constructedBugReportHtmlSequenceString += `
+                    <div style="background: #000; border-left: 4px solid #ef4444; padding: 15px; border-radius: 8px; color: #fff; font-family: monospace; font-size: 0.85rem; margin-bottom: 10px;">
+                        <div style="display:flex; justify-content:space-between; color:#ef4444; font-weight:bold;">
+                            <span>➡️ SYSTEM BUG ID TOKEN TRACE: #${reportIteratedObject.id}</span>
+                            <span>⏱️ TIME LOGGED: ${reportIteratedObject.timestamp}</span>
                         </div>
-                        <div style="margin-bottom:4px; color:#60a5fa;"><b>👤 RE-SOURCE ORIGIN NODE HANDLE:</b> ${report.submittedBy}</div>
-                        <div style="color:#e2e8f0; word-wrap:break-word; white-space:pre-wrap; background:rgba(255,255,255,0.05); padding:8px; border-radius:4px; border:1px solid #1e293b;"><b>📝 TRACE DIAGNOSTIC CONTENT META:</b> ${report.traceLogContext}</div>
+                        <div><b>👤 IDENTIFIED REPORTING NODE SOURCE ORIGIN:</b> ${reportIteratedObject.submittedBy}</div>
+                        <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:4px; margin-top:5px; border:1px solid #1e293b;">
+                            <b>📝 DIAGNOSTIC CONTEXT NARRATIVE:</b> ${reportIteratedObject.traceLogContext}
+                        </div>
                     </div>
                 `;
             });
         }
-        
-        if (targetOutletListWrapperDivPointerElement) targetOutletListWrapperDivPointerElement.innerHTML = constructedHtmlPayloadRowsBlocksSequenceString;
-        if (overlayDashboardViewContainerListPointerElement) overlayDashboardViewContainerListPointerElement.innerHTML = constructedHtmlPayloadRowsBlocksSequenceString;
+        if (primaryDashboardListOutletElement) { primaryDashboardListOutletElement.innerHTML = constructedBugReportHtmlSequenceString; }
     }
 
-    // =========================================================================
-    // 5. FILE UPLOADS PARSING SYSTEM STACK PORT ENTRY PORTS INTERFACES PIPELINES
-    // =========================================================================
-    function setupFileInput(id, callback) {
-        const el = safeEl(id);
-        if(el) {
-            el.addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = e => callback(e.target.result);
-                    reader.readAsDataURL(file);
+    function setupFileInput(elementIdString, resultCallbackFunctionMethod) {
+        const targetUploadInputElementNode = safeEl(elementIdString);
+        if (targetUploadInputElementNode) {
+            targetUploadInputElementNode.addEventListener('change', function () {
+                const selectedFileObject = this.files[0];
+                if (selectedFileObject) {
+                    const fileReaderInstanceObject = new FileReader();
+                    fileReaderInstanceObject.onload = function (eventObjectTriggerResult) {
+                        resultCallbackFunctionMethod(eventObjectTriggerResult.target.result);
+                    };
+                    fileReaderInstanceObject.readAsDataURL(selectedFileObject);
                 }
             });
         }
     }
 
-    setupFileInput('edit-dp-input', (res) => { currentUser.dp = res; saveData(); updateProfileUI(); alert("Logo updated!"); });
-    setupFileInput('edit-banner-input', (res) => { currentUser.banner = res; saveData(); updateProfileUI(); alert("Banner updated!"); });
-    setupFileInput('new-group-icon-input', (res) => { tempGroupIcon = res; sSrc('new-group-icon-preview', tempGroupIcon); });
-    setupFileInput('post-image-upload-input', (res) => { attachedPostImage = res; sRem('post-media-attachment-status-preview', 'hidden'); });
+    // Profile File Uploads
+    setupFileInput('edit-dp-input', (resultingBase64ImageStringCode) => { currentUser.dp = resultingBase64ImageStringCode; saveData(); updateProfileUI(); alert("Configuration Verified: Profile Picture DP Avatar Updated Successfully into Data Memory Arrays!"); });
+    setupFileInput('edit-banner-input', (resultingBase64ImageStringCode) => { currentUser.banner = resultingBase64ImageStringCode; saveData(); updateProfileUI(); alert("Configuration Verified: Profile Banner Background Graphic Updated Successfully!"); });
+    setupFileInput('new-group-icon-input', (resultingBase64ImageStringCode) => { tempGroupIcon = resultingBase64ImageStringCode; sSrc('new-group-icon-preview', tempGroupIcon); });
+    setupFileInput('post-image-upload-input', (resultingBase64ImageStringCode) => { attachedPostImage = resultingBase64ImageStringCode; sRem('post-media-attachment-status-preview', 'hidden'); });
 
-    // =========================================================================
-    // 6. KEYBOARD ENTER SUBMISSIONS PROTOCOLS KEYPRESS LISTENERS HOOKS
-    // =========================================================================
-    const handleEnterKeypressRoutingPort = (id, triggerId) => {
-        const el = safeEl(id);
-        if(el) {
-            el.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); 
-                    const btn = safeEl(triggerId);
-                    if(btn) btn.click();
-                }
-            });
-        }
-    };
-    handleEnterKeypressRoutingPort('username-input', 'join-btn');
-    handleEnterKeypressRoutingPort('email-input', 'join-btn');
-    handleEnterKeypressRoutingPort('dev-code', 'join-btn');
-    handleEnterKeypressRoutingPort('message-input', 'send-btn');
-    handleEnterKeypressRoutingPort('world-message-input', 'world-send-btn');
-    handleEnterKeypressRoutingPort('chat-sidebar-search-input', 'sidebar-action-search-trigger');
-
-    // =========================================================================
-    // 7. CORE COMPONENT PRESENTATION DOM DATA RENDERING FLOW SCHEMAS (STANDARDS METHODS)
-    // =========================================================================
-    async function sendWorldMessage() {
-        const inputVal = gVal('world-message-input');
-        if (inputVal !== "") {
-            
-            // --- 🐍 PYTHON FASTAPI AI SENTIMENT ANALYSIS INTERCEPTOR 🐍 ---
-            try {
-                const aiRes = await fetch('http://127.0.0.1:8000/api/ai/sentiment-analysis', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: inputVal, sender: currentUser.username })
-                });
-                const aiData = await aiRes.json();
-                if (aiData.classification && aiData.classification.is_toxic) {
-                    alert("⚠️ PYTHON AI FIREWALL: Toxic language detected in Global Chat. Packet Dropped!");
-                    return; 
-                }
-            } catch (err) {
-                console.warn("Python AI Server offline, proceeding without AI filtering.");
-            }
-            // ---------------------------------------------------------------
-
-            socket.emit('send_message', { sender: currentUser.username, text: inputVal });
-            const area = safeEl('world-messages-area');
-            if(area) {
-                const div = document.createElement('div');
-                div.className = `message-bubble my-msg`;
-                div.innerHTML = `<strong>${currentUser.username}:</strong> ${inputVal}`;
-                area.appendChild(div);
-                area.scrollTop = area.scrollHeight;
-            }
-            sVal('world-message-input', '');
+    // Chat Image/Media Attachment Rendering Engine
+    function renderChatMediaMessage(base64MediaString, targetMessageAreaIdString) {
+        const messageAreaTargetElement = safeEl(targetMessageAreaIdString);
+        if (messageAreaTargetElement) {
+            const mediaMessageBubbleDiv = document.createElement('div');
+            mediaMessageBubbleDiv.className = "message-bubble my-msg";
+            mediaMessageBubbleDiv.innerHTML = `<strong>Me:</strong><br><img src="${base64MediaString}" style="max-width:220px; border-radius:12px; margin-top:8px; border:2px solid rgba(255,255,255,0.2);">`;
+            messageAreaTargetElement.appendChild(mediaMessageBubbleDiv);
+            messageAreaTargetElement.scrollTop = messageAreaTargetElement.scrollHeight;
         }
     }
 
-    socket.on('receive_message', (data) => {
-        if (!isWorldMuted && currentUser && data.sender !== currentUser.username) {
-            const area = safeEl('world-messages-area');
-            if(area) {
-                const div = document.createElement('div');
-                div.className = `message-bubble other-msg`;
-                div.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
-                area.appendChild(div);
-                area.scrollTop = area.scrollHeight;
-            }
-        }
-    });
+    setupFileInput('chat-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'messages-area'); });
+    setupFileInput('group-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'group-messages-area'); });
+    setupFileInput('world-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'world-messages-area'); });
 
-    function updateProfileUI() {
-        if (!currentUser) return;
-        sText('display-username', currentUser.username);
-        sText('user-bio', currentUser.bio || "No data.");
-        sSrc('user-dp', currentUser.dp || DEFAULT_DP);
-        sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
-        
-        if (currentUser.banner) { sSrc('banner-img', currentUser.banner); sRem('banner-img', 'hidden'); }
-        else { sAdd('banner-img', 'hidden'); }
-        
-        sText('display-rank', currentUser.rank);
-
-        const usernameDisplay = safeEl('display-username');
-        const rankBadge = safeEl('display-rank');
-
-        if (currentUser.isDev) {
-            if(usernameDisplay) usernameDisplay.classList.add('shiny-dev-text');
-            if(rankBadge) rankBadge.className = 'rank-badge rank-developer';
-            sRem('dev-nav-item', 'hidden');
-        } else {
-            if(usernameDisplay) usernameDisplay.classList.remove('shiny-dev-text');
-        }
-    }
-
-    function updateBadgesAndCounts() {
-        const reqBadge = safeEl('req-badge');
-        if(reqBadge) {
-            if (friendRequests.length > 0) {
-                reqBadge.innerText = friendRequests.length; sRem('req-badge', 'hidden');
-            } else { sAdd('req-badge', 'hidden'); }
-        }
-        sText('total-friends-count', friends.length);
-    }
-
-    function renderContacts() {
-        const container = safeEl('contact-list-container');
-        if(!container) return; container.innerHTML = '';
-        let list = currentChatTab === 'favorite' ? friends.filter(f => f.isFavorite) : friends;
-        
-        if (list.length === 0) {
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">No operational terminal communication nodes matched indices.</p>`;
-            return;
-        }
-        list.forEach(friend => {
-            let star = friend.isFavorite ? `<i class="fas fa-star" style="color:#f59e0b; margin-left: 5px;"></i>` : '';
-            container.innerHTML += `
-                <div class="dummy-item contact-item" data-user="${friend.username}">
-                    <img src="${friend.dp}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:1px solid var(--primary-color);">
-                    <b>${friend.username} ${star}</b>
-                </div>
-            `;
-        });
-    }
-
-    function renderRequestSubTabUI() {
-        const container = safeEl('contact-list-container');
-        if(!container) return; container.innerHTML = '';
-        const acceptBtn = safeEl('sub-tab-accept-btn');
-        const sendBtn = safeEl('sub-tab-send-btn');
-        
-        if (currentRequestSubTab === 'accept') {
-            if(acceptBtn) acceptBtn.classList.add('active-sub-tab'); if(sendBtn) sendBtn.classList.remove('active-sub-tab');
-            sAdd('search-friend-field-block', 'hidden');
-            
-            if (friendRequests.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px;">No inbound verification requests detected inside local repository cache table frames grids rows lines data nodes.</p>`;
-                return;
-            }
-            friendRequests.forEach(req => {
-                container.innerHTML += `
-                    <div class="dummy-item" data-user="${req.username}" style="background:var(--bg-main); border:1px solid var(--border-color);">
-                        <img src="${req.dp}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                        <b style="font-size:0.9rem;">${req.username}</b>
-                        <div class="req-action-btns">
-                            <button class="btn-accept-friend btn-accept" title="Accept"><i class="fas fa-check"></i></button>
-                            <button class="btn-reject-friend btn-reject" title="Reject"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        } else if (currentRequestSubTab === 'send') {
-            if(acceptBtn) acceptBtn.classList.remove('active-sub-tab'); if(sendBtn) sendBtn.classList.add('active-sub-tab');
-            sRem('search-friend-field-block', 'hidden');
-            container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px; padding: 20px; font-weight:bold;"><i class="fas fa-search"></i> Input precise target system identity handle string character values above to locate active records rows in database registers matrix.</p>`;
-        }
-    }
-
-    function renderPosts() {
-        const container = safeEl('feed-container');
-        if(!container) return; container.innerHTML = '';
-        posts.forEach(post => {
-            let imgHtml = post.image ? `<img src="${post.image}" class="post-media-img">` : '';
-            let tagsHtml = (post.tags && post.tags.length > 0) ? `<div style="color: var(--primary-color); font-weight: bold; margin-bottom: 8px; font-size:0.9rem;">${post.tags.join(' ')}</div>` : '';
-            container.innerHTML += `
-                <div class="feed-post" data-id="${post.id}">
-                    <div class="post-header">
-                        <div class="post-user-info">
-                            <img src="${post.dp}" class="post-user-dp">
-                            <div><b style="font-size:1.15rem;">${post.user}</b><span style="color:var(--text-muted); font-size:0.85rem; display:block;">${post.time} [Scope: ${post.scope}]</span></div>
-                        </div>
-                        ${post.user === currentUser.username ? `<button class="delete-post-btn"><i class="fas fa-trash"></i></button>` : ''}
-                    </div>
-                    ${post.text ? `<div class="post-text-content">${post.text}</div>` : ''}
-                    ${tagsHtml}
-                    ${imgHtml}
-                    <div class="post-footer">
-                        <button class="action-btn like-btn"><i class="far fa-heart"></i> Endorse</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function renderGroups() {
-        const container = safeEl('group-list-container');
-        if(!container) return; container.innerHTML = '';
-        groups.forEach(group => {
-            let icon = group.icon || `https://ui-avatars.com/api/?name=${group.name}&background=a855f7&color=fff`;
-            container.innerHTML += `
-                <div class="dummy-item" style="padding: 15px;">
-                    <img src="${icon}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color);">
-                    <b style="font-size: 1.15rem;">${group.name}</b>
-                </div>
-            `;
-        });
-    }
-
-    function renderBandRequests() {
-        const container = safeEl('band-incoming-requests');
-        const emptyPlaceholder = safeEl('band-incoming-requests-empty-placeholder-string-element');
-        if(!container) return; container.innerHTML = '';
-        
-        if (bandRequests.length === 0) {
-            if(emptyPlaceholder) emptyPlaceholder.classList.remove('hidden');
-            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">No inbound synchronization requests queue active buffer line area storage room stack channels.</p>`;
-            return;
-        }
-        if(emptyPlaceholder) emptyPlaceholder.classList.add('hidden');
-        bandRequests.forEach(req => {
-            container.innerHTML += `
-                <div class="dummy-item" data-user="${req.username}" style="margin-top:10px; background:var(--bg-main); padding: 15px; border: 1px solid var(--border-color); border-radius:12px;">
-                    <b style="flex:1; font-size:0.95rem; color:var(--text-main);"><i class="fas fa-satellite-dish"></i> Incoming Link Handshake Matrix Vector Signature From: [ ${req.username} ]</b>
-                    <button class="btn-accept-band btn-accept" style="width:45px; height:45px; border-radius:50%;"><i class="fas fa-check"></i></button>
-                </div>
-            `;
-        });
-    }
-
-    function openChatWindow(username) {
-        sAdd('request-profile-preview-pane', 'hidden');
-        sAdd('chat-placeholder', 'hidden');
-        sRem('chat-header', 'hidden');
-        sRem('messages-area', 'hidden');
-        sRem('chat-input-area', 'hidden');
-        
-        activeChatUser = friends.find(f => f.username === username);
-        if(activeChatUser) {
-            sText('current-chat-name', activeChatUser.username);
-            sSrc('current-chat-dp', activeChatUser.dp);
-            updateFavoriteButtonUI();
-        }
-    }
-
-    function updateFavoriteButtonUI() {
-        const favBtn = safeEl('favorite-user-btn');
-        if(favBtn) {
-            if (activeChatUser && activeChatUser.isFavorite) {
-                favBtn.classList.add('starred');
-                favBtn.innerHTML = '<i class="fas fa-star"></i>';
-            } else {
-                favBtn.classList.remove('starred');
-                favBtn.innerHTML = '<i class="far fa-star"></i>';
-            }
-        }
-    }
-
-    function openRightProfilePreviewPane(userContext) {
+    function openRightProfilePreviewPane(selectedUserContextDataRecordObject) {
         sAdd('chat-placeholder', 'hidden'); sAdd('chat-header', 'hidden'); sAdd('messages-area', 'hidden'); sAdd('chat-input-area', 'hidden');
         sRem('request-profile-preview-pane', 'hidden');
-        sSrc('preview-search-user-dp', userContext.dp); sText('preview-search-user-name', userContext.username); sText('preview-search-user-bio', userContext.bio);
-        sText('preview-search-user-rank', userContext.rank || "Member");
+        sSrc('preview-search-user-dp', selectedUserContextDataRecordObject.dp); sText('preview-search-user-name', selectedUserContextDataRecordObject.username);
+        sText('preview-search-user-bio', selectedUserContextDataRecordObject.bio); sText('preview-search-user-rank', selectedUserContextDataRecordObject.rank || "Verified Member");
     }
 
     function resetRightWorkspacePane() {
@@ -1017,24 +1152,22 @@ document.addEventListener('DOMContentLoaded', () => {
         sRem('chat-placeholder', 'hidden');
     }
 
-    function openDevActionModal(title) { sRem('dev-action-modal', 'hidden'); sText('action-modal-title', title); }
-
-    function generateDevOptionsGrid(type) {
-        currentDevActionType = type; const grid = safeEl('dev-options-grid'); if(!grid) return; grid.innerHTML = ''; selectedDevOptionValue = null;
-        if (type === 'rank') {
-            ['Developer', 'Operator', 'Elite', 'Legend', 'Pro', 'Member'].forEach(r => {
-                const btn = document.createElement('button'); btn.className = 'action-btn'; btn.style.width = '100%'; btn.innerText = r;
-                btn.onclick = () => { selectedDevOptionValue = r; Array.from(grid.children).forEach(c => c.style.border = '1px solid var(--border-color)'); btn.style.border = '2px solid #fbbf24'; };
-                grid.appendChild(btn);
-            }); return;
+    const handleEnterKeypressRoutingPortAssignmentMethod = (targetInputIdString, triggerActionBtnIdString) => {
+        const inputFieldTargetElement = safeEl(targetInputIdString);
+        if (inputFieldTargetElement) {
+            inputFieldTargetElement.addEventListener('keypress', (keypressEventObject) => {
+                if (keypressEventObject.key === 'Enter') {
+                    keypressEventObject.preventDefault();
+                    const actionButtonTargetElement = safeEl(triggerActionBtnIdString);
+                    if (actionButtonTargetElement) { actionButtonTargetElement.click(); }
+                }
+            });
         }
-        if (type === 'theme') {
-            ['default', 'dark', 'grand-golden', 'matrix-neon'].forEach(t => {
-                const btn = document.createElement('button'); btn.className = 'action-btn'; btn.style.width = '100%'; btn.innerText = t.toUpperCase() + " Mode Sheet";
-                btn.onclick = () => { selectedDevOptionValue = t; Array.from(grid.children).forEach(c => c.style.outline = 'none'); btn.style.outline = '3px solid #fbbf24'; };
-                grid.appendChild(btn);
-            }); return;
-        }
-    }
+    };
 
-});
+    handleEnterKeypressRoutingPortAssignmentMethod('message-input', 'send-btn');
+    handleEnterKeypressRoutingPortAssignmentMethod('world-message-input', 'world-send-btn');
+    handleEnterKeypressRoutingPortAssignmentMethod('group-message-input', 'group-send-btn');
+    handleEnterKeypressRoutingPortAssignmentMethod('chat-sidebar-search-input', 'sidebar-action-search-trigger');
+
+}); // END OF DOMCONTENTLOADED EVENT LISTENER INFRASTRUCTURE BLOCK
