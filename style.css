@@ -425,7 +425,6 @@ button:active { transform: translateY(0); }
 .chat-header-info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .chat-header-info h3 { font-size: 1.25rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;}
 .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
-/* Adjustment for multiple header action buttons */
 .header-actions button {
     width: 40px;
     height: 40px;
@@ -471,11 +470,11 @@ button:active { transform: translateY(0); }
 
 /* Input area locked firmly to the bottom */
 .chat-input-area { 
-    padding: 15px 20px; /* NEW: Adjusted padding for extra buttons */
+    padding: 15px 20px; 
     background: var(--bg-panel); 
     border-top: 1px solid var(--border-color); 
     display: flex; 
-    gap: 8px; /* NEW: Adjusted gap for extra buttons */
+    gap: 8px; 
     align-items: center; 
     flex-shrink: 0; 
 }
@@ -487,11 +486,11 @@ button:active { transform: translateY(0); }
     background: var(--bg-main); 
     color: var(--text-main); 
     font-size: 1rem; 
-    min-width: 60px; /* NEW: Prevents input box from disappearing entirely on small screens */
+    min-width: 60px; 
 }
 .chat-input-area button { 
     border-radius: 50%; 
-    width: 42px; /* NEW: Shrunk slightly to fit new tools perfectly */
+    width: 42px; 
     height: 42px; 
     padding: 0; 
     font-size: 1.15rem;
@@ -625,7 +624,45 @@ button:active { transform: translateY(0); }
 }
 
 /* ========================================================================= */
-/* 10. GRAND GOLDEN SPECIAL STYLES OVERRIDES RULES                           */
+/* 10. ACTIVE CALL INTERFACE & ANIMATIONS                                    */
+/* ========================================================================= */
+
+/* Call Bottom Controls Hover Transitions */
+.call-bottom-controls .action-btn:hover {
+    background: rgba(255,255,255,0.4) !important;
+    transform: scale(1.1);
+}
+.call-bottom-controls .danger-btn:hover {
+    background: #dc2626 !important;
+    transform: scale(1.1);
+}
+
+/* Floating Widget Hover & Pulse Effects */
+#minimized-call-widget {
+    transition: transform 0.2s ease, background 0.3s ease;
+    animation: widgetPulse 2.5s infinite ease-in-out;
+}
+#minimized-call-widget:hover {
+    transform: scale(1.05);
+    background: #059669; /* slightly darker green on hover */
+}
+
+@keyframes widgetPulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+#end-minimized-call-btn {
+    transition: transform 0.2s ease;
+}
+#end-minimized-call-btn:hover {
+    transform: scale(1.15) rotate(15deg);
+    background: #dc2626 !important;
+}
+
+/* ========================================================================= */
+/* 11. GRAND GOLDEN SPECIAL STYLES OVERRIDES RULES                           */
 /* ========================================================================= */
 [data-theme="grand-golden"] button { color: #000000 !important; font-weight: 900 !important; }
 [data-theme="grand-golden"] .primary-btn, 
@@ -644,8 +681,20 @@ button:active { transform: translateY(0); }
     color: #000000 !important; border: 1px solid #ffffff !important; 
 }
 
+/* For Call Screen Buttons under Grand Golden Theme (Keep them clean) */
+[data-theme="grand-golden"] .call-bottom-controls .action-btn {
+    background: rgba(255,215,0,0.2) !important;
+    border: 1px solid rgba(255,215,0,0.5) !important;
+    color: #ffd700 !important;
+}
+[data-theme="grand-golden"] .call-bottom-controls .danger-btn {
+    background: #ef4444 !important;
+    color: white !important;
+    border: none !important;
+}
+
 /* ========================================================================= */
-/* 11. MOBILE LAYOUT RESPONSIVENESS                                          */
+/* 12. MOBILE LAYOUT RESPONSIVENESS                                          */
 /* ========================================================================= */
 @media (max-width: 1024px) { 
     .dev-grid { grid-template-columns: repeat(2, 1fr); } 
@@ -696,17 +745,23 @@ button:active { transform: translateY(0); }
     .messages-container { padding: 15px; }
     .message-bubble { max-width: 85%; }
     
-    /* FIX: Custom adjustments for chat input area to fit 5 buttons gracefully on small screens */
     .chat-input-area { 
         padding: 10px; 
         gap: 5px; 
-        overflow-x: auto; /* Allows sliding left-right if buttons get squeezed too tight */
-        scrollbar-width: none; /* Hide scrollbar for clean look */
+        overflow-x: auto; 
+        scrollbar-width: none; 
     }
     .chat-input-area::-webkit-scrollbar { display: none; }
     .chat-input-area button { 
         width: 38px; 
         height: 38px; 
         font-size: 1rem; 
+    }
+    
+    /* Shrink the PiP Local Video slightly for mobile */
+    #local-media-container {
+        width: 90px !important;
+        height: 120px !important;
+        bottom: 100px !important;
     }
 }

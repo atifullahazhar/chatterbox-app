@@ -1,8 +1,8 @@
 // =========================================================================
-// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V22 🔥
+// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V24 🔥
 // Privileges: SUPREME CORE ROOT OPERATOR
 // Optimization: STRICTLY DISABLED. FULL LOGIC EXPANDED.
-// Features Added: WebRTC Calling, Web Speech API (Hinglish), Media Uploads
+// Features Added: Real-time Socket.io Chatting & WhatsApp/Insta Style Call Engine
 // =========================================================================
 
 console.log("🔥 CHATTERBOX VIP ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥");
@@ -10,60 +10,14 @@ console.log("🔥 CHATTERBOX VIP ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥
 // =========================================================================
 // 0. CORE DOM UTILITIES
 // =========================================================================
-function safeEl(id) {
-    return document.getElementById(id);
-}
-
-function sAdd(id, className) {
-    const element = safeEl(id);
-    if (element) {
-        element.classList.add(className);
-    }
-}
-
-function sRem(id, className) {
-    const element = safeEl(id);
-    if (element) {
-        element.classList.remove(className);
-    }
-}
-
-function sText(id, textValue) {
-    const element = safeEl(id);
-    if (element) {
-        element.innerText = textValue;
-    }
-}
-
-function sHtml(id, htmlValue) {
-    const element = safeEl(id);
-    if (element) {
-        element.innerHTML = htmlValue;
-    }
-}
-
-function sVal(id, value) {
-    const element = safeEl(id);
-    if (element) {
-        element.value = value;
-    }
-}
-
-function gVal(id) {
-    const element = safeEl(id);
-    if (element) {
-        return element.value.trim();
-    }
-    return '';
-}
-
-function sSrc(id, sourceUrl) {
-    const element = safeEl(id);
-    if (element) {
-        element.src = sourceUrl;
-    }
-}
-
+function safeEl(id) { return document.getElementById(id); }
+function sAdd(id, className) { const el = safeEl(id); if (el) el.classList.add(className); }
+function sRem(id, className) { const el = safeEl(id); if (el) el.classList.remove(className); }
+function sText(id, textValue) { const el = safeEl(id); if (el) el.innerText = textValue; }
+function sHtml(id, htmlValue) { const el = safeEl(id); if (el) el.innerHTML = htmlValue; }
+function sVal(id, value) { const el = safeEl(id); if (el) el.value = value; }
+function gVal(id) { const el = safeEl(id); return el ? el.value.trim() : ''; }
+function sSrc(id, sourceUrl) { const el = safeEl(id); if (el) el.src = sourceUrl; }
 
 // =========================================================================
 // 1. DYNAMIC SYSTEM DATABASE & STATE VARIABLES
@@ -75,6 +29,7 @@ let bandRequests = [];
 let posts = [];
 let groups = [];
 let systemBugReports = [];
+let profileViews = 0;
 
 let activeChatUser = null;
 let currentChatTab = 'general';
@@ -88,7 +43,13 @@ let attachedPostImage = null;
 
 let clientMetricsRequestTelemetryCounter = 0;
 
-// Central Server Mapped Directory
+// Call System State Variables
+let activeCallTimerInterval = null;
+let currentCallSeconds = 0;
+let localMediaStreamTracker = null;
+let isLocalCamOn = true;
+let isLocalMicOn = true;
+
 const systemVerifiedUserDirectory = [
     { username: "Atifullah Azhar", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Developer and Creator of Chatterbox VIP.", rank: "Developer" },
     { username: "Nauras Daniyal", dp: "https://ui-avatars.com/api/?name=Nauras&background=eaddff&color=8b5cf6", bio: "Platform Administrator.", rank: "Operator" },
@@ -107,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log("DOM fully loaded and parsed. Bootstrapping UI Components...");
 
-    // Retrieve Local Storage Data Carefully
     try {
         currentUser = JSON.parse(localStorage.getItem('chatUser')) || null;
         friends = JSON.parse(localStorage.getItem('chatFriends')) || [];
@@ -116,32 +76,25 @@ document.addEventListener('DOMContentLoaded', () => {
         posts = JSON.parse(localStorage.getItem('chatPosts')) || [];
         groups = JSON.parse(localStorage.getItem('chatGroups')) || [];
         systemBugReports = JSON.parse(localStorage.getItem('chatBugReports')) || [];
-    } catch (error) {
-        console.error("Local Storage Parsing Error Detected:", error);
-    }
+        
+        profileViews = parseInt(localStorage.getItem('chatProfileViews')) || 0;
+        profileViews++; 
+        localStorage.setItem('chatProfileViews', profileViews);
+    } catch (error) { console.error("Local Storage Error:", error); }
 
-    // Process Application View if User Exists
     if (currentUser && currentUser.username) {
-        console.log("Active User Found in Session. Transitioning to Workspace Dashboard.");
-        sRem('login-screen', 'active');
-        sAdd('login-screen', 'hidden');
-        sRem('main-app', 'hidden');
-        sAdd('main-app', 'active');
+        sRem('login-screen', 'active'); sAdd('login-screen', 'hidden');
+        sRem('main-app', 'hidden'); sAdd('main-app', 'active');
 
-        applySystemThemePalette();
-        enforceDeveloperThemeRestrictions();
-        updateProfileUI();
-        renderContacts();
-        updateBadgesAndCounts();
-        renderPosts();
-        renderGroups();
-        renderBandRequests();
+        applySystemThemePalette(); enforceDeveloperThemeRestrictions();
+        updateProfileUI(); renderContacts(); updateBadgesAndCounts();
+        renderPosts(); renderGroups(); renderBandRequests();
         triggerAutomatedWelcomeBroadcast();
-    } else {
-        console.log("No active user session verified. Standing by at Authentication Screen.");
+        
+        // Notify server that this user is online
+        socket.emit('user_connected', currentUser.username);
     }
 
-    // Storage Writer Function
     function saveData() {
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
         localStorage.setItem('chatFriends', JSON.stringify(friends));
@@ -158,27 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const themeSelectorDropdownElement = safeEl('settings-theme-palette-spectrum-engine-selector-dropdown-field');
         if (currentUser.theme) {
             document.documentElement.setAttribute('data-theme', currentUser.theme);
-            if (themeSelectorDropdownElement) {
-                themeSelectorDropdownElement.value = currentUser.theme;
-            }
-            if (currentUser.theme === 'grand-golden') {
-                document.body.classList.add('dev-theme-active');
-            } else {
-                document.body.classList.remove('dev-theme-active');
-            }
+            if (themeSelectorDropdownElement) themeSelectorDropdownElement.value = currentUser.theme;
+            if (currentUser.theme === 'grand-golden') document.body.classList.add('dev-theme-active');
+            else document.body.classList.remove('dev-theme-active');
         }
     }
 
     function enforceDeveloperThemeRestrictions() {
         const devThemeOptionElement = safeEl('grand-golden-theme-option');
         if (devThemeOptionElement && currentUser) {
-            if (currentUser.isDev === false) {
-                devThemeOptionElement.style.display = 'none';
-                devThemeOptionElement.disabled = true;
-            } else {
-                devThemeOptionElement.style.display = 'block';
-                devThemeOptionElement.disabled = false;
-            }
+            if (currentUser.isDev === false) { devThemeOptionElement.style.display = 'none'; devThemeOptionElement.disabled = true; } 
+            else { devThemeOptionElement.style.display = 'block'; devThemeOptionElement.disabled = false; }
         }
     }
 
@@ -196,21 +139,162 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1200);
     }
 
+    // =========================================================================
+    // 3. ⚡ SOCKET.IO REAL-TIME COMMUNICATION ENGINE (FIXED MESSAGING)
+    // =========================================================================
+
+    // Listening for incoming messages from the server
+    socket.on('receive_message', (data) => {
+        if (!currentUser) return;
+
+        // 1. Handle World Chat Messages
+        if (data.type === 'world') {
+            const worldMessagesAreaOutput = safeEl('world-messages-area');
+            if (worldMessagesAreaOutput && data.sender !== currentUser.username) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = "message-bubble other-msg";
+                msgDiv.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
+                worldMessagesAreaOutput.appendChild(msgDiv);
+                worldMessagesAreaOutput.scrollTop = worldMessagesAreaOutput.scrollHeight;
+                
+                if (!isWorldMuted) {
+                    // Play notification sound here if you have one
+                    console.log("World chat notification sound triggered.");
+                }
+            }
+        }
+
+        // 2. Handle Direct Chat Messages
+        else if (data.type === 'direct' && data.to === currentUser.username) {
+            // Check if the chat window with this sender is currently open
+            if (activeChatUser && activeChatUser.username === data.sender) {
+                const messagesScrollableArea = safeEl('messages-area');
+                if (messagesScrollableArea) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = "message-bubble other-msg";
+                    msgDiv.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
+                    messagesScrollableArea.appendChild(msgDiv);
+                    messagesScrollableArea.scrollTop = messagesScrollableArea.scrollHeight;
+                }
+            } else {
+                alert(`📩 New Message from ${data.sender}: ${data.text}`);
+            }
+        }
+
+        // 3. Handle Group Chat Messages
+        else if (data.type === 'group') {
+            // Check if user is part of this group
+            const isMember = groups.some(g => g.name === data.groupName);
+            if (isMember && data.sender !== currentUser.username) {
+                const grpMessagesAreaOutput = safeEl('group-messages-area');
+                // Check if group is currently open
+                if (grpMessagesAreaOutput && safeEl('current-group-name').innerText === data.groupName) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = "message-bubble other-msg";
+                    msgDiv.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
+                    grpMessagesAreaOutput.appendChild(msgDiv);
+                    grpMessagesAreaOutput.scrollTop = grpMessagesAreaOutput.scrollHeight;
+                }
+            }
+        }
+    });
 
     // =========================================================================
-    // 3. NATIVE VOICE TYPING ENGINE (HINGLISH / ENGLISH SUPPORT)
+    // 4. WHATSAPP / INSTA STYLE CALLING ENGINE & WEB-RTC SIMULATION
+    // =========================================================================
+
+    function formatTime(totalSeconds) {
+        const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+        const s = (totalSeconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function updateCallTimers() {
+        currentCallSeconds++;
+        const timeStr = formatTime(currentCallSeconds);
+        sText('call-duration-timer', timeStr);
+        sText('minimized-call-timer-display', timeStr);
+    }
+
+    async function initLocalCameraStream(isVideoCall) {
+        try {
+            // Request camera & mic permission from browser
+            localMediaStreamTracker = await navigator.mediaDevices.getUserMedia({ 
+                video: isVideoCall, 
+                audio: true 
+            });
+            
+            const localVideoNode = safeEl('local-video');
+            if (localVideoNode && isVideoCall) {
+                localVideoNode.srcObject = localMediaStreamTracker;
+                localVideoNode.style.display = 'block';
+                sAdd('local-audio-fallback', 'hidden');
+                isLocalCamOn = true;
+            } else {
+                if (localVideoNode) localVideoNode.style.display = 'none';
+                sRem('local-audio-fallback', 'hidden');
+                isLocalCamOn = false;
+            }
+            
+            sSrc('call-local-dp', currentUser.dp || DEFAULT_DP);
+            isLocalMicOn = true;
+
+            // Setup mock remote stream for UI display (since actual signaling needs WebRTC peers)
+            sSrc('call-remote-dp', activeChatUser ? activeChatUser.dp : DEFAULT_DP);
+            sText('call-remote-name', activeChatUser ? activeChatUser.username : 'Unknown Peer');
+            sSrc('minimized-caller-dp', activeChatUser ? activeChatUser.dp : DEFAULT_DP);
+            
+            // Start Timer
+            currentCallSeconds = 0;
+            updateCallTimers();
+            activeCallTimerInterval = setInterval(updateCallTimers, 1000);
+
+        } catch (error) {
+            console.error("Camera/Mic Permission Denied or Not Found:", error);
+            alert("System Alert: Microphone or Camera access was denied by your browser. Running audio-only fallback mode.");
+            // Fallback initialization
+            sRem('local-audio-fallback', 'hidden');
+            sSrc('call-local-dp', currentUser.dp || DEFAULT_DP);
+            sSrc('call-remote-dp', activeChatUser ? activeChatUser.dp : DEFAULT_DP);
+            sText('call-remote-name', activeChatUser ? activeChatUser.username : 'Unknown Peer');
+            sSrc('minimized-caller-dp', activeChatUser ? activeChatUser.dp : DEFAULT_DP);
+            
+            currentCallSeconds = 0;
+            activeCallTimerInterval = setInterval(updateCallTimers, 1000);
+        }
+    }
+
+    function terminateActiveCall() {
+        if (activeCallTimerInterval) clearInterval(activeCallTimerInterval);
+        
+        // Stop all camera and microphone hardware tracks
+        if (localMediaStreamTracker) {
+            localMediaStreamTracker.getTracks().forEach(track => track.stop());
+            localMediaStreamTracker = null;
+        }
+
+        const localVideoNode = safeEl('local-video');
+        if (localVideoNode) localVideoNode.srcObject = null;
+
+        sAdd('active-call-window', 'hidden');
+        sAdd('minimized-call-widget', 'hidden');
+        sAdd('incoming-call-ring-modal', 'hidden');
+        
+        alert("Call Disconnected.");
+    }
+
+
+    // =========================================================================
+    // 5. NATIVE VOICE TYPING ENGINE (HINGLISH / ENGLISH SUPPORT)
     // =========================================================================
     function startVoiceTyping(inputIdString) {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert("System Info: Tumhara browser Voice Typing support nahi karta. Please Google Chrome use karo.");
-            return;
+            alert("System Info: Tumhara browser Voice Typing support nahi karta. Please Google Chrome use karo."); return;
         }
-
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognitionInstance = new SpeechRecognition();
-
-        // en-IN (Indian English) accurately captures Hinglish words natively!
-        recognitionInstance.lang = 'en-IN';
+        
+        recognitionInstance.lang = 'en-IN'; 
         recognitionInstance.interimResults = false;
         recognitionInstance.maxAlternatives = 1;
 
@@ -219,154 +303,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const originalPlaceholderText = targetInputFieldElement.placeholder;
         targetInputFieldElement.placeholder = "🎙️ Listening... Speak now!";
-
-        recognitionInstance.onresult = function (event) {
+        
+        recognitionInstance.onresult = function(event) {
             const capturedTranscriptString = event.results[0][0].transcript;
-            const currentInputValue = targetInputFieldElement.value;
-            targetInputFieldElement.value = currentInputValue ? (currentInputValue + " " + capturedTranscriptString) : capturedTranscriptString;
+            targetInputFieldElement.value = targetInputFieldElement.value ? (targetInputFieldElement.value + " " + capturedTranscriptString) : capturedTranscriptString;
             targetInputFieldElement.placeholder = originalPlaceholderText;
         };
-
-        recognitionInstance.onerror = function (event) {
-            targetInputFieldElement.placeholder = originalPlaceholderText;
-            console.error("Speech Recognition Error: ", event.error);
-        };
-
-        recognitionInstance.onend = function () {
-            targetInputFieldElement.placeholder = originalPlaceholderText;
-        };
-
+        recognitionInstance.onerror = function(event) { targetInputFieldElement.placeholder = originalPlaceholderText; };
+        recognitionInstance.onend = function() { targetInputFieldElement.placeholder = originalPlaceholderText; };
         recognitionInstance.start();
-    }
-
-
-    // =========================================================================
-    // 4. PYTHON AI API FETCH PIPELINES (SENTIMENT & SPAM)
-    // =========================================================================
-
-    async function evaluateTextPayloadToxicityMetrics(messageTextString) {
-        clientMetricsRequestTelemetryCounter++;
-        try {
-            const serverResponseObject = await fetch('http://127.0.0.1:8000/api/ai/sentiment-analysis', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    text: messageTextString,
-                    sender: currentUser ? currentUser.username : 'Unknown Node'
-                })
-            });
-            const responseDataJson = await serverResponseObject.json();
-            return responseDataJson;
-        } catch (networkError) {
-            console.warn("Python AI Server unreachable. Bypassing.", networkError);
-            const temporaryBlacklistArray = ["abuse", "toxic", "hacker", "exploit", "cheat", "bastard", "kamina", "fraud", "scam"];
-            let isBlacklistedHit = temporaryBlacklistArray.some(keyword => messageTextString.toLowerCase().includes(keyword));
-            return {
-                classification: { is_toxic: isBlacklistedHit, toxicity_rating: isBlacklistedHit ? 0.95 : 0.0 }
-            };
-        }
-    }
-
-    async function evaluatePostPayloadSpamProbabilityMetrics(postTextContentString) {
-        clientMetricsRequestTelemetryCounter++;
-        try {
-            const serverResponseObject = await fetch('http://127.0.0.1:8000/api/ai/spam-detection', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    text: postTextContentString,
-                    sender: currentUser ? currentUser.username : 'Unknown Node'
-                })
-            });
-            const responseDataJson = await serverResponseObject.json();
-            return responseDataJson;
-        } catch (networkError) {
-            return { verdict: { is_spam: false, spam_probability_score: 0.0, trigger_reasons_identified: [] } };
-        }
-    }
-
-
-    // =========================================================================
-    // 5. CORE EXECUTION LOGIC FOR CHATTING AND POSTING
-    // =========================================================================
-
-    async function executeDirectCommunicationMessageUplinkRoute() {
-        const chatInputNodeElement = safeEl('message-input');
-        let rawMessageTextValue = gVal('message-input');
-
-        if (rawMessageTextValue !== "" && activeChatUser) {
-            const aiVerificationObject = await evaluateTextPayloadToxicityMetrics(rawMessageTextValue);
-            if (aiVerificationObject.classification && aiVerificationObject.classification.is_toxic) {
-                alert(`🚨 SECURITY FIREWALL BLOCK: Toxic or offensive language detected! Your message was blocked to keep the community environment safe.`);
-                return;
-            }
-
-            const messagesScrollableArea = safeEl('messages-area');
-            const userMessageDivElement = document.createElement('div');
-            userMessageDivElement.className = "message-bubble my-msg";
-
-            if (activeDisappearingMessagesMode) {
-                userMessageDivElement.style.borderRight = "4px dashed var(--system-warning)";
-                userMessageDivElement.innerHTML = `<strong>[10s EXPIRY] Me:</strong> ${rawMessageTextValue}`;
-                setTimeout(() => {
-                    userMessageDivElement.style.opacity = "0.25";
-                    userMessageDivElement.innerHTML = `<i>✖️ Message disappeared automatically for privacy.</i>`;
-                }, 10000);
-            } else {
-                userMessageDivElement.innerHTML = `<strong>Me:</strong> ${rawMessageTextValue}`;
-            }
-
-            if (messagesScrollableArea) {
-                messagesScrollableArea.appendChild(userMessageDivElement);
-                messagesScrollableArea.scrollTop = messagesScrollableArea.scrollHeight;
-            }
-            if (chatInputNodeElement) {
-                chatInputNodeElement.value = "";
-            }
-        } else {
-            alert("Application Error: Please type a message before attempting to send.");
-        }
-    }
-
-    async function executePostContentPublishUplinkRoute() {
-        let postRawTextValue = gVal('post-input');
-        const postScopeSelectorElement = safeEl('post-privacy-scope-configuration-level-toggle-select');
-        const calculatedScopeString = postScopeSelectorElement ? postScopeSelectorElement.value : 'public';
-
-        if (postRawTextValue !== "" || attachedPostImage) {
-            if (postRawTextValue !== "") {
-                const aiSpamVerificationObject = await evaluatePostPayloadSpamProbabilityMetrics(postRawTextValue);
-                if (aiSpamVerificationObject.verdict && aiSpamVerificationObject.verdict.is_spam) {
-                    alert(`🚨 ANTI-SPAM PROTECTION ACTIVE: This looks like automated bot spam behavior. Post execution rejected!`);
-                    return;
-                }
-            }
-
-            let extractedTagsArray = postRawTextValue.match(/#\w+/g) || [];
-
-            posts.unshift({
-                id: Date.now(),
-                user: currentUser.username,
-                dp: currentUser.dp,
-                text: postRawTextValue,
-                image: attachedPostImage,
-                scope: calculatedScopeString,
-                tags: extractedTagsArray,
-                time: "Just Published via Secure Port"
-            });
-
-            saveData();
-            renderPosts();
-
-            sVal('post-input', '');
-            attachedPostImage = null;
-            sAdd('post-media-attachment-status-preview', 'hidden');
-            sVal('post-image-upload-input', '');
-
-            alert("✅ Action Verified! Your post was successfully published to your feed.");
-        } else {
-            alert("Application Error: Please write something or attach an image before publishing.");
-        }
     }
 
 
@@ -378,59 +323,50 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!activeChatUser) return;
         const favoriteBtnIcon = document.querySelector('#favorite-user-btn i');
         if (!favoriteBtnIcon) return;
-
         const arrayIndexMatchFound = friends.findIndex(fObj => fObj.username === activeChatUser.username);
         if (arrayIndexMatchFound !== -1 && friends[arrayIndexMatchFound].isFavorite) {
-            favoriteBtnIcon.className = 'fas fa-star';
-            favoriteBtnIcon.style.color = '#f59e0b';
+            favoriteBtnIcon.className = 'fas fa-star'; favoriteBtnIcon.style.color = '#f59e0b';
         } else {
-            favoriteBtnIcon.className = 'far fa-star';
-            favoriteBtnIcon.style.color = 'var(--text-muted)';
+            favoriteBtnIcon.className = 'far fa-star'; favoriteBtnIcon.style.color = 'var(--text-muted)';
         }
     }
 
     function updateProfileUI() {
         if (!currentUser) return;
-        sText('display-username', currentUser.username);
-        sText('user-bio', currentUser.bio || "No biography details available.");
-        sSrc('user-dp', currentUser.dp || DEFAULT_DP);
-        sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
-        if (currentUser.banner) { sSrc('banner-img', currentUser.banner); sRem('banner-img', 'hidden'); }
+        sText('display-username', currentUser.username); sText('user-bio', currentUser.bio || "No biography details available.");
+        sSrc('user-dp', currentUser.dp || DEFAULT_DP); sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
+        if (currentUser.banner) { sSrc('banner-img', currentUser.banner); sRem('banner-img', 'hidden'); } 
         else { sAdd('banner-img', 'hidden'); }
         sText('display-rank', currentUser.rank);
-
         const usernameTextDisplayElement = safeEl('display-username');
         const rankBadgeDisplayElement = safeEl('display-rank');
 
         if (currentUser.isDev) {
             if (usernameTextDisplayElement) usernameTextDisplayElement.classList.add('shiny-dev-text');
             if (rankBadgeDisplayElement) rankBadgeDisplayElement.className = 'rank-badge rank-developer';
-            sRem('dev-nav-item', 'hidden');
-            sText('total-friends-count', "99,999 (Administrator)");
-            sText('profile-visitor-numerical-counter-view', "4,521,092");
+            sRem('dev-nav-item', 'hidden'); sText('total-friends-count', `${friends.length} (Admin)`);
         } else {
             if (usernameTextDisplayElement) usernameTextDisplayElement.classList.remove('shiny-dev-text');
             sText('total-friends-count', friends.length);
-            sText('profile-visitor-numerical-counter-view', "12");
         }
+        sText('profile-visitor-numerical-counter-view', profileViews);
     }
 
     function updateBadgesAndCounts() {
-        if (currentUser && !currentUser.isDev) {
-            sText('total-friends-count', friends.length);
+        if (currentUser) {
+            if (currentUser.isDev) { sText('total-friends-count', `${friends.length} (Admin)`); } 
+            else { sText('total-friends-count', friends.length); }
         }
     }
 
     function renderContacts() {
         const contactListOutputContainerElement = safeEl('contact-list-container');
         if (!contactListOutputContainerElement) return;
-
         contactListOutputContainerElement.innerHTML = '';
         let processedListToRenderArray = currentChatTab === 'favorite' ? friends.filter(f => f.isFavorite === true) : friends;
 
         if (processedListToRenderArray.length === 0) {
-            contactListOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.95rem; font-weight:bold; padding:25px;">No active friends found in this specific section.</p>`;
-            return;
+            contactListOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.95rem; font-weight:bold; padding:25px;">No active friends found in this specific section.</p>`; return;
         }
 
         processedListToRenderArray.forEach(function (friendObject) {
@@ -453,26 +389,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!subTabOutputContainerElement) return;
         subTabOutputContainerElement.innerHTML = '';
 
-        const acceptTabSelectorBtnElement = safeEl('sub-tab-accept-btn');
-        const sendTabSelectorBtnElement = safeEl('sub-tab-send-btn');
-
+        const acceptTabSelectorBtnElement = safeEl('sub-tab-accept-btn'); const sendTabSelectorBtnElement = safeEl('sub-tab-send-btn');
         if (currentRequestSubTab === 'accept') {
             if (acceptTabSelectorBtnElement) acceptTabSelectorBtnElement.classList.add('active-sub-tab');
             if (sendTabSelectorBtnElement) sendTabSelectorBtnElement.classList.remove('active-sub-tab');
             sAdd('search-friend-field-block', 'hidden');
 
             if (friendRequests.length === 0) {
-                subTabOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem; font-weight:bold; padding:25px;">You currently have zero pending incoming friend requests.</p>`;
-                return;
+                subTabOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem; font-weight:bold; padding:25px;">You currently have zero pending incoming friend requests.</p>`; return;
             }
 
             friendRequests.forEach(function (requestObject) {
                 let constructedRequestHtmlElement = `
                     <div class="dummy-item" data-user="${requestObject.username}" style="background:var(--bg-panel); border:1px solid var(--border-color); border-radius:14px; padding:12px; display:flex; align-items:center; gap:12px; margin-bottom:8px;">
                         <img src="${requestObject.dp || DEFAULT_DP}" style="width:42px; height:42px; border-radius:50%; object-fit:cover;">
-                        <div style="flex:1;">
-                            <b style="font-size:1rem; color:var(--text-main); display:block;">${requestObject.username}</b>
-                        </div>
+                        <div style="flex:1;"><b style="font-size:1rem; color:var(--text-main); display:block;">${requestObject.username}</b></div>
                         <div class="req-action-btns">
                             <button class="btn-accept-friend btn-accept" style="color:#fff;" title="Accept Connect Handshake"><i class="fas fa-check"></i></button>
                             <button class="btn-reject-friend btn-reject" style="color:#fff;" title="Reject Connect Handshake"><i class="fas fa-times"></i></button>
@@ -485,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (acceptTabSelectorBtnElement) acceptTabSelectorBtnElement.classList.remove('active-sub-tab');
             if (sendTabSelectorBtnElement) sendTabSelectorBtnElement.classList.add('active-sub-tab');
             sRem('search-friend-field-block', 'hidden');
-
             subTabOutputContainerElement.innerHTML = `
                 <div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:bold; font-size:0.95rem; border:2px dashed var(--border-color); border-radius:16px; margin:10px; background:var(--bg-panel);">
                     <i class="fas fa-search" style="font-size:2rem; color:var(--primary-color); margin-bottom:12px; display:block;"></i>
@@ -498,12 +428,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPosts() {
         const postsOutputContainerElement = safeEl('feed-container');
         if (!postsOutputContainerElement) return;
-
         postsOutputContainerElement.innerHTML = '';
-
         if (posts.length === 0) {
-            postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`;
-            return;
+            postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`; return;
         }
 
         posts.forEach(function (postObject) {
@@ -539,12 +466,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroups() {
         const groupsOutputContainerElement = safeEl('group-list-container');
         if (!groupsOutputContainerElement) return;
-
         groupsOutputContainerElement.innerHTML = '';
-
         if (groups.length === 0) {
-            groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`;
-            return;
+            groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`; return;
         }
 
         groups.forEach(function (groupObject) {
@@ -570,8 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (bandRequests.length === 0) {
             if (emptyStatePlaceholderElement) emptyStatePlaceholderElement.classList.remove('hidden');
-            bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`;
-            return;
+            bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`; return;
         }
         if (emptyStatePlaceholderElement) emptyStatePlaceholderElement.classList.add('hidden');
 
@@ -585,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
             bandOutputContainerElement.innerHTML += constructedBandRequestHtmlElement;
         });
     }
-
 
     // =========================================================================
     // 7. GLOBAL EVENT DELEGATION SYSTEM (FLAWLESS BUTTON BINDINGS)
@@ -601,29 +523,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (clickedTargetElementNode.id === 'hamburger-btn' || clickedTargetElementNode.closest('#hamburger-btn')) {
             const mobileSidebarContainer = safeEl('sidebar');
             if (mobileSidebarContainer) {
-                mobileSidebarContainer.style.display = 'flex';
-                mobileSidebarContainer.style.position = 'fixed';
-                mobileSidebarContainer.style.zIndex = '10000';
-                mobileSidebarContainer.style.height = '100vh';
-                mobileSidebarContainer.style.width = '80%';
-                mobileSidebarContainer.style.flexDirection = 'column';
+                mobileSidebarContainer.style.display = 'flex'; mobileSidebarContainer.style.position = 'fixed';
+                mobileSidebarContainer.style.zIndex = '10000'; mobileSidebarContainer.style.height = '100vh';
+                mobileSidebarContainer.style.width = '80%'; mobileSidebarContainer.style.flexDirection = 'column';
                 mobileSidebarContainer.style.justifyContent = 'flex-start';
-                const closeBtn = safeEl('close-sidebar-btn');
-                if (closeBtn) closeBtn.classList.remove('hidden');
+                const closeBtn = safeEl('close-sidebar-btn'); if (closeBtn) closeBtn.classList.remove('hidden');
                 const navLinksContainer = mobileSidebarContainer.querySelector('.nav-links');
                 if (navLinksContainer) { navLinksContainer.style.flexDirection = 'column'; navLinksContainer.style.overflowY = 'auto'; }
             }
             return;
         }
-
         if (clickedTargetElementNode.id === 'close-sidebar-btn' || clickedTargetElementNode.closest('#close-sidebar-btn')) {
             const mobileSidebarContainer = safeEl('sidebar');
             if (mobileSidebarContainer) {
                 mobileSidebarContainer.style.display = ''; mobileSidebarContainer.style.position = '';
                 mobileSidebarContainer.style.zIndex = ''; mobileSidebarContainer.style.height = '';
                 mobileSidebarContainer.style.width = ''; mobileSidebarContainer.style.flexDirection = '';
-                const closeBtn = safeEl('close-sidebar-btn');
-                if (closeBtn) closeBtn.classList.add('hidden');
+                const closeBtn = safeEl('close-sidebar-btn'); if (closeBtn) closeBtn.classList.add('hidden');
                 const navLinksContainer = mobileSidebarContainer.querySelector('.nav-links');
                 if (navLinksContainer) { navLinksContainer.style.flexDirection = ''; navLinksContainer.style.overflowY = ''; }
             }
@@ -642,9 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Quick Actions
-        if (clickedTargetElementNode.closest('#sidebar-quick-report-bug-btn')) {
-            sVal('bug-report-text-input', ''); sRem('bug-report-modal', 'hidden'); return;
-        }
+        if (clickedTargetElementNode.closest('#sidebar-quick-report-bug-btn')) { sVal('bug-report-text-input', ''); sRem('bug-report-modal', 'hidden'); return; }
         if (clickedTargetElementNode.closest('#sidebar-quick-logout-btn')) {
             if (confirm("Are you absolutely sure you want to log out of your secure session and terminate tracking connections?")) {
                 localStorage.removeItem('chatUser'); location.reload();
@@ -658,23 +572,19 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chat-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
             chatTabNavigationButtonElement.classList.add('active');
             currentChatTab = chatTabNavigationButtonElement.getAttribute('data-tab');
-            if (currentChatTab === 'requests') {
-                sRem('request-sub-tabs-container', 'hidden'); sAdd('search-friend-field-block', 'hidden'); renderRequestSubTabUI();
-            } else {
-                sAdd('request-sub-tabs-container', 'hidden'); sRem('search-friend-field-block', 'hidden'); resetRightWorkspacePane(); renderContacts();
-            }
+            if (currentChatTab === 'requests') { sRem('request-sub-tabs-container', 'hidden'); sAdd('search-friend-field-block', 'hidden'); renderRequestSubTabUI(); } 
+            else { sAdd('request-sub-tabs-container', 'hidden'); sRem('search-friend-field-block', 'hidden'); resetRightWorkspacePane(); renderContacts(); }
             return;
         }
 
         if (clickedTargetElementNode.closest('#sub-tab-accept-btn')) { currentRequestSubTab = 'accept'; renderRequestSubTabUI(); resetRightWorkspacePane(); return; }
         if (clickedTargetElementNode.closest('#sub-tab-send-btn')) { currentRequestSubTab = 'send'; renderRequestSubTabUI(); return; }
 
-        // Search Directories
         if (clickedTargetElementNode.closest('#sidebar-action-search-trigger') && currentChatTab === 'requests' && currentRequestSubTab === 'send') {
             const searchInputQueryValue = gVal('chat-sidebar-search-input').toLowerCase();
             if (searchInputQueryValue !== "") {
                 const verifiedMatchedUserNodeObject = systemVerifiedUserDirectory.find(u => u.username.toLowerCase() === searchInputQueryValue);
-                if (verifiedMatchedUserNodeObject) { searchedUserContext = verifiedMatchedUserNodeObject; openRightProfilePreviewPane(searchedUserContext); }
+                if (verifiedMatchedUserNodeObject) { searchedUserContext = verifiedMatchedUserNodeObject; openRightProfilePreviewPane(searchedUserContext); } 
                 else { alert(`Directory Trace Failure: Username '${searchInputQueryValue}' was not found in the verified target directory registers.`); resetRightWorkspacePane(); }
             } else { alert("Application Notification: Please enter a target username identifier string to execute the search."); }
             return;
@@ -688,7 +598,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Accept/Reject Requests
         if (clickedTargetElementNode.closest('.btn-accept-friend')) {
             const listRowItemElement = clickedTargetElementNode.closest('.dummy-item');
             if (listRowItemElement) {
@@ -709,16 +618,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Open Direct Chat
         if (clickedTargetElementNode.closest('.contact-item')) {
             const retrievedUsernameKey = clickedTargetElementNode.closest('.contact-item').getAttribute('data-user');
             sAdd('request-profile-preview-pane', 'hidden'); sAdd('chat-placeholder', 'hidden');
             sRem('chat-header', 'hidden'); sRem('messages-area', 'hidden'); sRem('chat-input-area', 'hidden');
 
             activeChatUser = friends.find(fObj => fObj.username === retrievedUsernameKey);
-            if (activeChatUser) {
-                sText('current-chat-name', activeChatUser.username); sSrc('current-chat-dp', activeChatUser.dp); updateFavoriteButtonUI();
-            }
+            if (activeChatUser) { sText('current-chat-name', activeChatUser.username); sSrc('current-chat-dp', activeChatUser.dp); updateFavoriteButtonUI(); }
             return;
         }
 
@@ -735,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // =========================================================
-        // CALLING SYSTEM: DIRECT CHAT (Modals) VS GROUP/WORLD (Silent)
+        // CALLING SYSTEM BUTTONS & LOGIC
         // =========================================================
         function simulateIncomingCall(type) {
             sText('incoming-call-type-text', type === 'video' ? '🎥 Incoming Video Call Request...' : '📞 Incoming Voice Call Request...');
@@ -747,53 +653,112 @@ document.addEventListener('DOMContentLoaded', () => {
         if (clickedTargetElementNode.closest('#direct-voice-call-btn')) { simulateIncomingCall('voice'); return; }
         if (clickedTargetElementNode.closest('#direct-video-call-btn')) { simulateIncomingCall('video'); return; }
 
-        if (clickedTargetElementNode.closest('#group-voice-call-btn') || clickedTargetElementNode.closest('#group-video-call-btn')) {
-            alert("Group Room Call Initiated: Participants can join the stream silently. No ring notifications dispatched to avoid spam.");
-            return;
-        }
-        if (clickedTargetElementNode.closest('#world-voice-call-btn') || clickedTargetElementNode.closest('#world-video-call-btn')) {
-            alert("Global Stage Initiated: A public stage stream has been created. Notifications are suppressed by default in World Chat.");
-            return;
-        }
-
         if (clickedTargetElementNode.closest('#accept-incoming-call-btn')) {
             sAdd('incoming-call-ring-modal', 'hidden');
-            alert("Call Connected! 📞 (WebRTC secure stream channel actively initialized)");
+            sRem('active-call-window', 'hidden'); // Open the big call window
+            
+            const isVideoCall = document.getElementById('incoming-call-type-text').innerText.includes('Video');
+            initLocalCameraStream(isVideoCall);
             return;
         }
+        
         if (clickedTargetElementNode.closest('#reject-incoming-call-btn')) {
             sAdd('incoming-call-ring-modal', 'hidden'); return;
         }
 
-        // =========================================================
-        // MULTI-FEATURE CHAT INPUTS (EMOJI, VOICE TYPING, ATTACHMENTS)
-        // =========================================================
-        // Emoji Button Simulation
-        if (clickedTargetElementNode.closest('#emoji-btn')) { sVal('message-input', gVal('message-input') + ' 😊'); return; }
-        if (clickedTargetElementNode.closest('#group-emoji-btn')) { sVal('group-message-input', gVal('group-message-input') + ' 🚀'); return; }
-        if (clickedTargetElementNode.closest('#world-emoji-btn')) { sVal('world-message-input', gVal('world-message-input') + ' 🌍'); return; }
+        // End Call Logic
+        if (clickedTargetElementNode.closest('#end-active-call-btn') || clickedTargetElementNode.closest('#end-minimized-call-btn')) {
+            terminateActiveCall(); return;
+        }
 
-        // Voice Note Simulation
-        if (clickedTargetElementNode.closest('#voice-note-btn') || clickedTargetElementNode.closest('#group-voice-note-btn') || clickedTargetElementNode.closest('#world-voice-note-btn')) {
-            alert("🎙️ Voice Note Recording Engine activated... (Hold functionality engaged. Let go to send.)");
+        // Minimize / Expand logic
+        if (clickedTargetElementNode.closest('#minimize-call-btn')) {
+            sAdd('active-call-window', 'hidden');
+            sRem('minimized-call-widget', 'hidden');
+            return;
+        }
+        if (clickedTargetElementNode.closest('#minimized-call-widget') && !clickedTargetElementNode.closest('#end-minimized-call-btn')) {
+            sAdd('minimized-call-widget', 'hidden');
+            sRem('active-call-window', 'hidden');
             return;
         }
 
-        // Voice Typing Engine Triggers
-        if (clickedTargetElementNode.closest('#voice-type-btn')) { startVoiceTyping('message-input'); return; }
-        if (clickedTargetElementNode.closest('#group-voice-type-btn')) { startVoiceTyping('group-message-input'); return; }
-        if (clickedTargetElementNode.closest('#world-voice-type-btn')) { startVoiceTyping('world-message-input'); return; }
+        // Hardware Toggles (Mute/Video Off)
+        if (clickedTargetElementNode.closest('#toggle-cam-btn')) {
+            if (localMediaStreamTracker) {
+                const videoTrack = localMediaStreamTracker.getVideoTracks()[0];
+                if (videoTrack) {
+                    isLocalCamOn = !isLocalCamOn;
+                    videoTrack.enabled = isLocalCamOn;
+                    const toggleBtn = clickedTargetElementNode.closest('#toggle-cam-btn');
+                    
+                    if (isLocalCamOn) {
+                        toggleBtn.innerHTML = '<i class="fas fa-video"></i>';
+                        toggleBtn.style.color = "white";
+                        safeEl('local-video').style.display = 'block';
+                        sAdd('local-audio-fallback', 'hidden');
+                    } else {
+                        toggleBtn.innerHTML = '<i class="fas fa-video-slash"></i>';
+                        toggleBtn.style.color = "#ef4444"; // Red when off
+                        safeEl('local-video').style.display = 'none';
+                        sRem('local-audio-fallback', 'hidden');
+                    }
+                } else { alert("Camera hardware not detected on your device."); }
+            }
+            return;
+        }
 
-        // Attachment Hidden Input Triggers
-        if (clickedTargetElementNode.closest('#attach-btn')) { const uploadInput = safeEl('chat-media-upload-input'); if (uploadInput) uploadInput.click(); return; }
-        if (clickedTargetElementNode.closest('#group-attach-btn')) { const uploadInput = safeEl('group-media-upload-input'); if (uploadInput) uploadInput.click(); return; }
-        if (clickedTargetElementNode.closest('#world-attach-btn')) { const uploadInput = safeEl('world-media-upload-input'); if (uploadInput) uploadInput.click(); return; }
+        if (clickedTargetElementNode.closest('#toggle-mic-btn')) {
+            if (localMediaStreamTracker) {
+                const audioTrack = localMediaStreamTracker.getAudioTracks()[0];
+                if (audioTrack) {
+                    isLocalMicOn = !isLocalMicOn;
+                    audioTrack.enabled = isLocalMicOn;
+                    const toggleBtn = clickedTargetElementNode.closest('#toggle-mic-btn');
+                    
+                    if (isLocalMicOn) {
+                        toggleBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                        toggleBtn.style.color = "white";
+                    } else {
+                        toggleBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                        toggleBtn.style.color = "#ef4444"; 
+                    }
+                }
+            }
+            return;
+        }
 
-        // Send Messages (Direct, Group, World)
-        if (clickedTargetElementNode.closest('#send-btn')) { executeDirectCommunicationMessageUplinkRoute(); return; }
+        // =========================================================
+        // MESSAGING & EMITTING CHAT EVENTS
+        // =========================================================
+        if (clickedTargetElementNode.closest('#send-btn')) {
+            let rawMessageTextValue = gVal('message-input');
+            if (rawMessageTextValue !== "" && activeChatUser) {
+                
+                // 1. Locally Append Message
+                const messagesScrollableArea = safeEl('messages-area');
+                const userMessageDivElement = document.createElement('div');
+                userMessageDivElement.className = "message-bubble my-msg";
+                userMessageDivElement.innerHTML = `<strong>Me:</strong> ${rawMessageTextValue}`;
+                if (messagesScrollableArea) {
+                    messagesScrollableArea.appendChild(userMessageDivElement);
+                    messagesScrollableArea.scrollTop = messagesScrollableArea.scrollHeight;
+                }
+                sVal('message-input', '');
+
+                // 2. Emit to Server (Real-time sending)
+                socket.emit('send_message', {
+                    type: 'direct',
+                    text: rawMessageTextValue,
+                    sender: currentUser.username,
+                    to: activeChatUser.username
+                });
+            }
+            return;
+        }
+
         if (clickedTargetElementNode.closest('#group-send-btn')) {
-            const groupMsgInputElem = safeEl('group-message-input');
-            const groupMsgText = groupMsgInputElem ? groupMsgInputElem.value.trim() : "";
+            let groupMsgText = gVal('group-message-input');
             if (groupMsgText) {
                 const grpMessagesAreaOutput = safeEl('group-messages-area');
                 if (grpMessagesAreaOutput) {
@@ -803,13 +768,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     grpMessagesAreaOutput.appendChild(myGrpMsgDiv);
                     grpMessagesAreaOutput.scrollTop = grpMessagesAreaOutput.scrollHeight;
                 }
-                if (groupMsgInputElem) groupMsgInputElem.value = "";
+                sVal('group-message-input', '');
+
+                // Emit group message to server
+                socket.emit('send_message', {
+                    type: 'group',
+                    text: groupMsgText,
+                    sender: currentUser.username,
+                    groupName: safeEl('current-group-name').innerText
+                });
             }
             return;
         }
+
         if (clickedTargetElementNode.closest('#world-send-btn')) {
-            const worldMsgInputElem = safeEl('world-message-input');
-            const worldMsgText = worldMsgInputElem ? worldMsgInputElem.value.trim() : "";
+            let worldMsgText = gVal('world-message-input');
             if (worldMsgText) {
                 const worldMessagesAreaOutput = safeEl('world-messages-area');
                 if (worldMessagesAreaOutput) {
@@ -819,10 +792,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     worldMessagesAreaOutput.appendChild(myWorldMsgDiv);
                     worldMessagesAreaOutput.scrollTop = worldMessagesAreaOutput.scrollHeight;
                 }
-                if (worldMsgInputElem) worldMsgInputElem.value = "";
+                sVal('world-message-input', '');
+
+                // Emit world message to server
+                socket.emit('send_message', {
+                    type: 'world',
+                    text: worldMsgText,
+                    sender: currentUser.username
+                });
             }
             return;
         }
+
+        // =========================================================
+        // OTHER INTERFACES (Voice Typing, Mute, Modals, Feed, Bonds)
+        // =========================================================
+        if (clickedTargetElementNode.closest('#emoji-btn')) { sVal('message-input', gVal('message-input') + ' 😊'); return; }
+        if (clickedTargetElementNode.closest('#group-emoji-btn')) { sVal('group-message-input', gVal('group-message-input') + ' 🚀'); return; }
+        if (clickedTargetElementNode.closest('#world-emoji-btn')) { sVal('world-message-input', gVal('world-message-input') + ' 🌍'); return; }
+
+        if (clickedTargetElementNode.closest('#voice-note-btn') || clickedTargetElementNode.closest('#group-voice-note-btn') || clickedTargetElementNode.closest('#world-voice-note-btn')) {
+            alert("🎙️ Voice Note Recording Engine activated... (Hold functionality engaged. Let go to send.)"); return;
+        }
+
+        if (clickedTargetElementNode.closest('#voice-type-btn')) { startVoiceTyping('message-input'); return; }
+        if (clickedTargetElementNode.closest('#group-voice-type-btn')) { startVoiceTyping('group-message-input'); return; }
+        if (clickedTargetElementNode.closest('#world-voice-type-btn')) { startVoiceTyping('world-message-input'); return; }
+
+        if (clickedTargetElementNode.closest('#attach-btn')) { const uploadInput = safeEl('chat-media-upload-input'); if(uploadInput) uploadInput.click(); return; }
+        if (clickedTargetElementNode.closest('#group-attach-btn')) { const uploadInput = safeEl('group-media-upload-input'); if(uploadInput) uploadInput.click(); return; }
+        if (clickedTargetElementNode.closest('#world-attach-btn')) { const uploadInput = safeEl('world-media-upload-input'); if(uploadInput) uploadInput.click(); return; }
 
         if (clickedTargetElementNode.closest('#world-mute-btn')) {
             isWorldMuted = !isWorldMuted;
@@ -839,10 +838,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-
-        // =========================================================
-        // PROFILE PICTURE AND BANNER MODIFICATIONS
-        // =========================================================
         if (clickedTargetElementNode.closest('#trigger-dp-upload')) { const hiddenUploadInputField = safeEl('edit-dp-input'); if (hiddenUploadInputField) hiddenUploadInputField.click(); return; }
         if (clickedTargetElementNode.closest('#trigger-banner-upload')) { const hiddenUploadInputField = safeEl('edit-banner-input'); if (hiddenUploadInputField) hiddenUploadInputField.click(); return; }
 
@@ -856,35 +851,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // =========================================================
-        // POST FEED CREATION, DELETE & ATTACHMENTS 
-        // =========================================================
         if (clickedTargetElementNode.closest('#post-image-btn')) { const hiddenImageUploadInputField = safeEl('post-image-upload-input'); if (hiddenImageUploadInputField) hiddenImageUploadInputField.click(); return; }
         if (clickedTargetElementNode.closest('#post-gif-btn')) { alert("System Info: GIF integration engine API is currently undergoing maintenance. Try attaching a static image instead."); return; }
-        if (clickedTargetElementNode.closest('#post-meme-btn')) { alert("System Info: Meme generator module is pending upcoming V22 update integration."); return; }
-
+        if (clickedTargetElementNode.closest('#post-meme-btn')) { alert("System Info: Meme generator module is pending upcoming V24 update integration."); return; }
+        
         if (clickedTargetElementNode.closest('#action-remove-attached-post-file-buffer')) {
             attachedPostImage = null; sAdd('post-media-attachment-status-preview', 'hidden'); sVal('post-image-upload-input', ''); return;
         }
         if (clickedTargetElementNode.closest('#submit-post-btn')) { executePostContentPublishUplinkRoute(); return; }
 
-        // FIX: The missing Post Delete click event logic
         if (clickedTargetElementNode.closest('.delete-post-btn')) {
             if (confirm("Are you entirely sure you want to permanently delete this specific post from the global feed arrays?")) {
                 const postCardElement = clickedTargetElementNode.closest('.feed-post');
                 if (postCardElement) {
                     const extractedPostId = parseInt(postCardElement.getAttribute('data-id'));
                     posts = posts.filter(postObj => postObj.id !== extractedPostId);
-                    saveData();
-                    renderPosts();
+                    saveData(); renderPosts();
                 }
             }
             return;
         }
 
-        // =========================================================
-        // GROUP CHAT CONTROLS
-        // =========================================================
         if (clickedTargetElementNode.closest('#create-group-btn')) { sRem('create-group-modal', 'hidden'); return; }
         if (clickedTargetElementNode.closest('#trigger-group-icon-upload')) { const hiddenGroupIconUploadInputField = safeEl('new-group-icon-input'); if (hiddenGroupIconUploadInputField) hiddenGroupIconUploadInputField.click(); return; }
 
@@ -905,11 +892,10 @@ document.addEventListener('DOMContentLoaded', () => {
             sRem('group-messages-area', 'hidden'); sRem('group-input-area', 'hidden');
             sText('current-group-name', groupNameStringValue);
             const selectedGroupObj = groups.find(x => x.name === groupNameStringValue);
-            if (selectedGroupObj) { sSrc('group-header-img', selectedGroupObj.icon || `https://ui-avatars.com/api/?name=${groupNameStringValue}&background=a855f7&color=fff`); }
+            if(selectedGroupObj) { sSrc('group-header-img', selectedGroupObj.icon || `https://ui-avatars.com/api/?name=${groupNameStringValue}&background=a855f7&color=fff`); }
             return;
         }
 
-        // Group Chat Poll Systems
         if (clickedTargetElementNode.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn')) {
             sVal('group-poll-input-question-string-field', ''); sVal('group-poll-input-option-string-field-1', ''); sVal('group-poll-input-option-string-field-2', '');
             sRem('group-channel-poll-creation-modal-framework-overlay-window', 'hidden'); return;
@@ -952,9 +938,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // =========================================================
-        // FRIENDSHIP BOND ACTIONS 
-        // =========================================================
         if (clickedTargetElementNode.closest('#send-band-req-btn')) {
             const bondTargetInputStringValue = gVal('band-request-input');
             if (bondTargetInputStringValue !== "") {
@@ -988,9 +971,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // =========================================================
-        // DEVELOPER CONTROL PANEL BUTTONS
-        // =========================================================
         if (clickedTargetElementNode.closest('#dev-assign-rank-btn')) { alert("Admin Access Log: Select a target user first to modify their database rank tier mapping."); return; }
         if (clickedTargetElementNode.closest('#dev-assign-ring-btn')) { alert("Admin Access Log: Premium profile rings and aura interface deploying in the next patch iteration."); return; }
         if (clickedTargetElementNode.closest('#dev-shadowban-toggle-btn')) { alert("Admin Warning: Ghost shadowban protocol requires target user ID confirmation to execute properly."); return; }
@@ -1000,12 +980,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Disappearing Messages & Bug Reports
         if (clickedTargetElementNode.closest('#chat-input-toggle-secret-disappearing-messages-mode-btn')) {
             activeDisappearingMessagesMode = !activeDisappearingMessagesMode;
             const disappearModeToggleBtnElement = safeEl('chat-input-toggle-secret-disappearing-messages-mode-btn');
             if (disappearModeToggleBtnElement) {
-                if (activeDisappearingMessagesMode) { disappearModeToggleBtnElement.style.color = "#fbbf24"; alert("SECURITY TOGGLE: Ephemeral Disappearing messages are now turned ON. Transmission arrays will expire in 10 seconds."); }
+                if (activeDisappearingMessagesMode) { disappearModeToggleBtnElement.style.color = "#fbbf24"; alert("SECURITY TOGGLE: Ephemeral Disappearing messages are now turned ON. Transmission arrays will expire in 10 seconds."); } 
                 else { disappearModeToggleBtnElement.style.color = "var(--text-muted)"; alert("SECURITY TOGGLE: Disappearing messages mode is now officially turned OFF."); }
             }
             return;
@@ -1021,7 +1000,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Modals Overlay Closing Hooks
         if (clickedTargetElementNode.closest('.close-modal-btn') || clickedTargetElementNode.classList.contains('modal-overlay')) {
             let overlayToCloseElement = clickedTargetElementNode.closest('.modal-overlay');
             if (!overlayToCloseElement) { overlayToCloseElement = clickedTargetElementNode; }
@@ -1029,7 +1007,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Settings Actions
         if (clickedTargetElementNode.closest('#action-clear-cache-btn')) {
             if (confirm("Notice: Are you absolutely positive you want to completely clear the application cache blocks? This will delete all temporary files and posts arrays, but will keep your active profile login session running safely.")) {
                 localStorage.removeItem('chatPosts'); posts = []; renderPosts();
@@ -1041,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (clickedTargetElementNode.closest('#view-friends-list-btn')) { renderFriendsListModal(); sRem('friend-list-modal', 'hidden'); return; }
         if (clickedTargetElementNode.closest('#edit-profile-btn')) { sVal('edit-username-input', currentUser.username); sVal('edit-bio-input', currentUser.bio || ''); sRem('edit-profile-modal', 'hidden'); return; }
 
-    });
+    }); 
 
 
     // =========================================================================
@@ -1125,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFileInput('post-image-upload-input', (resultingBase64ImageStringCode) => { attachedPostImage = resultingBase64ImageStringCode; sRem('post-media-attachment-status-preview', 'hidden'); });
 
     // Chat Image/Media Attachment Rendering Engine
-    function renderChatMediaMessage(base64MediaString, targetMessageAreaIdString) {
+    function renderChatMediaMessage(base64MediaString, targetMessageAreaIdString, emitType) {
         const messageAreaTargetElement = safeEl(targetMessageAreaIdString);
         if (messageAreaTargetElement) {
             const mediaMessageBubbleDiv = document.createElement('div');
@@ -1134,11 +1111,22 @@ document.addEventListener('DOMContentLoaded', () => {
             messageAreaTargetElement.appendChild(mediaMessageBubbleDiv);
             messageAreaTargetElement.scrollTop = messageAreaTargetElement.scrollHeight;
         }
+
+        // Send media to server
+        let dataToEmit = {
+            type: emitType,
+            text: `<br><img src="${base64MediaString}" style="max-width:220px; border-radius:12px; margin-top:8px; border:2px solid rgba(255,255,255,0.2);">`,
+            sender: currentUser.username
+        };
+        if (emitType === 'direct') dataToEmit.to = activeChatUser.username;
+        if (emitType === 'group') dataToEmit.groupName = safeEl('current-group-name').innerText;
+        
+        socket.emit('send_message', dataToEmit);
     }
 
-    setupFileInput('chat-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'messages-area'); });
-    setupFileInput('group-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'group-messages-area'); });
-    setupFileInput('world-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'world-messages-area'); });
+    setupFileInput('chat-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'messages-area', 'direct'); });
+    setupFileInput('group-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'group-messages-area', 'group'); });
+    setupFileInput('world-media-upload-input', (mediaBase64Data) => { renderChatMediaMessage(mediaBase64Data, 'world-messages-area', 'world'); });
 
     function openRightProfilePreviewPane(selectedUserContextDataRecordObject) {
         sAdd('chat-placeholder', 'hidden'); sAdd('chat-header', 'hidden'); sAdd('messages-area', 'hidden'); sAdd('chat-input-area', 'hidden');

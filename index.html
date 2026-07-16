@@ -547,7 +547,7 @@
         <div class="modal-box" style="max-height: 80vh; display: flex; flex-direction: column;">
             <h2><i class="fas fa-users"></i> Your Friends</h2>
             <div id="modal-friend-list-container" style="overflow-y: auto; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
-                </div>
+            </div>
             <div class="modal-actions">
                 <button class="primary-btn close-modal-btn" style="width: 100%;">Close</button>
             </div>
@@ -569,7 +569,60 @@
         </div>
     </div>
 
+    <div id="active-call-window" class="modal-overlay hidden" style="z-index: 10005; background: var(--bg-main);">
+        <div class="call-interface-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;">
+            
+            <div class="call-top-bar" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; width: 100%; z-index: 10;">
+                <button id="minimize-call-btn" class="action-btn" title="Minimize Call" style="border-radius: 50%; width: 45px; height: 45px; background: rgba(0,0,0,0.5); color: white; border: none;"><i class="fas fa-compress-alt"></i></button>
+                <div style="color: white; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">
+                    <i class="fas fa-lock" style="font-size: 0.8rem; margin-right: 5px;"></i> End-to-End Encrypted
+                </div>
+                <div style="width: 45px;"></div> </div>
+
+            <div class="call-media-area" style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; background: #111;">
+                
+                <div id="remote-media-container" style="width: 100%; height: 100%; position: absolute; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                    <video id="remote-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
+                    
+                    <div id="remote-audio-fallback" style="display: flex; flex-direction: column; align-items: center;">
+                        <img id="call-remote-dp" src="https://ui-avatars.com/api/?name=User" style="width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <h2 id="call-remote-name" style="color: white; font-size: 2.2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">Username</h2>
+                        <p id="call-duration-timer" style="color: var(--system-success); font-weight: bold; font-size: 1.2rem;">00:00</p>
+                    </div>
+                </div>
+
+                <div id="local-media-container" style="position: absolute; bottom: 120px; right: 20px; width: 110px; height: 150px; background: #222; border-radius: 16px; overflow: hidden; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 5;">
+                    <video id="local-video" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; display: none; transform: scaleX(-1);"></video>
+                    
+                    <div id="local-audio-fallback" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #333;">
+                        <img id="call-local-dp" src="https://ui-avatars.com/api/?name=Me" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="call-bottom-controls" style="padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); position: absolute; bottom: 0; width: 100%; display: flex; justify-content: center; align-items: center; gap: 25px; z-index: 10;">
+                <button id="toggle-mic-btn" class="action-btn" title="Mute/Unmute Mic" style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i class="fas fa-microphone"></i></button>
+                
+                <button id="end-active-call-btn" class="danger-btn" title="End Call" style="border-radius: 50%; width: 75px; height: 75px; padding: 0; font-size: 2rem; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);"><i class="fas fa-phone-slash"></i></button>
+                
+                <button id="toggle-cam-btn" class="action-btn" title="Turn Camera On/Off" style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i class="fas fa-video"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="minimized-call-widget" class="hidden" style="position: fixed; top: 20px; right: 20px; background: var(--system-success); color: white; padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); z-index: 10006; cursor: pointer; border: 2px solid rgba(255,255,255,0.3);">
+        <div style="position: relative;">
+            <img id="minimized-caller-dp" src="https://ui-avatars.com/api/?name=User" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+            <span style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;"><i class="fas fa-phone" style="font-size: 0.5rem; color: var(--system-success);"></i></span>
+        </div>
+        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+            <span style="font-weight: 800; font-size: 0.95rem;">Tap to expand</span>
+            <span id="minimized-call-timer-display" style="font-size: 0.8rem; font-weight: bold; opacity: 0.9;">00:00</span>
+        </div>
+        <button id="end-minimized-call-btn" style="background: var(--system-error); border: none; border-radius: 50%; width: 32px; height: 32px; color: white; display: flex; justify-content: center; align-items: center; margin-left: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"><i class="fas fa-phone-slash" style="font-size: 0.85rem;"></i></button>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js?v=50001"></script>
+    <script src="script.js?v=60001"></script>
 </body>
 </html>
