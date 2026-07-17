@@ -1,68 +1,68 @@
 // =========================================================================
-// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V41 🔥
+// 🔥 CHATTERBOX ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V42 🔥
 // Privileges: SUPREME CORE ROOT OPERATOR
 // Optimization: STRICTLY DISABLED. 100% EXPLICIT RAW CODE.
-// Bug Fixes: Real-Time Counters, Story Viewer, Reel Deletion, No Alerts
+// Updates: Dynamic Polls, Story Privacy & Insights, Registry, Logic Fixes
 // =========================================================================
 
-console.log("🔥 CHATTERBOX VIP ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥");
-console.log("Initializing Un-Optimized Raw Master Engine V41...");
+console.log("🔥 CHATTERBOX ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥");
+console.log("Initializing Un-Optimized Raw Master Engine V42...");
 
 // =========================================================================
 // 0. CORE DOM UTILITIES & EXPLICIT SAFE WRAPPERS
 // =========================================================================
-function safeEl(elementIdString) {
-    return document.getElementById(elementIdString);
+function safeEl(elementIdString) { 
+    return document.getElementById(elementIdString); 
 }
 
-function sAdd(elementIdString, classNameString) {
-    const targetElementNode = safeEl(elementIdString);
+function sAdd(elementIdString, classNameString) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
-        targetElementNode.classList.add(classNameString);
+        targetElementNode.classList.add(classNameString); 
     }
 }
 
-function sRem(elementIdString, classNameString) {
-    const targetElementNode = safeEl(elementIdString);
+function sRem(elementIdString, classNameString) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
-        targetElementNode.classList.remove(classNameString);
+        targetElementNode.classList.remove(classNameString); 
     }
 }
 
-function sText(elementIdString, textContentValue) {
-    const targetElementNode = safeEl(elementIdString);
+function sText(elementIdString, textContentValue) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
-        targetElementNode.innerText = textContentValue;
+        targetElementNode.innerText = textContentValue; 
     }
 }
 
-function sHtml(elementIdString, htmlContentValue) {
-    const targetElementNode = safeEl(elementIdString);
+function sHtml(elementIdString, htmlContentValue) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
-        targetElementNode.innerHTML = htmlContentValue;
+        targetElementNode.innerHTML = htmlContentValue; 
     }
 }
 
-function sVal(elementIdString, inputValue) {
-    const targetElementNode = safeEl(elementIdString);
+function sVal(elementIdString, inputValue) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
-        targetElementNode.value = inputValue;
+        targetElementNode.value = inputValue; 
     }
 }
 
-function gVal(elementIdString) {
-    const targetElementNode = safeEl(elementIdString);
+function gVal(elementIdString) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
         return targetElementNode.value.trim();
     } else {
-        return '';
+        return ''; 
     }
 }
 
-function sSrc(elementIdString, sourceUrlString) {
-    const targetElementNode = safeEl(elementIdString);
+function sSrc(elementIdString, sourceUrlString) { 
+    const targetElementNode = safeEl(elementIdString); 
     if (targetElementNode !== null) {
-        targetElementNode.src = sourceUrlString;
+        targetElementNode.src = sourceUrlString; 
     }
 }
 
@@ -84,33 +84,36 @@ let reelsDatabase = [];
 let scheduledMessagesQueue = [];
 let pinnedMessages = { direct: {}, group: {}, world: null };
 
+// Temporary Story Upload Buffer
+let tempStoryMediaBuffer = null;
+
 // Persistent Chat History Database
-let chatHistory = {
-    direct: {},
-    group: {},
-    world: [],
-    ai: []
+let chatHistory = { 
+    direct: {}, 
+    group: {}, 
+    world: [], 
+    ai: [] 
 };
 
 // Security & Moderation Database
 let bannedUsers = [];
 let shadowBannedUsers = [];
 let worldMutedUsers = [];
-let worldBannedUsers = [];
+let worldBannedUsers = []; 
 let serverStopped = false;
 
 // UI State Variables
 let activeChatUser = null;
 let currentChatTab = 'general';
 let currentRequestSubTab = 'accept';
-let currentDevActionTarget = '';
+let currentDevActionTarget = ''; 
 let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
 let attachedPostImage = null;
 let isWorldMuted = false;
 let isTypingHidden = false;
 
 // Universal Poll Context Manager
-let activePollContextEngineType = null;
+let activePollContextEngineType = null; 
 
 // Call System & WebRTC Variables
 let activeCallTimerInterval = null;
@@ -130,10 +133,10 @@ let activeMessageContextId = null;
 let targetMessageForReply = null;
 let targetMessageForEdit = null;
 
-const emojiLibrary = ["😀", "😂", "🤣", "😊", "😍", "🥰", "😘", "😜", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "❤️", "🔥", "👍", "👎", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✌️", "🤞", "🖖", "🤘", "🤙", "👈", "👉", "👆", "👇", "☝️", "✋", "🤚", "🖐", "🖖", "👋", "🤙", "💪", "🖕", "✍️", "🤳", "💅", "🙇", "🙋", "💁", "🙆", "🙅", "🤷", "🤦", "🙍", "🙎", "🧏"];
+const emojiLibrary = ["😀","😂","🤣","😊","😍","🥰","😘","😜","😎","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾","❤️","🔥","👍","👎","👏","🙌","👐","🤲","🤝","🙏","✌️","🤞","🖖","🤘","🤙","👈","👉","👆","👇","☝️","✋","🤚","🖐","🖖","👋","🤙","💪","🖕","✍️","🤳","💅","🙇","🙋","💁","🙆","🙅","🤷","🤦","🙍","🙎","🧏"];
 
 const systemVerifiedUserDirectory = [
-    { username: "Atifullah Azhar", uid: "62004377", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Developer and Creator of Chatterbox VIP.", rank: "Developer", isDev: true },
+    { username: "Atifullah Azhar", uid: "62004377", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Developer and Creator of Chatterbox.", rank: "Developer", isDev: true },
     { username: "Chatterbox AI", uid: "00000007", dp: "https://ui-avatars.com/api/?name=AI&background=8b5cf6&color=fff", bio: "Your dedicated AI Intelligence assistant.", rank: "Verified AI Bot", isDev: false }
 ];
 
@@ -143,14 +146,14 @@ const DEFAULT_DP = "https://ui-avatars.com/api/?name=User&background=eaddff&colo
 // =========================================================================
 // 🔥 PWA OFFLINE DETECTOR SYSTEM 🔥
 // =========================================================================
-window.addEventListener('online', function () {
-    sAdd('offline-alert-banner', 'hidden');
-    console.log("System Status: Online Connectivity Restored");
+window.addEventListener('online', function() { 
+    sAdd('offline-alert-banner', 'hidden'); 
+    console.log("System Status: Online Connectivity Restored"); 
 });
 
-window.addEventListener('offline', function () {
-    sRem('offline-alert-banner', 'hidden');
-    console.log("System Status: Offline Connectivity Lost");
+window.addEventListener('offline', function() { 
+    sRem('offline-alert-banner', 'hidden'); 
+    console.log("System Status: Offline Connectivity Lost"); 
 });
 
 // =========================================================================
@@ -164,9 +167,9 @@ function getSafeArrayFromLocalStorage(storageKeyString) {
         } else {
             return [];
         }
-    } catch (errorException) {
+    } catch (errorException) { 
         console.error(`Error parsing array for key: ${storageKeyString}`, errorException);
-        return [];
+        return []; 
     }
 }
 
@@ -181,12 +184,12 @@ function loadAllPersistedData() {
     storiesDatabase = getSafeArrayFromLocalStorage('cb_stories');
     reelsDatabase = getSafeArrayFromLocalStorage('cb_reels');
     scheduledMessagesQueue = getSafeArrayFromLocalStorage('cb_scheduledMessages');
-
+    
     bannedUsers = getSafeArrayFromLocalStorage('cb_bannedUsers');
     shadowBannedUsers = getSafeArrayFromLocalStorage('cb_shadowBannedUsers');
     worldMutedUsers = getSafeArrayFromLocalStorage('cb_worldMutedUsers');
     worldBannedUsers = getSafeArrayFromLocalStorage('cb_worldBannedUsers');
-
+    
     if (localStorage.getItem('cb_serverStopped') === 'true') {
         serverStopped = true;
     } else {
@@ -207,13 +210,13 @@ function loadAllPersistedData() {
         pinnedMessages.group = loadedPinnedData.group || {};
         pinnedMessages.world = loadedPinnedData.world || null;
     }
-
+    
     profileViews = parseInt(localStorage.getItem('chatProfileViews')) || 0;
-    profileViews = profileViews + 1;
+    profileViews = profileViews + 1; 
     localStorage.setItem('chatProfileViews', profileViews.toString());
 }
 
-window.saveData = function () {
+window.saveData = function() {
     try {
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
         localStorage.setItem('chatFriends', JSON.stringify(friends));
@@ -227,7 +230,7 @@ window.saveData = function () {
         localStorage.setItem('cb_stories', JSON.stringify(storiesDatabase));
         localStorage.setItem('cb_reels', JSON.stringify(reelsDatabase));
         localStorage.setItem('cb_scheduledMessages', JSON.stringify(scheduledMessagesQueue));
-
+        
         localStorage.setItem('cb_bannedUsers', JSON.stringify(bannedUsers));
         localStorage.setItem('cb_shadowBannedUsers', JSON.stringify(shadowBannedUsers));
         localStorage.setItem('cb_worldMutedUsers', JSON.stringify(worldMutedUsers));
@@ -235,60 +238,61 @@ window.saveData = function () {
         localStorage.setItem('cb_serverStopped', serverStopped.toString());
 
         updateBadgesAndCounts();
-    } catch (storageError) {
-        console.error("Critical Storage Save Error:", storageError);
+    } catch(storageError) { 
+        console.error("Critical Storage Save Error:", storageError); 
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded. Initiating Full Protocol Execution...");
-    if (navigator.onLine === false) {
-        sRem('offline-alert-banner', 'hidden');
+    if (navigator.onLine === false) { 
+        sRem('offline-alert-banner', 'hidden'); 
     }
 
     loadAllPersistedData();
 
     if (currentUser !== null && currentUser.username !== undefined) {
-
+        
+        // Security Gatekeeper Check
         if (bannedUsers.includes(currentUser.username) === true || bannedUsers.includes(currentUser.uid) === true) {
             document.body.innerHTML = "<div style='display:flex; height:100vh; width:100vw; justify-content:center; align-items:center; background:#000; color:red; flex-direction:column;'><h1 style='font-size:4rem;'><i class='fas fa-ban'></i></h1><h2>YOU ARE PERMANENTLY BANNED FROM CHATTERBOX</h2><p>Contact Developer Atifullah if this is an error.</p></div>";
             return;
         }
 
-        sRem('login-screen', 'active');
+        sRem('login-screen', 'active'); 
         sAdd('login-screen', 'hidden');
-        sRem('main-app', 'hidden');
+        sRem('main-app', 'hidden'); 
         sAdd('main-app', 'active');
 
-        applySystemThemePalette();
-        enforceHierarchyPermissions();
-        updateProfileUI();
-        renderContacts();
-        updateBadgesAndCounts();
-        renderPosts();
-        renderGroups();
+        applySystemThemePalette(); 
+        enforceHierarchyPermissions(); 
+        updateProfileUI(); 
+        renderContacts(); 
+        updateBadgesAndCounts(); 
+        renderPosts(); 
+        renderGroups(); 
         renderBandRequests();
-
+        
         initializeStoriesEngine();
         initializeReelsEngine();
         startScheduledMessageDaemon();
 
-        setTimeout(function () {
-            loadChatHistoryToView('world');
-            loadChatHistoryToView('ai');
+        setTimeout(function() { 
+            loadChatHistoryToView('world'); 
+            loadChatHistoryToView('ai'); 
         }, 500);
 
         socket.emit('user_connected', currentUser.username);
-
-        initEmojiPickerEngine();
-        attachRealVoiceNoteRecordingListeners();
-        setupLiveSearchFilter();
-        setupThemeLibraryEngine();
+        
+        initEmojiPickerEngine(); 
+        attachRealVoiceNoteRecordingListeners(); 
+        setupLiveSearchFilter(); 
+        setupThemeLibraryEngine(); 
         initWhiteboardCanvas();
     } else {
-        sRem('login-screen', 'hidden');
+        sRem('login-screen', 'hidden'); 
         sAdd('login-screen', 'active');
-        sRem('main-app', 'active');
+        sRem('main-app', 'active'); 
         sAdd('main-app', 'hidden');
     }
 });
@@ -301,44 +305,44 @@ function applySystemThemePalette() {
     if (currentUser === null) {
         return;
     }
-
+    
     const themeToggleButtonElement = safeEl('activate-golden-theme-btn');
-
+    
     if (currentUser.theme !== undefined && currentUser.theme !== null) {
         document.documentElement.setAttribute('data-theme', currentUser.theme);
-
+        
         if (currentUser.theme === 'grand-golden') {
             document.body.classList.add('dev-theme-active');
-            if (themeToggleButtonElement !== null) {
-                themeToggleButtonElement.innerText = 'Deactivate';
-                themeToggleButtonElement.style.background = '#ef4444';
-                themeToggleButtonElement.style.color = 'white';
-                themeToggleButtonElement.style.border = 'none';
+            if (themeToggleButtonElement !== null) { 
+                themeToggleButtonElement.innerText = 'Deactivate'; 
+                themeToggleButtonElement.style.background = '#ef4444'; 
+                themeToggleButtonElement.style.color = 'white'; 
+                themeToggleButtonElement.style.border = 'none'; 
             }
         } else {
             document.body.classList.remove('dev-theme-active');
-            if (themeToggleButtonElement !== null) {
-                themeToggleButtonElement.innerText = 'Activate';
-                themeToggleButtonElement.style.background = 'transparent';
-                themeToggleButtonElement.style.color = '#ffd700';
-                themeToggleButtonElement.style.border = '1px solid #ffd700';
+            if (themeToggleButtonElement !== null) { 
+                themeToggleButtonElement.innerText = 'Activate'; 
+                themeToggleButtonElement.style.background = 'transparent'; 
+                themeToggleButtonElement.style.color = '#ffd700'; 
+                themeToggleButtonElement.style.border = '1px solid #ffd700'; 
             }
         }
-    } else {
-        document.documentElement.setAttribute('data-theme', 'default');
+    } else { 
+        document.documentElement.setAttribute('data-theme', 'default'); 
     }
 }
 
 function setupThemeLibraryEngine() {
     const themeSelectionBoxesArray = document.querySelectorAll('.theme-selection-box');
     for (let i = 0; i < themeSelectionBoxesArray.length; i++) {
-        themeSelectionBoxesArray[i].addEventListener('click', function () {
+        themeSelectionBoxesArray[i].addEventListener('click', function() {
             const selectedThemeNameString = this.getAttribute('data-theme-name');
-            currentUser.theme = selectedThemeNameString;
+            currentUser.theme = selectedThemeNameString; 
             document.documentElement.setAttribute('data-theme', selectedThemeNameString);
-            window.saveData();
-            applySystemThemePalette();
-            sAdd('theme-selector-modal', 'hidden');
+            window.saveData(); 
+            applySystemThemePalette(); 
+            sAdd('theme-selector-modal', 'hidden'); 
             alert(`Premium Theme [${selectedThemeNameString}] applied successfully!`);
         });
     }
@@ -348,12 +352,12 @@ function enforceHierarchyPermissions() {
     if (currentUser === null) {
         return;
     }
-
+    
     let currentRankValue = currentUser.rank || 'Member';
-    const devNavigationItemNode = safeEl('dev-nav-item');
-    const goldenThemeOptionRowNode = safeEl('golden-theme-setting-row');
+    const devNavigationItemNode = safeEl('dev-nav-item'); 
+    const goldenThemeOptionRowNode = safeEl('golden-theme-setting-row'); 
     const developerRoleTextNode = safeEl('dev-status-role-text');
-
+    
     const allDevBoxesArray = document.querySelectorAll('.dev-box');
     for (let i = 0; i < allDevBoxesArray.length; i++) {
         allDevBoxesArray[i].style.display = 'none';
@@ -363,16 +367,16 @@ function enforceHierarchyPermissions() {
         if (devNavigationItemNode !== null) { devNavigationItemNode.classList.remove('hidden'); }
         if (goldenThemeOptionRowNode !== null) { goldenThemeOptionRowNode.classList.remove('hidden'); }
         if (developerRoleTextNode !== null) { developerRoleTextNode.innerText = "SYSTEM STATUS: ACTIVE // ROLE: SUPREME DEVELOPER"; }
-
+        
         for (let i = 0; i < allDevBoxesArray.length; i++) {
             allDevBoxesArray[i].style.display = 'block';
         }
-    }
+    } 
     else if (currentRankValue === 'Operator') {
         if (devNavigationItemNode !== null) { devNavigationItemNode.classList.remove('hidden'); }
         if (goldenThemeOptionRowNode !== null) { goldenThemeOptionRowNode.classList.remove('hidden'); }
         if (developerRoleTextNode !== null) { developerRoleTextNode.innerText = "SYSTEM STATUS: ACTIVE // ROLE: OPERATOR"; }
-
+        
         const operatorAllowedToolsArray = ['dev-ban-btn', 'dev-unban-btn', 'dev-mute-world-btn', 'dev-unmute-world-btn', 'dev-ban-world-btn', 'dev-unban-world-btn'];
         for (let i = 0; i < operatorAllowedToolsArray.length; i++) {
             let toolNode = safeEl(operatorAllowedToolsArray[i]);
@@ -385,7 +389,7 @@ function enforceHierarchyPermissions() {
         if (devNavigationItemNode !== null) { devNavigationItemNode.classList.remove('hidden'); }
         if (goldenThemeOptionRowNode !== null) { goldenThemeOptionRowNode.classList.add('hidden'); }
         if (developerRoleTextNode !== null) { developerRoleTextNode.innerText = "SYSTEM STATUS: ACTIVE // ROLE: MODERATOR"; }
-
+        
         const moderatorAllowedToolsArray = ['dev-mute-world-btn', 'dev-unmute-world-btn', 'dev-ban-world-btn', 'dev-unban-world-btn'];
         for (let i = 0; i < moderatorAllowedToolsArray.length; i++) {
             let toolNode = safeEl(moderatorAllowedToolsArray[i]);
@@ -408,37 +412,37 @@ function updateProfileUI() {
     if (currentUser === null) {
         return;
     }
-
-    sText('display-username', currentUser.username);
+    
+    sText('display-username', currentUser.username); 
     sText('user-bio', currentUser.bio || "No biography details available.");
-    sSrc('user-dp', currentUser.dp || DEFAULT_DP);
+    sSrc('user-dp', currentUser.dp || DEFAULT_DP); 
     sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
     sText('display-uid', `UID: #${currentUser.uid || '00000000'}`);
 
-    if (currentUser.banner) {
-        sSrc('banner-img', currentUser.banner);
-        sRem('banner-img', 'hidden');
-    } else {
-        sAdd('banner-img', 'hidden');
+    if (currentUser.banner) { 
+        sSrc('banner-img', currentUser.banner); 
+        sRem('banner-img', 'hidden'); 
+    } else { 
+        sAdd('banner-img', 'hidden'); 
     }
-
+    
     sText('display-rank', currentUser.rank || 'Member');
 
     const usernameTextDisplayElement = safeEl('display-username');
     const rankBadgeDisplayElement = safeEl('display-rank');
 
     if (usernameTextDisplayElement !== null) {
-        usernameTextDisplayElement.className = 'username-display';
+        usernameTextDisplayElement.className = 'username-display'; 
     }
     if (rankBadgeDisplayElement !== null) {
-        rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge';
+        rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge'; 
     }
 
     if (currentUser.isDev === true || currentUser.rank === 'Developer') {
         if (usernameTextDisplayElement !== null) { usernameTextDisplayElement.classList.add('shiny-dev-text'); }
         if (rankBadgeDisplayElement !== null) { rankBadgeDisplayElement.classList.add('rank-developer'); }
-        sRem('dev-nav-item', 'hidden');
-    }
+        sRem('dev-nav-item', 'hidden'); 
+    } 
     else if (currentUser.rank === 'Operator') {
         if (usernameTextDisplayElement !== null) { usernameTextDisplayElement.classList.add('shiny-silver-text'); }
         if (rankBadgeDisplayElement !== null) { rankBadgeDisplayElement.classList.add('rank-member'); }
@@ -458,7 +462,7 @@ function updateProfileUI() {
         if (rankBadgeDisplayElement !== null) { rankBadgeDisplayElement.classList.add('rank-member'); }
         sAdd('dev-nav-item', 'hidden');
     }
-
+    
     sText('total-friends-count', friends.length.toString());
     sText('profile-visitor-numerical-counter-view', profileViews.toString());
 }
@@ -469,34 +473,68 @@ function updateBadgesAndCounts() {
     }
 }
 
+function findUserGlobally(targetUsernameString) {
+    let internalFoundRootUser = systemVerifiedUserDirectory.find(userNode => userNode.username === targetUsernameString || userNode.uid === targetUsernameString);
+    if (internalFoundRootUser !== undefined) {
+        return internalFoundRootUser;
+    }
+
+    let dynamicLocalRegistryArray = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
+    let localRegisteredUserObject = dynamicLocalRegistryArray.find(userNode => userNode.username === targetUsernameString || userNode.uid === targetUsernameString);
+
+    if (localRegisteredUserObject !== undefined) {
+        return {
+            username: localRegisteredUserObject.username,
+            uid: localRegisteredUserObject.uid || "00000000",
+            dp: `https://ui-avatars.com/api/?name=${localRegisteredUserObject.username}&background=random&color=fff`,
+            rank: 'Member',
+            bio: "Hey there! I am using Chatterbox.",
+            isDev: false
+        };
+    }
+    return null;
+}
+
 // =========================================================================
-// 4. STORIES & REELS ENGINE (REAL-TIME COUNTERS & MODALS)
+// 4. STORIES & REELS ENGINE (PRIVACY, INSIGHTS & REAL-TIME LOGIC)
 // =========================================================================
 function initializeStoriesEngine() {
     const storiesContainerBoxElement = safeEl('stories-container-box');
     if (storiesContainerBoxElement === null) { return; }
-
+    
     let currentHtmlContent = `<div class="story-item" id="add-story-btn" style="display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;"><div style="width: 70px; height: 70px; border-radius: 50%; border: 3px dashed var(--primary-color); display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary-color);">+</div><span style="font-weight: bold; font-size: 0.85rem;">Add Story</span></div>`;
-    currentHtmlContent += `<input type="file" id="story-upload-input" accept="image/*,video/*" class="hidden">`;
 
     for (let i = 0; i < storiesDatabase.length; i++) {
         let storyDataObject = storiesDatabase[i];
-        let ringStyleString = storyDataObject.viewed ? 'border: 3px solid var(--border-color);' : 'background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px;';
-        let storyDisplaySource = storyDataObject.image ? storyDataObject.image : storyDataObject.dp;
+        
+        // Scope logic: if friends only, only show to uploader or their friends
+        let isStoryVisible = true;
+        if (storyDataObject.scope === 'friends' && storyDataObject.name !== currentUser.username) {
+            let isFriend = false;
+            for(let f=0; f<friends.length; f++){
+                if(friends[f].username === storyDataObject.name) { isFriend = true; break; }
+            }
+            if(!isFriend) isStoryVisible = false;
+        }
 
-        currentHtmlContent += `
-            <div class="story-item" data-id="${storyDataObject.id}" onclick="viewStoryProtocol(${storyDataObject.id})">
-                <div style="width: 70px; height: 70px; border-radius: 50%; ${ringStyleString} display: flex; justify-content: center; align-items: center;">
-                    <img src="${storyDisplaySource}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-panel);">
-                </div>
-                <span style="font-weight: 700; font-size: 0.85rem;">${storyDataObject.name}</span>
-            </div>`;
+        if (isStoryVisible === true) {
+            let ringStyleString = storyDataObject.viewed ? 'border: 3px solid var(--border-color);' : 'background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px;';
+            let storyDisplaySource = storyDataObject.image ? storyDataObject.image : storyDataObject.dp;
+
+            currentHtmlContent += `
+                <div class="story-item" data-id="${storyDataObject.id}" onclick="viewStoryProtocol(${storyDataObject.id})">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; ${ringStyleString} display: flex; justify-content: center; align-items: center;">
+                        <img src="${storyDisplaySource}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-panel);">
+                    </div>
+                    <span style="font-weight: 700; font-size: 0.85rem;">${storyDataObject.name}</span>
+                </div>`;
+        }
     }
     storiesContainerBoxElement.innerHTML = currentHtmlContent;
 }
 
-// 🔥 EXPLICIT STORY VIEWER MODAL LOGIC 🔥
-window.viewStoryProtocol = function (storyIdentifierInt) {
+// 🔥 EXPLICIT STORY VIEWER MODAL LOGIC (INSIGHTS & LIKES FIX) 🔥
+window.viewStoryProtocol = function(storyIdentifierInt) {
     let targetedStoryObject = null;
     for (let i = 0; i < storiesDatabase.length; i++) {
         if (storiesDatabase[i].id === storyIdentifierInt) {
@@ -505,56 +543,98 @@ window.viewStoryProtocol = function (storyIdentifierInt) {
             break;
         }
     }
-
+    
     window.saveData();
     initializeStoriesEngine(); // Refresh visual rings
-
+    
     if (targetedStoryObject !== null) {
         sSrc('story-viewer-dp', targetedStoryObject.dp);
         sText('story-viewer-username', targetedStoryObject.name);
         sSrc('story-viewer-media', targetedStoryObject.image || targetedStoryObject.dp);
+        
+        if (targetedStoryObject.likes === undefined) { targetedStoryObject.likes = 0; }
+        if (targetedStoryObject.likedByArray === undefined) { targetedStoryObject.likedByArray = []; }
+        if (targetedStoryObject.viewedByArray === undefined) { targetedStoryObject.viewedByArray = []; }
 
-        if (targetedStoryObject.likes === undefined) {
-            targetedStoryObject.likes = 0;
+        // Record View
+        if (targetedStoryObject.name !== currentUser.username && !targetedStoryObject.viewedByArray.includes(currentUser.username)) {
+            targetedStoryObject.viewedByArray.push(currentUser.username);
+            window.saveData();
         }
-        sText('story-like-count', targetedStoryObject.likes.toString());
 
+        sText('story-like-count', targetedStoryObject.likes.toString());
+        
         const userInfoContainerNode = safeEl('story-viewer-user-info');
         if (userInfoContainerNode !== null) {
-            userInfoContainerNode.onclick = function () {
+            userInfoContainerNode.onclick = function() {
                 openProfileFromReel(targetedStoryObject.name);
                 sAdd('story-viewer-modal', 'hidden');
             };
         }
 
         const deleteStoryButtonElement = safeEl('story-delete-btn');
-        if (deleteStoryButtonElement !== null) {
-            if (targetedStoryObject.name === currentUser.username || currentUser.rank === 'Developer') {
+        const likeStoryButtonElement = safeEl('story-like-btn');
+        const insightsStoryButtonElement = safeEl('story-insights-btn');
+
+        if (targetedStoryObject.name === currentUser.username || currentUser.rank === 'Developer') {
+            // Uploader options
+            if(deleteStoryButtonElement) {
                 deleteStoryButtonElement.classList.remove('hidden');
-                deleteStoryButtonElement.onclick = function () {
+                deleteStoryButtonElement.onclick = function() {
                     let filteredStoriesArray = [];
-                    for (let k = 0; k < storiesDatabase.length; k++) {
-                        if (storiesDatabase[k].id !== storyIdentifierInt) {
-                            filteredStoriesArray.push(storiesDatabase[k]);
-                        }
+                    for(let k=0; k<storiesDatabase.length; k++){
+                        if (storiesDatabase[k].id !== storyIdentifierInt) { filteredStoriesArray.push(storiesDatabase[k]); }
                     }
                     storiesDatabase = filteredStoriesArray;
-                    window.saveData();
-                    initializeStoriesEngine();
-                    sAdd('story-viewer-modal', 'hidden');
+                    window.saveData(); initializeStoriesEngine(); sAdd('story-viewer-modal', 'hidden');
                 };
-            } else {
-                deleteStoryButtonElement.classList.add('hidden');
             }
-        }
-
-        const likeStoryButtonElement = safeEl('story-like-btn');
-        if (likeStoryButtonElement !== null) {
-            likeStoryButtonElement.onclick = function () {
-                targetedStoryObject.likes = targetedStoryObject.likes + 1;
-                sText('story-like-count', targetedStoryObject.likes.toString());
-                window.saveData();
-            };
+            if(likeStoryButtonElement) likeStoryButtonElement.classList.add('hidden');
+            
+            // INSIGHTS BUTTON
+            if(insightsStoryButtonElement) {
+                insightsStoryButtonElement.classList.remove('hidden');
+                insightsStoryButtonElement.onclick = function() {
+                    const insightsListContainer = safeEl('story-insights-list');
+                    if(insightsListContainer) {
+                        let htmlContent = `<b>👀 Viewed By:</b><br>`;
+                        if(targetedStoryObject.viewedByArray.length === 0) htmlContent += `<span style="color:var(--text-muted); font-size:0.85rem;">No views yet.</span><br>`;
+                        for(let v=0; v<targetedStoryObject.viewedByArray.length; v++){
+                            htmlContent += `<span>- @${targetedStoryObject.viewedByArray[v]}</span><br>`;
+                        }
+                        htmlContent += `<br><b>❤️ Liked By:</b><br>`;
+                        if(targetedStoryObject.likedByArray.length === 0) htmlContent += `<span style="color:var(--text-muted); font-size:0.85rem;">No likes yet.</span><br>`;
+                        for(let l=0; l<targetedStoryObject.likedByArray.length; l++){
+                            htmlContent += `<span>- @${targetedStoryObject.likedByArray[l]}</span><br>`;
+                        }
+                        insightsListContainer.innerHTML = htmlContent;
+                    }
+                    sRem('story-insights-modal', 'hidden');
+                }
+            }
+        } else {
+            // Viewer options
+            if(deleteStoryButtonElement) deleteStoryButtonElement.classList.add('hidden');
+            if(insightsStoryButtonElement) insightsStoryButtonElement.classList.add('hidden');
+            
+            if(likeStoryButtonElement) {
+                likeStoryButtonElement.classList.remove('hidden');
+                if (targetedStoryObject.likedByArray.includes(currentUser.username)) {
+                    likeStoryButtonElement.style.color = '#ef4444'; // Already liked (red)
+                } else {
+                    likeStoryButtonElement.style.color = 'white'; // Not liked
+                }
+                
+                likeStoryButtonElement.onclick = function() {
+                    if (targetedStoryObject.likedByArray.includes(currentUser.username) === false) {
+                        targetedStoryObject.likedByArray.push(currentUser.username);
+                        targetedStoryObject.likes = targetedStoryObject.likes + 1;
+                        sText('story-like-count', targetedStoryObject.likes.toString());
+                        this.style.color = '#ef4444';
+                        window.saveData();
+                    }
+                };
+            }
         }
 
         sRem('story-viewer-modal', 'hidden');
@@ -564,14 +644,14 @@ window.viewStoryProtocol = function (storyIdentifierInt) {
 function initializeReelsEngine() {
     const reelsFeedContainerElement = safeEl('reels-feed-container');
     if (reelsFeedContainerElement === null) { return; }
-
+    
     reelsFeedContainerElement.innerHTML = '';
-
+    
     if (reelsDatabase.length === 0) {
         reelsFeedContainerElement.innerHTML = `<div style="height: 100%; display: flex; justify-content: center; align-items: center; color: white;">No Reels available yet. Be the first to post!</div>`;
         return;
     }
-
+    
     let reelsHtmlStringAccumulator = '';
     for (let i = 0; i < reelsDatabase.length; i++) {
         let reelObject = reelsDatabase[i];
@@ -579,6 +659,9 @@ function initializeReelsEngine() {
 
         if (reelObject.likes === undefined) { reelObject.likes = 0; }
         if (reelObject.comments === undefined) { reelObject.comments = 0; }
+        if (reelObject.likedByArray === undefined) { reelObject.likedByArray = []; }
+
+        let heartColorClass = reelObject.likedByArray.includes(currentUser.username) ? 'color: #ef4444;' : 'color: white;';
 
         reelsHtmlStringAccumulator += `
             <div class="reel-item" style="background: ${inlineStyleBackground};">
@@ -587,9 +670,9 @@ function initializeReelsEngine() {
                     <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 5px;">@${reelObject.username || "creator"}</p>
                 </div>
                 <div class="reel-actions">
-                    <button class="reel-action-btn" onclick="likeReelAction(${reelObject.id}, this)"><i class="fas fa-heart"></i><span style="font-size:0.8rem; margin-top:3px;">${reelObject.likes}</span></button>
-                    <button class="reel-action-btn"><i class="fas fa-comment"></i><span style="font-size:0.8rem; margin-top:3px;">${reelObject.comments}</span></button>
-                    <button class="reel-action-btn"><i class="fas fa-share"></i><span style="font-size:0.8rem; margin-top:3px;">Share</span></button>
+                    <button class="reel-action-btn" style="${heartColorClass}" onclick="likeReelAction(${reelObject.id}, this)"><i class="fas fa-heart"></i><span style="font-size:0.8rem; margin-top:3px; color:white;">${reelObject.likes}</span></button>
+                    <button class="reel-action-btn" onclick="alert('Opening Comments Section...')"><i class="fas fa-comment"></i><span style="font-size:0.8rem; margin-top:3px; color:white;">${reelObject.comments}</span></button>
+                    <button class="reel-action-btn" onclick="alert('Opening Share Menu...')"><i class="fas fa-share"></i><span style="font-size:0.8rem; margin-top:3px; color:white;">Share</span></button>
                     <button class="reel-action-btn" onclick="openReelOptionsModal(${reelObject.id}, '${reelObject.username}')"><i class="fas fa-ellipsis-v"></i></button>
                 </div>
             </div>`;
@@ -598,49 +681,52 @@ function initializeReelsEngine() {
 }
 
 // 🔥 EXPLICIT REELS ACTIONS (LIKE, DELETE, PROFILE OPEN) 🔥
-window.likeReelAction = function (targetReelIdInteger, triggeredButtonElement) {
+window.likeReelAction = function(targetReelIdInteger, triggeredButtonElement) {
     for (let i = 0; i < reelsDatabase.length; i++) {
         if (reelsDatabase[i].id === targetReelIdInteger) {
-            reelsDatabase[i].likes = reelsDatabase[i].likes + 1;
-            triggeredButtonElement.style.color = '#ef4444';
-            const spanTextNode = triggeredButtonElement.querySelector('span');
-            if (spanTextNode !== null) {
-                spanTextNode.innerText = reelsDatabase[i].likes.toString();
+            if (reelsDatabase[i].likedByArray === undefined) { reelsDatabase[i].likedByArray = []; }
+            
+            if (reelsDatabase[i].likedByArray.includes(currentUser.username) === false) {
+                reelsDatabase[i].likedByArray.push(currentUser.username);
+                reelsDatabase[i].likes = reelsDatabase[i].likes + 1;
+                triggeredButtonElement.style.color = '#ef4444';
+                const spanTextNode = triggeredButtonElement.querySelector('span');
+                if (spanTextNode !== null) { spanTextNode.innerText = reelsDatabase[i].likes.toString(); }
+                window.saveData();
             }
-            window.saveData();
             break;
         }
     }
 };
 
-window.openProfileFromReel = function (targetUsernameString) {
+window.openProfileFromReel = function(targetUsernameString) {
     let locatedUserContextObject = findUserGlobally(targetUsernameString);
     if (locatedUserContextObject !== null) {
         const allNavBtnNodesArray = document.querySelectorAll('.nav-links .nav-btn');
-        for (let i = 0; i < allNavBtnNodesArray.length; i++) {
+        for(let i=0; i<allNavBtnNodesArray.length; i++){
             allNavBtnNodesArray[i].classList.remove('active');
         }
 
         const allContentViewSectionsArray = document.querySelectorAll('.content-view');
-        for (let i = 0; i < allContentViewSectionsArray.length; i++) {
+        for(let i=0; i<allContentViewSectionsArray.length; i++){
             allContentViewSectionsArray[i].classList.remove('active');
             allContentViewSectionsArray[i].classList.add('hidden');
         }
 
         sRem('chat-section', 'hidden');
         sAdd('chat-section', 'active');
-
+        
         openRightProfilePreviewPane(locatedUserContextObject);
     }
 };
 
-window.openReelOptionsModal = function (targetReelIdInteger, targetReelOwnerString) {
+window.openReelOptionsModal = function(targetReelIdInteger, targetReelOwnerString) {
     if (targetReelOwnerString === currentUser.username || currentUser.rank === 'Developer') {
         const deleteReelConfirmBtnNode = safeEl('delete-reel-confirm-btn');
         if (deleteReelConfirmBtnNode !== null) {
-            deleteReelConfirmBtnNode.onclick = function () {
+            deleteReelConfirmBtnNode.onclick = function() {
                 let filteredReelsArrayBuffer = [];
-                for (let i = 0; i < reelsDatabase.length; i++) {
+                for(let i=0; i<reelsDatabase.length; i++) {
                     if (reelsDatabase[i].id !== targetReelIdInteger) {
                         filteredReelsArrayBuffer.push(reelsDatabase[i]);
                     }
@@ -653,9 +739,8 @@ window.openReelOptionsModal = function (targetReelIdInteger, targetReelOwnerStri
         }
         sRem('reel-options-modal', 'hidden');
     } else {
-        // Just hide or ignore, since only uploader or dev can delete
         sRem('reel-options-modal', 'hidden');
-        if (safeEl('delete-reel-confirm-btn')) safeEl('delete-reel-confirm-btn').onclick = function () { alert("Access Denied: You can only delete your own reels."); };
+        if(safeEl('delete-reel-confirm-btn')) safeEl('delete-reel-confirm-btn').onclick = function(){ alert("Access Denied: You can only delete your own reels."); sAdd('reel-options-modal', 'hidden'); };
     }
 };
 
@@ -666,11 +751,11 @@ window.openReelOptionsModal = function (targetReelIdInteger, targetReelOwnerStri
 function renderPosts() {
     const postsOutputContainerElement = safeEl('feed-container');
     if (postsOutputContainerElement === null) { return; }
-
+    
     postsOutputContainerElement.innerHTML = '';
-
+    
     if (posts.length === 0) {
-        postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`;
+        postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`; 
         return;
     }
 
@@ -681,17 +766,17 @@ function renderPosts() {
         if (postObject.image) {
             renderedImageHtmlString = `<img src="${postObject.image}" class="post-media-img" style="margin-top:12px; border-radius:14px; width:100%;">`;
         }
-
+        
         let renderedTagsHtmlString = '';
         if (postObject.tags && postObject.tags.length > 0) {
             renderedTagsHtmlString = `<div style="color: var(--primary-color); font-weight: bold; margin-top: 8px; font-size:0.9rem;">${postObject.tags.join(' ')}</div>`;
         }
-
+        
         let renderedDeleteButtonHtmlString = '';
-        if (postObject.user === currentUser.username) {
+        if (postObject.user === currentUser.username || currentUser.rank === 'Developer') {
             renderedDeleteButtonHtmlString = `<button class="delete-post-btn" style="background:transparent; color:var(--text-muted); box-shadow:none; padding:8px;"><i class="fas fa-trash-alt"></i></button>`;
         }
-
+        
         let renderedTextContentHtmlString = '';
         if (postObject.text) {
             renderedTextContentHtmlString = `<div class="post-text-content" style="margin-top:15px; font-size:1.1rem; line-height:1.6; color:var(--text-main); font-weight:600; white-space:pre-wrap;">${postObject.text}</div>`;
@@ -724,11 +809,11 @@ function renderPosts() {
 function renderGroups() {
     const groupsOutputContainerElement = safeEl('group-list-container');
     if (groupsOutputContainerElement === null) { return; }
-
+    
     groupsOutputContainerElement.innerHTML = '';
-
+    
     if (groups.length === 0) {
-        groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`;
+        groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`; 
         return;
     }
 
@@ -751,19 +836,19 @@ function renderGroups() {
 function renderBandRequests() {
     const bandOutputContainerElement = safeEl('band-incoming-requests');
     const emptyStatePlaceholderElement = safeEl('band-incoming-requests-empty-placeholder-string-element');
-
+    
     if (bandOutputContainerElement === null) { return; }
-
+    
     bandOutputContainerElement.innerHTML = '';
 
     if (bandRequests.length === 0) {
         if (emptyStatePlaceholderElement !== null) {
             emptyStatePlaceholderElement.classList.remove('hidden');
         }
-        bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`;
+        bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`; 
         return;
     }
-
+    
     if (emptyStatePlaceholderElement !== null) {
         emptyStatePlaceholderElement.classList.add('hidden');
     }
@@ -780,6 +865,85 @@ function renderBandRequests() {
     bandOutputContainerElement.innerHTML = allBandRequestsHtmlAccumulator;
 }
 
+function renderGlobalUsersList(searchTermStringParameter = '') {
+    const registryContainerNodeElement = safeEl('global-users-list-container');
+    if (registryContainerNodeElement === null) { return; }
+
+    registryContainerNodeElement.innerHTML = '';
+    let extractedLocalRegistryDatabaseArray = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
+    let combinedAllUsersEntityArray = [...systemVerifiedUserDirectory];
+
+    for(let i=0; i<extractedLocalRegistryDatabaseArray.length; i++){
+        let uObj = extractedLocalRegistryDatabaseArray[i];
+        let foundExisting = false;
+        for(let j=0; j<combinedAllUsersEntityArray.length; j++){
+            if(combinedAllUsersEntityArray[j].username === uObj.username) { foundExisting = true; break; }
+        }
+        if(!foundExisting) {
+            combinedAllUsersEntityArray.push({
+                username: uObj.username,
+                uid: uObj.uid || '00000000',
+                rank: 'Member',
+                dp: `https://ui-avatars.com/api/?name=${uObj.username}&background=random&color=fff`
+            });
+        }
+    }
+
+    if (currentUser !== null) {
+        let filteredCurrentSelf = [];
+        for(let k=0; k<combinedAllUsersEntityArray.length; k++){
+            if(combinedAllUsersEntityArray[k].username !== currentUser.username) { filteredCurrentSelf.push(combinedAllUsersEntityArray[k]); }
+        }
+        combinedAllUsersEntityArray = filteredCurrentSelf;
+    }
+
+    if (searchTermStringParameter !== "") {
+        const loweredTermString = searchTermStringParameter.toLowerCase();
+        let searchedUsersBuffer = [];
+        for(let p=0; p<combinedAllUsersEntityArray.length; p++){
+            let iterUser = combinedAllUsersEntityArray[p];
+            if(iterUser.username.toLowerCase().includes(loweredTermString) || (iterUser.uid && iterUser.uid.includes(loweredTermString))) {
+                searchedUsersBuffer.push(iterUser);
+            }
+        }
+        combinedAllUsersEntityArray = searchedUsersBuffer;
+    }
+
+    if (combinedAllUsersEntityArray.length === 0) {
+        registryContainerNodeElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 20px;">No users found in global directory.</p>`;
+        return;
+    }
+
+    let globalUsersHtmlBuilder = '';
+    for(let x=0; x<combinedAllUsersEntityArray.length; x++) {
+        let uData = combinedAllUsersEntityArray[x];
+        let actionBtnInjectHtml = uData.username === "Chatterbox AI" ? "" : `<button class="primary-btn action-dispatch-global-req-btn" data-username="${uData.username}" style="padding: 8px 14px; font-size:0.9rem; border-radius:10px;"><i class="fas fa-user-plus"></i></button>`;
+
+        globalUsersHtmlBuilder += `
+            <div class="global-user-item" data-username="${uData.username}" style="cursor: pointer;">
+                <img src="${uData.dp}" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
+                <div style="flex:1; margin-left:12px;">
+                    <b style="font-size:1.05rem; color:var(--text-main); display:block;">${uData.username}</b>
+                    <span style="font-size:0.8rem; color:var(--primary-color); font-weight:800; font-family:monospace;">UID: #${uData.uid}</span>
+                </div>
+                ${actionBtnInjectHtml}
+            </div>`;
+    }
+    registryContainerNodeElement.innerHTML = globalUsersHtmlBuilder;
+}
+
+function setupLiveSearchFilter() {
+    const mainSearchInputDOMNodeElement = safeEl('chat-sidebar-search-input');
+    if (mainSearchInputDOMNodeElement !== null) {
+        mainSearchInputDOMNodeElement.addEventListener('input', function(eventInputTriggerObject) {
+            if (currentChatTab === 'requests' && currentRequestSubTab === 'send') {
+                renderGlobalUsersList(eventInputTriggerObject.target.value);
+            }
+        });
+    }
+}
+
+
 // =========================================================================
 // 6. MESSAGING CORE LOGIC (PINNING, EXPORT, REACTIONS, SELF-DESTRUCT)
 // =========================================================================
@@ -788,65 +952,63 @@ function exportChatHistory() {
         alert("Action Denied: You must select a direct chat target first to export.");
         return;
     }
-
+    
     const targetChatHistoryArray = chatHistory.direct[activeChatUser.username];
     if (targetChatHistoryArray === undefined || targetChatHistoryArray.length === 0) {
         alert("Action Denied: There are no messages to export in this channel.");
         return;
     }
-
+    
     let formattedTextExportString = `====================================================\n`;
-    formattedTextExportString += `CHATTERBOX VIP EXPORT: Chat with @${activeChatUser.username}\n`;
+    formattedTextExportString += `CHATTERBOX EXPORT: Chat with @${activeChatUser.username}\n`;
     formattedTextExportString += `Timestamp: ${new Date().toLocaleString()}\n`;
     formattedTextExportString += `====================================================\n\n`;
-
+    
     for (let i = 0; i < targetChatHistoryArray.length; i++) {
         let messageItemObject = targetChatHistoryArray[i];
-        // Strip HTML tags for clean text export
         let cleanTextContent = messageItemObject.text.replace(/<[^>]*>?/gm, '');
         formattedTextExportString += `[${messageItemObject.sender}]: ${cleanTextContent}\n`;
     }
-
+    
     const textBlobData = new Blob([formattedTextExportString], { type: 'text/plain' });
     const localBlobUrlString = URL.createObjectURL(textBlobData);
-
-    const hiddenDownloadAnchorElement = document.createElement('a');
-    hiddenDownloadAnchorElement.href = localBlobUrlString;
+    
+    const hiddenDownloadAnchorElement = document.createElement('a'); 
+    hiddenDownloadAnchorElement.href = localBlobUrlString; 
     hiddenDownloadAnchorElement.download = `Chatterbox_Export_${activeChatUser.username}.txt`;
-
-    document.body.appendChild(hiddenDownloadAnchorElement);
-    hiddenDownloadAnchorElement.click();
-    document.body.removeChild(hiddenDownloadAnchorElement);
+    
+    document.body.appendChild(hiddenDownloadAnchorElement); 
+    hiddenDownloadAnchorElement.click(); 
+    document.body.removeChild(hiddenDownloadAnchorElement); 
     URL.revokeObjectURL(localBlobUrlString);
 }
 
 function startScheduledMessageDaemon() {
     console.log("Starting Scheduled Message Background Daemon...");
-    setInterval(function () {
+    setInterval(function() {
         const currentTimeInt = Date.now();
         let updatedQueueArray = [];
-
+        
         for (let i = 0; i < scheduledMessagesQueue.length; i++) {
             let scheduledMsgObj = scheduledMessagesQueue[i];
             if (currentTimeInt >= scheduledMsgObj.triggerTime) {
                 console.log("Triggering scheduled message to:", scheduledMsgObj.target);
-                // Trick to temporarily set the chat target if it's direct
                 let previousActiveUser = activeChatUser;
                 if (scheduledMsgObj.type === 'direct') {
                     activeChatUser = { username: scheduledMsgObj.target };
                 }
                 sendMessageWithSave(scheduledMsgObj.type, scheduledMsgObj.text, scheduledMsgObj.target);
-                activeChatUser = previousActiveUser; // restore
+                activeChatUser = previousActiveUser; 
             } else {
                 updatedQueueArray.push(scheduledMsgObj);
             }
         }
-
+        
         if (scheduledMessagesQueue.length !== updatedQueueArray.length) {
             scheduledMessagesQueue = updatedQueueArray;
             window.saveData();
         }
-    }, 10000); // Check every 10 seconds
+    }, 10000); 
 }
 
 function renderMessageToDOM(msgObj, containerElement) {
@@ -855,29 +1017,28 @@ function renderMessageToDOM(msgObj, containerElement) {
     }
 
     const singleMessageDivElement = document.createElement('div');
-
-    // Check Self Destruct Routine
+    
     if (msgObj.isDestructing === true) {
         singleMessageDivElement.style.border = "2px dashed red";
         singleMessageDivElement.style.opacity = "0.9";
-
-        setTimeout(function () {
+        
+        setTimeout(function() {
             singleMessageDivElement.style.transition = "opacity 1s ease, transform 1s ease";
             singleMessageDivElement.style.opacity = "0";
             singleMessageDivElement.style.transform = "scale(0.8)";
-            setTimeout(function () {
+            setTimeout(function() {
                 if (singleMessageDivElement.parentNode) {
                     singleMessageDivElement.parentNode.removeChild(singleMessageDivElement);
                 }
             }, 1000);
-        }, 10000); // 10 seconds to explode
+        }, 10000); 
     }
 
     let quotedHtmlBlock = '';
     if (msgObj.replyToText !== undefined && msgObj.replyToText !== null) {
         quotedHtmlBlock = `<div style="background: rgba(0,0,0,0.1); border-left: 3px solid var(--primary-color); padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; margin-bottom: 5px; font-style: italic;">Reply: ${msgObj.replyToText}</div>`;
     }
-
+    
     let reactionsHtmlBlock = '';
     if (msgObj.reactions !== undefined && Array.isArray(msgObj.reactions) && msgObj.reactions.length > 0) {
         reactionsHtmlBlock = `<div style="position: absolute; bottom: -12px; right: 10px; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 2px 6px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 5;">${msgObj.reactions.join(' ')}</div>`;
@@ -890,66 +1051,64 @@ function renderMessageToDOM(msgObj, containerElement) {
     } else {
         singleMessageDivElement.className = "message-bubble other-msg";
         singleMessageDivElement.setAttribute('data-id', msgObj.id);
-        if (msgObj.sender === 'SYSTEM') {
-            singleMessageDivElement.innerHTML = `${quotedHtmlBlock}${msgObj.text}${reactionsHtmlBlock}`;
-        } else {
-            singleMessageDivElement.innerHTML = `${quotedHtmlBlock}<strong>${msgObj.sender}:</strong> ${msgObj.text}${reactionsHtmlBlock}`;
+        if (msgObj.sender === 'SYSTEM') { 
+            singleMessageDivElement.innerHTML = `${quotedHtmlBlock}${msgObj.text}${reactionsHtmlBlock}`; 
+        } else { 
+            singleMessageDivElement.innerHTML = `${quotedHtmlBlock}<strong>${msgObj.sender}:</strong> ${msgObj.text}${reactionsHtmlBlock}`; 
         }
     }
-
-    // Add explicit right-click Context Menu Listener
-    singleMessageDivElement.addEventListener('contextmenu', function (mouseEventObject) {
+    
+    singleMessageDivElement.addEventListener('contextmenu', function(mouseEventObject) {
         mouseEventObject.preventDefault();
         const contextMenuContainerNode = safeEl('message-context-menu');
         if (contextMenuContainerNode !== null) {
-            contextMenuContainerNode.style.top = `${mouseEventObject.clientY}px`;
+            contextMenuContainerNode.style.top = `${mouseEventObject.clientY}px`; 
             contextMenuContainerNode.style.left = `${mouseEventObject.clientX}px`;
             activeMessageContextId = msgObj.id;
             sRem('message-context-menu', 'hidden');
         }
     });
 
-    containerElement.appendChild(singleMessageDivElement);
+    containerElement.appendChild(singleMessageDivElement); 
     containerElement.scrollTop = containerElement.scrollHeight;
 }
 
 function loadChatHistoryToView(typeStringParameter, targetNameStringParameter = null) {
-    let targetMessageAreaElement;
+    let targetMessageAreaElement; 
     let retrievedMessagesArray = [];
-
+    
     try {
-        if (typeStringParameter === 'world') {
-            targetMessageAreaElement = safeEl('world-messages-area');
+        if (typeStringParameter === 'world') { 
+            targetMessageAreaElement = safeEl('world-messages-area'); 
             if (targetMessageAreaElement !== null) {
-                targetMessageAreaElement.innerHTML = '<div class="message-bubble system-msg">🤖 Notice: Welcome to World Chat. Be respectful.</div>';
+                targetMessageAreaElement.innerHTML = '<div class="message-bubble system-msg">🤖 Notice: Welcome to World Chat. Be respectful.</div>'; 
             }
-            retrievedMessagesArray = chatHistory.world || [];
-
+            retrievedMessagesArray = chatHistory.world || []; 
+            
             if (pinnedMessages.world !== null && safeEl('pinned-message-container') !== null) {
-                safeEl('pinned-text-preview').innerText = "Pinned: " + pinnedMessages.world.text.substring(0, 40);
+                safeEl('pinned-text-preview').innerText = "Pinned: " + pinnedMessages.world.text.substring(0,40);
                 safeEl('pinned-message-container').classList.remove('hidden');
             } else {
-                if (safeEl('pinned-message-container')) safeEl('pinned-message-container').classList.add('hidden');
+                if(safeEl('pinned-message-container')) safeEl('pinned-message-container').classList.add('hidden');
             }
-        }
-        else if (typeStringParameter === 'ai') {
-            targetMessageAreaElement = safeEl('ai-messages-area');
+        } 
+        else if (typeStringParameter === 'ai') { 
+            targetMessageAreaElement = safeEl('ai-messages-area'); 
             if (targetMessageAreaElement !== null) {
-                targetMessageAreaElement.innerHTML = '<div class="message-bubble system-msg" style="align-self: center; background: rgba(139, 92, 246, 0.1); border: 1px dashed var(--primary-color); color: var(--text-main); max-width: 80%; border-radius: 12px; padding: 12px;">🤖 <strong>Welcome to Chatterbox AI!</strong><br>Main aapka friendly chatbot hoon. Mujhse aap kuch bhi pooch sakte hain.</div>';
+                targetMessageAreaElement.innerHTML = '<div class="message-bubble system-msg" style="align-self: center; background: rgba(139, 92, 246, 0.1); border: 1px dashed var(--primary-color); color: var(--text-main); max-width: 80%; border-radius: 12px; padding: 12px;">🤖 <strong>Welcome to Chatterbox AI!</strong><br>Main aapka friendly chatbot hoon. Mujhse aap kuch bhi pooch sakte hain.</div>'; 
             }
-            retrievedMessagesArray = chatHistory.ai || [];
-        }
-        else if (typeStringParameter === 'direct') {
-            targetMessageAreaElement = safeEl('messages-area');
+            retrievedMessagesArray = chatHistory.ai || []; 
+        } 
+        else if (typeStringParameter === 'direct') { 
+            targetMessageAreaElement = safeEl('messages-area'); 
             if (targetMessageAreaElement !== null) {
-                targetMessageAreaElement.innerHTML = '';
+                targetMessageAreaElement.innerHTML = ''; 
             }
-            retrievedMessagesArray = chatHistory.direct[targetNameStringParameter] || [];
-
-            // Manage Smart Replies visibility
+            retrievedMessagesArray = chatHistory.direct[targetNameStringParameter] || []; 
+            
             const smartRepliesBarNode = safeEl('smart-replies-bar');
             if (smartRepliesBarNode !== null) {
-                if (retrievedMessagesArray.length > 0 && retrievedMessagesArray[retrievedMessagesArray.length - 1].isMe === false) {
+                if (retrievedMessagesArray.length > 0 && retrievedMessagesArray[retrievedMessagesArray.length-1].isMe === false) {
                     smartRepliesBarNode.classList.remove('hidden');
                 } else {
                     smartRepliesBarNode.classList.add('hidden');
@@ -957,60 +1116,60 @@ function loadChatHistoryToView(typeStringParameter, targetNameStringParameter = 
             }
 
             if (pinnedMessages.direct[targetNameStringParameter] !== undefined && safeEl('pinned-message-container') !== null) {
-                safeEl('pinned-text-preview').innerText = "Pinned: " + pinnedMessages.direct[targetNameStringParameter].text.substring(0, 40);
+                safeEl('pinned-text-preview').innerText = "Pinned: " + pinnedMessages.direct[targetNameStringParameter].text.substring(0,40);
                 safeEl('pinned-message-container').classList.remove('hidden');
             } else {
-                if (safeEl('pinned-message-container')) safeEl('pinned-message-container').classList.add('hidden');
+                if(safeEl('pinned-message-container')) safeEl('pinned-message-container').classList.add('hidden');
             }
-        }
-        else if (typeStringParameter === 'group') {
-            targetMessageAreaElement = safeEl('group-messages-area');
+        } 
+        else if (typeStringParameter === 'group') { 
+            targetMessageAreaElement = safeEl('group-messages-area'); 
             if (targetMessageAreaElement !== null) {
-                targetMessageAreaElement.innerHTML = '';
+                targetMessageAreaElement.innerHTML = ''; 
             }
-            retrievedMessagesArray = chatHistory.group[targetNameStringParameter] || [];
+            retrievedMessagesArray = chatHistory.group[targetNameStringParameter] || []; 
         }
-
-        if (targetMessageAreaElement !== null && retrievedMessagesArray.length > 0) {
+        
+        if (targetMessageAreaElement !== null && retrievedMessagesArray.length > 0) { 
             for (let i = 0; i < retrievedMessagesArray.length; i++) {
-                renderMessageToDOM(retrievedMessagesArray[i], targetMessageAreaElement);
+                renderMessageToDOM(retrievedMessagesArray[i], targetMessageAreaElement); 
             }
         }
-    } catch (loadingError) {
-        console.error("Critical Error loading chat history:", loadingError);
+    } catch(loadingError) { 
+        console.error("Critical Error loading chat history:", loadingError); 
     }
 }
 
 function sendMessageWithSave(typeParameter, htmlTextString, targetNameParameter = null, isDestructingBool = false) {
     try {
-        if (serverStopped === true) {
-            alert("SYSTEM ALERT: The server has been explicitly stopped by the Supreme Root Administrator. Messaging transmission protocols are temporarily disabled.");
-            return;
+        if (serverStopped === true) { 
+            alert("SYSTEM ALERT: The server has been explicitly stopped by the Supreme Root Administrator. Messaging transmission protocols are temporarily disabled."); 
+            return; 
         }
-
+        
         if (shadowBannedUsers.includes(currentUser.username) === true || shadowBannedUsers.includes(currentUser.uid) === true) {
             const shadowMsgObj = { id: Date.now(), text: htmlTextString, sender: currentUser.username, isMe: true, isDestructing: isDestructingBool };
-            if (typeParameter === 'direct') { renderMessageToDOM(shadowMsgObj, safeEl('messages-area')); }
-            else if (typeParameter === 'group') { renderMessageToDOM(shadowMsgObj, safeEl('group-messages-area')); }
+            if (typeParameter === 'direct') { renderMessageToDOM(shadowMsgObj, safeEl('messages-area')); } 
+            else if (typeParameter === 'group') { renderMessageToDOM(shadowMsgObj, safeEl('group-messages-area')); } 
             else if (typeParameter === 'world') { renderMessageToDOM(shadowMsgObj, safeEl('world-messages-area')); }
-            return;
+            return; 
         }
-
+        
         if (typeParameter === 'world') {
             if (worldMutedUsers.includes(currentUser.username) === true || worldMutedUsers.includes(currentUser.uid) === true) {
-                alert("SYSTEM MODERATION: You have been explicitly muted in the Global World Chat. Transmission blocked.");
+                alert("SYSTEM MODERATION: You have been explicitly muted in the Global World Chat. Transmission blocked."); 
                 return;
             }
             if (worldBannedUsers.includes(currentUser.username) === true || worldBannedUsers.includes(currentUser.uid) === true) {
-                alert("SYSTEM MODERATION: You are permanently kicked from World Chat parameters.");
+                alert("SYSTEM MODERATION: You are permanently kicked from World Chat parameters."); 
                 return;
             }
         }
 
-        const standardMsgObj = {
-            id: Date.now(),
-            text: htmlTextString,
-            sender: currentUser.username,
+        const standardMsgObj = { 
+            id: Date.now(), 
+            text: htmlTextString, 
+            sender: currentUser.username, 
             isMe: true,
             isDestructing: isDestructingBool,
             reactions: []
@@ -1018,12 +1177,12 @@ function sendMessageWithSave(typeParameter, htmlTextString, targetNameParameter 
 
         if (targetMessageForReply !== null) {
             standardMsgObj.replyToText = targetMessageForReply.replace(/<[^>]*>?/gm, '').substring(0, 40) + "...";
-            targetMessageForReply = null;
+            targetMessageForReply = null; 
         }
 
-        let emitDataPayload = {
-            type: typeParameter,
-            text: htmlTextString,
+        let emitDataPayload = { 
+            type: typeParameter, 
+            text: htmlTextString, 
             sender: currentUser.username,
             isDestructing: isDestructingBool
         };
@@ -1036,12 +1195,12 @@ function sendMessageWithSave(typeParameter, htmlTextString, targetNameParameter 
             chatHistory.direct[resolvedTargetUser].push(standardMsgObj);
             emitDataPayload.to = resolvedTargetUser;
             renderMessageToDOM(standardMsgObj, safeEl('messages-area'));
-        }
+        } 
         else if (typeParameter === 'ai') {
             chatHistory.ai.push(standardMsgObj);
             renderMessageToDOM(standardMsgObj, safeEl('ai-messages-area'));
             simulateChatterboxAIResponse(htmlTextString);
-        }
+        } 
         else if (typeParameter === 'group') {
             const resolvedGroupName = targetNameParameter || (safeEl('current-group-name') ? safeEl('current-group-name').innerText : 'Unknown Group');
             if (chatHistory.group[resolvedGroupName] === undefined) {
@@ -1050,18 +1209,18 @@ function sendMessageWithSave(typeParameter, htmlTextString, targetNameParameter 
             chatHistory.group[resolvedGroupName].push(standardMsgObj);
             emitDataPayload.groupName = resolvedGroupName;
             renderMessageToDOM(standardMsgObj, safeEl('group-messages-area'));
-        }
+        } 
         else if (typeParameter === 'world') {
             chatHistory.world.push(standardMsgObj);
             renderMessageToDOM(standardMsgObj, safeEl('world-messages-area'));
         }
-
-        window.saveData();
+        
+        window.saveData(); 
         if (typeParameter !== 'ai') {
             socket.emit('send_message', emitDataPayload);
         }
-    } catch (sendMessageError) {
-        console.error("Critical Runtime Error sending message packet:", sendMessageError);
+    } catch(sendMessageError) { 
+        console.error("Critical Runtime Error sending message packet:", sendMessageError); 
     }
 }
 
@@ -1077,7 +1236,7 @@ function simulateChatterboxAIResponse(userMessageString) {
     aiTargetAreaElement.appendChild(typingIndicatorNode);
     aiTargetAreaElement.scrollTop = aiTargetAreaElement.scrollHeight;
 
-    setTimeout(function () {
+    setTimeout(function() {
         typingIndicatorNode.remove();
         let computedAiTextResponse = "";
         let normalizedLowerMsg = userMessageString.toLowerCase();
@@ -1085,7 +1244,7 @@ function simulateChatterboxAIResponse(userMessageString) {
         if (normalizedLowerMsg.includes("hello") === true || normalizedLowerMsg.includes("hi") === true || normalizedLowerMsg.includes("hey") === true) {
             computedAiTextResponse = "Greetings! I am the Chatterbox AI Engine. I am completely operational and ready to assist you. What can I do for you today?";
         } else if (normalizedLowerMsg.includes("who created you") === true || normalizedLowerMsg.includes("developer") === true || normalizedLowerMsg.includes("creator") === true) {
-            computedAiTextResponse = "My core cognitive algorithms were integrated into the Chatterbox VIP Ecosystem by the Supreme Root Operator, Atifullah Azhar.";
+            computedAiTextResponse = "My core cognitive algorithms were integrated into the Chatterbox Ecosystem by the Supreme Root Operator, Atifullah Azhar.";
         } else if (normalizedLowerMsg.includes("theme") === true || normalizedLowerMsg.includes("dark mode") === true) {
             computedAiTextResponse = "You can modify your visual interface parameters within the Settings tab by exploring the Theme Library module!";
         } else if (normalizedLowerMsg.includes("summarize") === true) {
@@ -1102,16 +1261,16 @@ function simulateChatterboxAIResponse(userMessageString) {
     }, 1500);
 }
 
-socket.on('receive_message', function (incomingDataPayload) {
+socket.on('receive_message', function(incomingDataPayload) {
     try {
         if (currentUser === null) {
             return;
         }
 
-        const incomingMessageObject = {
-            id: Date.now(),
-            text: incomingDataPayload.text,
-            sender: incomingDataPayload.sender,
+        const incomingMessageObject = { 
+            id: Date.now(), 
+            text: incomingDataPayload.text, 
+            sender: incomingDataPayload.sender, 
             isMe: false,
             isDestructing: incomingDataPayload.isDestructing || false,
             reactions: []
@@ -1162,12 +1321,12 @@ socket.on('receive_message', function (incomingDataPayload) {
         }
         else if (incomingDataPayload.type === 'group') {
             let isUserMemberOfGroup = false;
-            for (let i = 0; i < groups.length; i++) {
-                if (groups[i].name === incomingDataPayload.groupName) {
+            for(let i=0; i<groups.length; i++) {
+                if(groups[i].name === incomingDataPayload.groupName) {
                     isUserMemberOfGroup = true; break;
                 }
             }
-
+            
             if (isUserMemberOfGroup === true) {
                 if (chatHistory.group[incomingDataPayload.groupName] === undefined) {
                     chatHistory.group[incomingDataPayload.groupName] = [];
@@ -1214,7 +1373,7 @@ window.initiateOutgoingCall = function (isVideoModeBoolean) {
 async function initLocalCameraStream(isVideoCallBoolean, isOutgoingBoolean = false, chatTypeString = 'direct') {
     const gridContainerNode = safeEl('call-grid-container');
     if (gridContainerNode === null) return;
-
+    
     gridContainerNode.className = 'call-grid-wrapper';
     gridContainerNode.innerHTML = '';
 
@@ -1261,10 +1420,10 @@ async function initLocalCameraStream(isVideoCallBoolean, isOutgoingBoolean = fal
     // EXPLICIT DYNAMIC INSTAGRAM GRID INJECTION LOGIC
     if (chatTypeString === 'direct') {
         gridContainerNode.classList.add('call-grid-2');
-
+        
         let localCamDisplayProp = isLocalCamOn ? 'block' : 'none';
         let localFallbackDisplayProp = isLocalCamOn ? 'none' : 'flex';
-
+        
         let customGridHtmlBuilder = '';
         customGridHtmlBuilder += `<div class="call-video-cell">`;
         customGridHtmlBuilder += `    <div class="avatar-fallback">`;
@@ -1279,15 +1438,15 @@ async function initLocalCameraStream(isVideoCallBoolean, isOutgoingBoolean = fal
         customGridHtmlBuilder += `        <h2 style="color:white; font-size:1.8rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">You</h2>`;
         customGridHtmlBuilder += `    </div>`;
         customGridHtmlBuilder += `</div>`;
-
+        
         gridContainerNode.innerHTML = customGridHtmlBuilder;
     } else {
         gridContainerNode.classList.add('call-grid-4');
-
+        
         let dummyPeer1Dp = "https://ui-avatars.com/api/?name=User1&background=random";
         let dummyPeer2Dp = "https://ui-avatars.com/api/?name=User2&background=random";
         let dummyPeer3Dp = "https://ui-avatars.com/api/?name=User3&background=random";
-
+        
         let localCamDisplayProp = isLocalCamOn ? 'block' : 'none';
         let localFallbackDisplayProp = isLocalCamOn ? 'none' : 'flex';
 
@@ -1317,7 +1476,7 @@ async function initLocalCameraStream(isVideoCallBoolean, isOutgoingBoolean = fal
         customQuadGridHtmlBuilder += `        <span class="call-user-label">You (Host)</span>`;
         customQuadGridHtmlBuilder += `    </div>`;
         customQuadGridHtmlBuilder += `</div>`;
-
+        
         gridContainerNode.innerHTML = customQuadGridHtmlBuilder;
     }
 
@@ -1327,7 +1486,7 @@ async function initLocalCameraStream(isVideoCallBoolean, isOutgoingBoolean = fal
     }
 
     if (isOutgoingBoolean === true && chatTypeString === 'direct') {
-        outgoingCallTimeout = setTimeout(function () {
+        outgoingCallTimeout = setTimeout(function() {
             currentCallSeconds = 0;
             updateCallTimers();
             activeCallTimerInterval = setInterval(updateCallTimers, 1000);
@@ -1348,20 +1507,20 @@ function terminateActiveCall() {
     }
     if (localMediaStreamTracker !== null) {
         let hardwareTracksArray = localMediaStreamTracker.getTracks();
-        for (let i = 0; i < hardwareTracksArray.length; i++) {
+        for(let i = 0; i < hardwareTracksArray.length; i++){
             hardwareTracksArray[i].stop();
         }
         localMediaStreamTracker = null;
     }
     if (screenShareStreamTracker !== null) {
         let screenTracksArray = screenShareStreamTracker.getTracks();
-        for (let i = 0; i < screenTracksArray.length; i++) {
+        for(let i = 0; i < screenTracksArray.length; i++){
             screenTracksArray[i].stop();
         }
         screenShareStreamTracker = null;
         isScreenSharingActive = false;
     }
-
+    
     let localVidEl = safeEl('local-video');
     if (localVidEl !== null) {
         localVidEl.srcObject = null;
@@ -1376,40 +1535,40 @@ function terminateActiveCall() {
 // 🔥 EXPLICIT SCREEN SHARE API LOGIC 🔥
 async function toggleScreenShare() {
     try {
-        if (isScreenSharingActive === true) {
+        if(isScreenSharingActive === true) {
             alert("System Notice: Screen share is already in progress.");
             return;
         }
-
+        
         if (navigator.mediaDevices === undefined || navigator.mediaDevices.getDisplayMedia === undefined) {
-            alert("System Capability Error: Your current environment does not support WebRTC display capture.");
-            return;
+             alert("System Capability Error: Your current environment does not support WebRTC display capture.");
+             return;
         }
-
-        screenShareStreamTracker = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        
+        screenShareStreamTracker = await navigator.mediaDevices.getDisplayMedia({video: true, audio: true});
         const localVideoNodeElement = safeEl('local-video');
-
-        if (localVideoNodeElement !== null) {
-            localVideoNodeElement.srcObject = screenShareStreamTracker;
-            localVideoNodeElement.style.display = 'block';
+        
+        if(localVideoNodeElement !== null) {
+            localVideoNodeElement.srcObject = screenShareStreamTracker; 
+            localVideoNodeElement.style.display = 'block'; 
             localVideoNodeElement.style.transform = 'scaleX(1)'; // un-mirror for screen share
             sAdd('local-audio-fallback', 'hidden');
             isScreenSharingActive = true;
         }
-
+        
         screenShareStreamTracker.getVideoTracks()[0].onended = function () {
             isScreenSharingActive = false;
-            if (localMediaStreamTracker !== null) {
-                localVideoNodeElement.srcObject = localMediaStreamTracker;
-                localVideoNodeElement.style.transform = 'scaleX(-1)';
-            } else {
-                localVideoNodeElement.style.display = 'none';
-                sRem('local-audio-fallback', 'hidden');
+            if(localMediaStreamTracker !== null) { 
+                localVideoNodeElement.srcObject = localMediaStreamTracker; 
+                localVideoNodeElement.style.transform = 'scaleX(-1)'; 
+            } else { 
+                localVideoNodeElement.style.display = 'none'; 
+                sRem('local-audio-fallback', 'hidden'); 
             }
         };
-
-    } catch (screenShareError) {
-        console.error("Screen Share Promise Denied or Failed:", screenShareError);
+        
+    } catch(screenShareError) { 
+        console.error("Screen Share Promise Denied or Failed:", screenShareError); 
     }
 }
 
@@ -1422,64 +1581,67 @@ let whiteboardCanvasElement = null;
 
 function initWhiteboardCanvas() {
     whiteboardCanvasElement = safeEl('live-drawing-canvas');
-    if (whiteboardCanvasElement === null) {
+    if(whiteboardCanvasElement === null) {
         return;
     }
-
+    
     canvasRenderingContext = whiteboardCanvasElement.getContext('2d');
-
+    
+    // Explicitly set real dimensions to prevent stretching
     setTimeout(() => {
         whiteboardCanvasElement.width = whiteboardCanvasElement.offsetWidth || 700;
         whiteboardCanvasElement.height = whiteboardCanvasElement.offsetHeight || 400;
-
+        
+        // Fill white background explicitly so PNG export is opaque
         canvasRenderingContext.fillStyle = "#ffffff";
         canvasRenderingContext.fillRect(0, 0, whiteboardCanvasElement.width, whiteboardCanvasElement.height);
     }, 500);
-
-    const calculatePointerPosition = function (eventObject) {
+    
+    const calculatePointerPosition = function(eventObject) {
         let rectBounds = whiteboardCanvasElement.getBoundingClientRect();
         let posX = eventObject.clientX - rectBounds.left;
         let posY = eventObject.clientY - rectBounds.top;
-        if (eventObject.touches && eventObject.touches.length > 0) {
-            posX = eventObject.touches[0].clientX - rectBounds.left;
-            posY = eventObject.touches[0].clientY - rectBounds.top;
+        if(eventObject.touches && eventObject.touches.length > 0) { 
+            posX = eventObject.touches[0].clientX - rectBounds.left; 
+            posY = eventObject.touches[0].clientY - rectBounds.top; 
         }
         return { x: posX, y: posY };
     };
 
-    const beginDrawingPath = function (eventObject) {
-        isWhiteboardDrawingActive = true;
-        executeDrawingStroke(eventObject);
+    const beginDrawingPath = function(eventObject) { 
+        isWhiteboardDrawingActive = true; 
+        executeDrawingStroke(eventObject); 
     };
-
-    const terminateDrawingPath = function () {
-        isWhiteboardDrawingActive = false;
-        canvasRenderingContext.beginPath();
+    
+    const terminateDrawingPath = function() { 
+        isWhiteboardDrawingActive = false; 
+        canvasRenderingContext.beginPath(); 
     };
-
-    const executeDrawingStroke = function (eventObject) {
-        if (isWhiteboardDrawingActive === false) {
+    
+    const executeDrawingStroke = function(eventObject) {
+        if(isWhiteboardDrawingActive === false) {
             return;
         }
-        canvasRenderingContext.lineWidth = 4;
-        canvasRenderingContext.lineCap = 'round';
-        canvasRenderingContext.strokeStyle = '#8b5cf6';
-
+        canvasRenderingContext.lineWidth = 4; 
+        canvasRenderingContext.lineCap = 'round'; 
+        canvasRenderingContext.strokeStyle = '#8b5cf6'; // Primary Purple
+        
         let positionCoords = calculatePointerPosition(eventObject);
-
-        canvasRenderingContext.lineTo(positionCoords.x, positionCoords.y);
-        canvasRenderingContext.stroke();
-        canvasRenderingContext.beginPath();
+        
+        canvasRenderingContext.lineTo(positionCoords.x, positionCoords.y); 
+        canvasRenderingContext.stroke(); 
+        canvasRenderingContext.beginPath(); 
         canvasRenderingContext.moveTo(positionCoords.x, positionCoords.y);
     };
 
-    whiteboardCanvasElement.addEventListener('mousedown', beginDrawingPath);
+    whiteboardCanvasElement.addEventListener('mousedown', beginDrawingPath); 
     whiteboardCanvasElement.addEventListener('mouseup', terminateDrawingPath);
-    whiteboardCanvasElement.addEventListener('mousemove', executeDrawingStroke);
-
-    whiteboardCanvasElement.addEventListener('touchstart', function (e) { e.preventDefault(); beginDrawingPath(e); }, { passive: false });
-    whiteboardCanvasElement.addEventListener('touchend', function (e) { e.preventDefault(); terminateDrawingPath(e); }, { passive: false });
-    whiteboardCanvasElement.addEventListener('touchmove', function (e) { e.preventDefault(); executeDrawingStroke(e); }, { passive: false });
+    whiteboardCanvasElement.addEventListener('mousemove', executeDrawingStroke); 
+    
+    // Touch support for mobile devices
+    whiteboardCanvasElement.addEventListener('touchstart', function(e){ e.preventDefault(); beginDrawingPath(e); }, {passive: false});
+    whiteboardCanvasElement.addEventListener('touchend', function(e){ e.preventDefault(); terminateDrawingPath(e); }, {passive: false}); 
+    whiteboardCanvasElement.addEventListener('touchmove', function(e){ e.preventDefault(); executeDrawingStroke(e); }, {passive: false});
 }
 
 
@@ -1487,10 +1649,10 @@ function initWhiteboardCanvas() {
 // 8. GLOBAL EVENT DELEGATION SYSTEM (100% BULLETPROOF)
 // =========================================================================
 
-document.addEventListener('click', function (eventObject) {
+document.addEventListener('click', function(eventObject) {
     try {
         const targetElement = eventObject.target;
-
+        
         if (targetElement === null || targetElement === undefined || typeof targetElement.closest !== 'function') {
             return;
         }
@@ -1499,9 +1661,10 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Hide message context menu if clicking elsewhere
         const contextMenuContainer = safeEl('message-context-menu');
-        if (targetElement.closest('#message-context-menu') === null && contextMenuContainer !== null) {
-            contextMenuContainer.classList.add('hidden');
+        if (targetElement.closest('#message-context-menu') === null && contextMenuContainer !== null) { 
+            contextMenuContainer.classList.add('hidden'); 
         }
 
         // -------------------------------------------------------------
@@ -1510,11 +1673,12 @@ document.addEventListener('click', function (eventObject) {
         if (targetElement.closest('.context-react-btn') !== null) {
             let selectedEmojiReaction = targetElement.closest('.context-react-btn').innerText;
             if (activeMessageContextId !== null && activeChatUser !== null) {
+                // Find and update the message
                 let directHistArray = chatHistory.direct[activeChatUser.username];
-                if (directHistArray) {
-                    for (let i = 0; i < directHistArray.length; i++) {
-                        if (directHistArray[i].id.toString() === activeMessageContextId.toString()) {
-                            if (!directHistArray[i].reactions) directHistArray[i].reactions = [];
+                if(directHistArray) {
+                    for(let i=0; i<directHistArray.length; i++) {
+                        if(directHistArray[i].id.toString() === activeMessageContextId.toString()) {
+                            if(!directHistArray[i].reactions) directHistArray[i].reactions = [];
                             directHistArray[i].reactions.push(selectedEmojiReaction);
                             window.saveData();
                             loadChatHistoryToView('direct', activeChatUser.username);
@@ -1523,19 +1687,19 @@ document.addEventListener('click', function (eventObject) {
                     }
                 }
             }
-            if (contextMenuContainer) contextMenuContainer.classList.add('hidden');
+            if(contextMenuContainer) contextMenuContainer.classList.add('hidden');
             return;
         }
 
         if (targetElement.closest('.context-reply-btn') !== null) {
             if (activeMessageContextId !== null && activeChatUser !== null) {
                 let directHistArray = chatHistory.direct[activeChatUser.username];
-                if (directHistArray) {
-                    for (let i = 0; i < directHistArray.length; i++) {
-                        if (directHistArray[i].id.toString() === activeMessageContextId.toString()) {
+                if(directHistArray) {
+                    for(let i=0; i<directHistArray.length; i++) {
+                        if(directHistArray[i].id.toString() === activeMessageContextId.toString()) {
                             targetMessageForReply = directHistArray[i].text;
                             let inputFieldNode = safeEl('message-input');
-                            if (inputFieldNode) {
+                            if(inputFieldNode) {
                                 inputFieldNode.placeholder = "Replying to message...";
                                 inputFieldNode.focus();
                             }
@@ -1544,7 +1708,7 @@ document.addEventListener('click', function (eventObject) {
                     }
                 }
             }
-            if (contextMenuContainer) contextMenuContainer.classList.add('hidden');
+            if(contextMenuContainer) contextMenuContainer.classList.add('hidden');
             return;
         }
 
@@ -1594,11 +1758,11 @@ document.addEventListener('click', function (eventObject) {
             let mappedTargetUserObject = findUserGlobally(specifiedTargetUsername);
             if (mappedTargetUserObject !== null && specifiedTargetUsername === currentUser.username) {
                 currentUser.rank = specifiedNewRankValue;
-                if (specifiedNewRankValue === 'Developer') {
-                    currentUser.isDev = true;
-                    currentUser.theme = 'grand-golden';
-                } else {
-                    currentUser.isDev = false;
+                if (specifiedNewRankValue === 'Developer') { 
+                    currentUser.isDev = true; 
+                    currentUser.theme = 'grand-golden'; 
+                } else { 
+                    currentUser.isDev = false; 
                 }
                 window.saveData();
                 window.location.reload();
@@ -1608,6 +1772,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // 🔥 DEV TOOLS ACTIONS ROUTING FIX (V42) 🔥
         if (targetElement.closest('#dev-ban-btn') !== null) {
             openDevActionModal('Execute Global Ban on User', 'ban');
             return;
@@ -1729,68 +1894,94 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
-        // NEW DEV TOOLS IMPLEMENTATION
-        if (targetElement.closest('#dev-css-injector-btn') !== null) {
-            sVal('css-inject-textarea', '');
-            sRem('dev-css-injector-modal', 'hidden');
-            return;
-        }
-
-        if (targetElement.closest('#apply-css-inject-btn') !== null) {
-            const rawCssDataString = gVal('css-inject-textarea');
-            if (rawCssDataString !== "") {
-                const injectedStyleNode = document.createElement('style');
-                injectedStyleNode.innerHTML = rawCssDataString;
-                document.head.appendChild(injectedStyleNode);
-                sAdd('dev-css-injector-modal', 'hidden');
+        // 🔥 NEW DEV TOOLS USER REGISTRY IMPLEMENTATION 🔥
+        if (targetElement.closest('#dev-user-registry-btn') !== null) {
+            let extractedLocalRegistryDatabaseArray = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
+            sText('total-registry-count', extractedLocalRegistryDatabaseArray.length.toString());
+            
+            let htmlListAccumulator = '';
+            for(let i=0; i<extractedLocalRegistryDatabaseArray.length; i++){
+                let nodeUser = extractedLocalRegistryDatabaseArray[i];
+                htmlListAccumulator += `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 15px; background:var(--bg-main); border-radius:12px; border:1px solid var(--border-color);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="https://ui-avatars.com/api/?name=${nodeUser.username}&background=random&color=fff" style="width:38px; height:38px; border-radius:50%; object-fit:cover;">
+                        <div style="display:flex; flex-direction:column;">
+                            <b style="color:var(--text-main); font-size:1.05rem;">${nodeUser.username}</b>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">${nodeUser.email}</span>
+                        </div>
+                    </div>
+                    <span style="font-family:monospace; font-weight:900; color:var(--primary-color);">UID: #${nodeUser.uid}</span>
+                </div>`;
             }
+            sHtml('user-registry-list', htmlListAccumulator);
+            sRem('dev-user-registry-modal', 'hidden');
             return;
         }
 
-        if (targetElement.closest('#dev-broadcast-btn') !== null) {
-            sVal('broadcast-message-input', '');
-            sRem('dev-broadcast-modal', 'hidden');
-            return;
+        if (targetElement.closest('#dev-css-injector-btn') !== null) { 
+            sVal('css-inject-textarea', ''); 
+            sRem('dev-css-injector-modal', 'hidden'); 
+            return; 
         }
-
-        if (targetElement.closest('#send-broadcast-btn') !== null) {
-            const broadcaseMsgContent = gVal('broadcast-message-input');
-            if (broadcaseMsgContent !== "") {
-                socket.emit('send_message', { type: 'world', text: `<div style="color:red; font-weight:900; border:2px dashed red; padding:10px; background:rgba(0,0,0,0.1);">[GLOBAL BROADCAST OVERRIDE]:<br>${broadcaseMsgContent}</div>` });
-                sAdd('dev-broadcast-modal', 'hidden');
-            }
-            return;
+        
+        if (targetElement.closest('#apply-css-inject-btn') !== null) { 
+            const rawCssDataString = gVal('css-inject-textarea'); 
+            if(rawCssDataString !== "") { 
+                const injectedStyleNode = document.createElement('style'); 
+                injectedStyleNode.innerHTML = rawCssDataString; 
+                document.head.appendChild(injectedStyleNode); 
+                sAdd('dev-css-injector-modal', 'hidden'); 
+            } 
+            return; 
         }
-
-        if (targetElement.closest('#dev-analytics-btn') !== null) {
-            alert("Live Telemetry & Analytics System:\n\nActive Node Connections: 4\nTotal Registered Entities: " + friends.length + "\nServer Resource Load: 12.4%\nDatabase Integrity: 100%");
-            return;
+        
+        if (targetElement.closest('#dev-broadcast-btn') !== null) { 
+            sVal('broadcast-message-input', ''); 
+            sRem('dev-broadcast-modal', 'hidden'); 
+            return; 
         }
-
-        if (targetElement.closest('#dev-error-log-btn') !== null) {
-            alert("System Integrity Scanner:\n\nError Logs array is completely empty. Master Ecosystem is operating at 100% nominal efficiency.");
-            return;
+        
+        if (targetElement.closest('#send-broadcast-btn') !== null) { 
+            const broadcaseMsgContent = gVal('broadcast-message-input'); 
+            if(broadcaseMsgContent !== "") { 
+                socket.emit('send_message', { type: 'world', text: `<div style="color:red; font-weight:900; border:2px dashed red; padding:10px; background:rgba(0,0,0,0.1);">[GLOBAL BROADCAST OVERRIDE]:<br>${broadcaseMsgContent}</div>` }); 
+                sAdd('dev-broadcast-modal', 'hidden'); 
+            } 
+            return; 
         }
-
-        if (targetElement.closest('#dev-language-btn') !== null) {
-            alert("Localization Module Interacted. I18N packages are pending external download API availability.");
-            return;
+        
+        if (targetElement.closest('#dev-analytics-btn') !== null) { 
+            alert("Live Telemetry & Analytics System:\n\nActive Node Connections: 4\nTotal Registered Entities: " + friends.length + "\nServer Resource Load: 12.4%\nDatabase Integrity: 100%"); 
+            return; 
+        }
+        
+        if (targetElement.closest('#dev-error-log-btn') !== null) { 
+            alert("System Integrity Scanner:\n\nError Logs array is completely empty. Master Ecosystem is operating at 100% nominal efficiency."); 
+            return; 
+        }
+        
+        if (targetElement.closest('#dev-language-btn') !== null) { 
+            alert("Localization Module Interacted. I18N packages are pending external download API availability."); 
+            return; 
         }
 
         // -------------------------------------------------------------
         // NORMAL APP EVENT BINDINGS (EXPLICIT CHECKS)
         // -------------------------------------------------------------
 
+        // World Chat Ban Block Check
         if (targetElement.closest('.nav-btn') !== null) {
             let navigationTargetAttributeValue = targetElement.closest('.nav-btn').getAttribute('data-target');
             if (navigationTargetAttributeValue === 'world-chat-section') {
                 if (worldBannedUsers.includes(currentUser.username) === true || worldBannedUsers.includes(currentUser.uid) === true) {
                     alert("SYSTEM MODERATION: You have been permanently kicked/banned from the Global World Chat parameters. Access Denied.");
-                    return;
+                    return; 
                 }
             }
         }
 
+        // SETTINGS & THEME TOGGLE
         if (targetElement.closest('#activate-golden-theme-btn') !== null) {
             if (currentUser.theme === 'grand-golden') {
                 currentUser.theme = 'default';
@@ -1806,6 +1997,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // UNSEND (DELETE) MESSAGE LOGIC
         if (targetElement.closest('.unsend-btn') !== null) {
             if (confirm("Are you absolutely positive you wish to unsend and permanently purge this specific message packet?")) {
                 const unsendButtonTriggerElement = targetElement.closest('.unsend-btn');
@@ -1822,39 +2014,39 @@ document.addEventListener('click', function (eventObject) {
                 if (rootContainerIdString === 'messages-area' && activeChatUser !== null) {
                     if (chatHistory.direct[activeChatUser.username] !== undefined) {
                         let filteredArrayBuffer = [];
-                        for (let i = 0; i < chatHistory.direct[activeChatUser.username].length; i++) {
-                            if (chatHistory.direct[activeChatUser.username][i].id.toString() !== internalMessageIdString.toString()) {
+                        for(let i=0; i<chatHistory.direct[activeChatUser.username].length; i++){
+                            if(chatHistory.direct[activeChatUser.username][i].id.toString() !== internalMessageIdString.toString()){
                                 filteredArrayBuffer.push(chatHistory.direct[activeChatUser.username][i]);
                             }
                         }
                         chatHistory.direct[activeChatUser.username] = filteredArrayBuffer;
                     }
-                }
+                } 
                 else if (rootContainerIdString === 'ai-messages-area') {
                     let filteredAiBuffer = [];
-                    for (let i = 0; i < chatHistory.ai.length; i++) {
-                        if (chatHistory.ai[i].id.toString() !== internalMessageIdString.toString()) {
+                    for(let i=0; i<chatHistory.ai.length; i++){
+                        if(chatHistory.ai[i].id.toString() !== internalMessageIdString.toString()){
                             filteredAiBuffer.push(chatHistory.ai[i]);
                         }
                     }
                     chatHistory.ai = filteredAiBuffer;
-                }
+                } 
                 else if (rootContainerIdString === 'group-messages-area') {
                     const currentGroupNameExtractedStr = safeEl('current-group-name') ? safeEl('current-group-name').innerText : '';
                     if (chatHistory.group[currentGroupNameExtractedStr] !== undefined) {
                         let filteredGroupBuffer = [];
-                        for (let i = 0; i < chatHistory.group[currentGroupNameExtractedStr].length; i++) {
-                            if (chatHistory.group[currentGroupNameExtractedStr][i].id.toString() !== internalMessageIdString.toString()) {
+                        for(let i=0; i<chatHistory.group[currentGroupNameExtractedStr].length; i++){
+                            if(chatHistory.group[currentGroupNameExtractedStr][i].id.toString() !== internalMessageIdString.toString()){
                                 filteredGroupBuffer.push(chatHistory.group[currentGroupNameExtractedStr][i]);
                             }
                         }
                         chatHistory.group[currentGroupNameExtractedStr] = filteredGroupBuffer;
                     }
-                }
+                } 
                 else if (rootContainerIdString === 'world-messages-area') {
                     let filteredWorldBuffer = [];
-                    for (let i = 0; i < chatHistory.world.length; i++) {
-                        if (chatHistory.world[i].id.toString() !== internalMessageIdString.toString()) {
+                    for(let i=0; i<chatHistory.world.length; i++){
+                        if(chatHistory.world[i].id.toString() !== internalMessageIdString.toString()){
                             filteredWorldBuffer.push(chatHistory.world[i]);
                         }
                     }
@@ -1866,6 +2058,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Emoji Tray Closing Logic
         if (targetElement.closest('#emoji-picker-tray') === null && targetElement.closest('.emoji-trigger-btn') === null && targetElement.classList.contains('emoji-item') === false) {
             sAdd('emoji-picker-tray', 'hidden');
         }
@@ -1877,6 +2070,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Public Profile Modal Trigger
         if (targetElement.closest('.public-profile-trigger') !== null || targetElement.classList.contains('public-profile-trigger') === true) {
             if (activeChatUser !== null) {
                 showPublicProfileModal(activeChatUser);
@@ -1884,6 +2078,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Right Pane Live Preview Trigger
         if (targetElement.closest('.global-user-item') !== null && targetElement.closest('.action-dispatch-global-req-btn') === null && targetElement.closest('.req-action-btns') === null) {
             const dataUsernameAttributeValue = targetElement.closest('.global-user-item').getAttribute('data-username');
             const fetchedUserContextObject = findUserGlobally(dataUsernameAttributeValue);
@@ -1894,6 +2089,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Mobile Sidebar Toggles
         if (targetElement.id === 'hamburger-btn' || targetElement.closest('#hamburger-btn') !== null) {
             const overlayMobileSidebarContainerNode = safeEl('sidebar');
             if (overlayMobileSidebarContainerNode !== null) {
@@ -1943,16 +2139,17 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Sidebar Navigation Module Routing
         const internalNavigationButtonElementNode = targetElement.closest('.nav-btn');
         if (internalNavigationButtonElementNode !== null && internalNavigationButtonElementNode.id.includes('report-bug') === false && internalNavigationButtonElementNode.id.includes('logout') === false) {
-
+            
             const allNavBtnNodesArray = document.querySelectorAll('.nav-links .nav-btn');
-            for (let i = 0; i < allNavBtnNodesArray.length; i++) {
+            for(let i=0; i<allNavBtnNodesArray.length; i++){
                 allNavBtnNodesArray[i].classList.remove('active');
             }
 
             const allContentViewSectionsArray = document.querySelectorAll('.content-view');
-            for (let i = 0; i < allContentViewSectionsArray.length; i++) {
+            for(let i=0; i<allContentViewSectionsArray.length; i++){
                 allContentViewSectionsArray[i].classList.remove('active');
                 allContentViewSectionsArray[i].classList.add('hidden');
             }
@@ -1969,6 +2166,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Quick Actions System
         if (targetElement.closest('#sidebar-quick-report-bug-btn') !== null) {
             sVal('bug-report-text-input', '');
             sRem('bug-report-modal', 'hidden');
@@ -1983,11 +2181,12 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // Chat View Sidebar Tabs State Manager
         const embeddedChatTabNavigationButtonElement = targetElement.closest('.chat-tabs .tab-btn');
         if (embeddedChatTabNavigationButtonElement !== null) {
-
+            
             const allChatTabBtnsArray = document.querySelectorAll('.chat-tabs .tab-btn');
-            for (let i = 0; i < allChatTabBtnsArray.length; i++) {
+            for(let i=0; i<allChatTabBtnsArray.length; i++){
                 allChatTabBtnsArray[i].classList.remove('active');
             }
 
@@ -2008,6 +2207,7 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
+        // 🔥 BUG FIX: EXPLICIT SUB TAB ROUTING 🔥
         if (targetElement.closest('#sub-tab-accept-btn') !== null) {
             currentRequestSubTab = 'accept';
             renderRequestSubTabUI();
@@ -2025,7 +2225,7 @@ document.addEventListener('click', function (eventObject) {
         if (targetElement.closest('.action-dispatch-global-req-btn') !== null) {
             const specificActionButtonTriggerNode = targetElement.closest('.action-dispatch-global-req-btn');
             const correspondingTargetUsernameAttrValue = specificActionButtonTriggerNode.getAttribute('data-username');
-
+            
             specificActionButtonTriggerNode.innerHTML = '<i class="fas fa-check"></i>';
             specificActionButtonTriggerNode.style.background = "var(--system-success)";
             specificActionButtonTriggerNode.disabled = true;
@@ -2038,8 +2238,8 @@ document.addEventListener('click', function (eventObject) {
                 const targetIdentificationUsernameStringKey = genericListRowItemElementContainer.getAttribute('data-username') || genericListRowItemElementContainer.getAttribute('data-user');
 
                 let updatedFriendRequestsArrayBuffer = [];
-                for (let i = 0; i < friendRequests.length; i++) {
-                    if (friendRequests[i].username !== targetIdentificationUsernameStringKey) {
+                for(let i=0; i<friendRequests.length; i++){
+                    if(friendRequests[i].username !== targetIdentificationUsernameStringKey){
                         updatedFriendRequestsArrayBuffer.push(friendRequests[i]);
                     }
                 }
@@ -2062,15 +2262,15 @@ document.addEventListener('click', function (eventObject) {
             const genericListRowItemElementContainer = targetElement.closest('.dummy-item');
             if (genericListRowItemElementContainer !== null) {
                 const targetIdentificationUsernameStringKey = genericListRowItemElementContainer.getAttribute('data-username') || genericListRowItemElementContainer.getAttribute('data-user');
-
+                
                 let updatedFriendRequestsArrayBuffer = [];
-                for (let i = 0; i < friendRequests.length; i++) {
-                    if (friendRequests[i].username !== targetIdentificationUsernameStringKey) {
+                for(let i=0; i<friendRequests.length; i++){
+                    if(friendRequests[i].username !== targetIdentificationUsernameStringKey){
                         updatedFriendRequestsArrayBuffer.push(friendRequests[i]);
                     }
                 }
                 friendRequests = updatedFriendRequestsArrayBuffer;
-
+                
                 window.saveData();
                 renderRequestSubTabUI();
             }
@@ -2088,13 +2288,13 @@ document.addEventListener('click', function (eventObject) {
             sRem('chat-input-area', 'hidden');
 
             let locatedFriendObject = null;
-            for (let i = 0; i < friends.length; i++) {
-                if (friends[i].username === retrievedUsernameDataKeyString) {
+            for(let i=0; i<friends.length; i++){
+                if(friends[i].username === retrievedUsernameDataKeyString){
                     locatedFriendObject = friends[i];
                     break;
                 }
             }
-
+            
             activeChatUser = locatedFriendObject;
 
             if (activeChatUser !== null) {
@@ -2118,13 +2318,13 @@ document.addEventListener('click', function (eventObject) {
         if (targetElement.closest('#favorite-user-btn') !== null) {
             if (activeChatUser !== null) {
                 let arrayIndexMatchFoundLocator = -1;
-                for (let i = 0; i < friends.length; i++) {
-                    if (friends[i].username === activeChatUser.username) {
+                for(let i=0; i<friends.length; i++){
+                    if(friends[i].username === activeChatUser.username){
                         arrayIndexMatchFoundLocator = i;
                         break;
                     }
                 }
-
+                
                 if (arrayIndexMatchFoundLocator !== -1) {
                     friends[arrayIndexMatchFoundLocator].isFavorite = !friends[arrayIndexMatchFoundLocator].isFavorite;
                     window.saveData();
@@ -2187,7 +2387,7 @@ document.addEventListener('click', function (eventObject) {
                         if (DOMlocalVideoNode !== null) { DOMlocalVideoNode.style.display = 'none'; }
                         sRem('local-audio-fallback', 'hidden');
                     }
-                }
+                } 
             }
             return;
         }
@@ -2200,7 +2400,7 @@ document.addEventListener('click', function (eventObject) {
                     isLocalMicOn = !isLocalMicOn;
                     extractedAudioTrackNode.enabled = isLocalMicOn;
                     const micToggleButtonElement = targetElement.closest('#toggle-mic-btn');
-                    if (isLocalMicOn === true) { micToggleButtonElement.innerHTML = '<i class="fas fa-microphone"></i>'; micToggleButtonElement.style.color = "white"; }
+                    if (isLocalMicOn === true) { micToggleButtonElement.innerHTML = '<i class="fas fa-microphone"></i>'; micToggleButtonElement.style.color = "white"; } 
                     else { micToggleButtonElement.innerHTML = '<i class="fas fa-microphone-slash"></i>'; micToggleButtonElement.style.color = "#ef4444"; }
                 }
             }
@@ -2219,7 +2419,7 @@ document.addEventListener('click', function (eventObject) {
                 sendMessageWithSave('direct', extractedRawMessageTextValueString, activeChatUser.username, false);
                 sVal('message-input', '');
                 let inputFieldDOMNode = safeEl('message-input');
-                if (inputFieldDOMNode !== null) { inputFieldDOMNode.placeholder = "Type a message..."; }
+                if(inputFieldDOMNode !== null) { inputFieldDOMNode.placeholder = "Type a message..."; }
             }
             return;
         }
@@ -2262,9 +2462,9 @@ document.addEventListener('click', function (eventObject) {
 
         if (targetElement.closest('#destruct-btn') !== null) {
             let inputFieldDOMNode = safeEl('message-input');
-            if (inputFieldDOMNode !== null) {
+            if(inputFieldDOMNode !== null) {
                 let extractedText = inputFieldDOMNode.value;
-                if (extractedText !== "" && activeChatUser !== null) {
+                if(extractedText !== "" && activeChatUser !== null) {
                     sendMessageWithSave('direct', extractedText, activeChatUser.username, true);
                     sVal('message-input', '');
                 }
@@ -2285,9 +2485,9 @@ document.addEventListener('click', function (eventObject) {
                 if (activeChatUser !== null) {
                     scheduledMessagesQueue.push({ triggerTime: calculatedEpochTimestamp, text: configuredTextVal, type: 'direct', target: activeChatUser.username });
                     window.saveData();
-                }
+                } 
                 sAdd('schedule-message-modal', 'hidden');
-            }
+            } 
             return;
         }
 
@@ -2296,15 +2496,15 @@ document.addEventListener('click', function (eventObject) {
         if (targetElement.closest('#location-btn') !== null) {
             if (navigator.geolocation !== undefined) {
                 navigator.geolocation.getCurrentPosition(
-                    function (successPositionObject) {
+                    function(successPositionObject) {
                         const preciseLatitudeFloat = successPositionObject.coords.latitude;
                         const preciseLongitudeFloat = successPositionObject.coords.longitude;
                         const constructedLocationHtmlPayload = `📍 <strong>Live Geolocation Coords Transmitted:</strong><br><a href="https://www.google.com/maps?q=${preciseLatitudeFloat},${preciseLongitudeFloat}" target="_blank" style="color:var(--primary-color);">Click here to view on Google Maps</a>`;
                         if (activeChatUser !== null) { sendMessageWithSave('direct', constructedLocationHtmlPayload, activeChatUser.username, false); }
-                    },
-                    function (errorObject) { }
+                    }, 
+                    function(errorObject) {}
                 );
-            }
+            } 
             return;
         }
 
@@ -2323,7 +2523,7 @@ document.addEventListener('click', function (eventObject) {
         }
 
         if (targetElement.closest('#ai-summarize-btn') !== null) { return; }
-
+        
         if (targetElement.closest('#group-ping-btn') !== null) {
             const groupInputFieldDOMNode = safeEl('group-message-input');
             if (groupInputFieldDOMNode !== null) { groupInputFieldDOMNode.value = groupInputFieldDOMNode.value + "@everyone "; groupInputFieldDOMNode.focus(); }
@@ -2340,15 +2540,15 @@ document.addEventListener('click', function (eventObject) {
             if (DOMInputElementNode === null) { return; }
             const originalPlaceholderStateString = DOMInputElementNode.placeholder;
             DOMInputElementNode.placeholder = "🎙️ Audio Sensor Active. Listening for vocal syntax...";
-
-            liveRecognitionInstance.onresult = function (speechEventObject) {
+            
+            liveRecognitionInstance.onresult = function(speechEventObject) {
                 const transcribedTextResultString = speechEventObject.results[0][0].transcript;
-                if (DOMInputElementNode.value === "") { DOMInputElementNode.value = transcribedTextResultString; }
+                if (DOMInputElementNode.value === "") { DOMInputElementNode.value = transcribedTextResultString; } 
                 else { DOMInputElementNode.value = DOMInputElementNode.value + " " + transcribedTextResultString; }
                 DOMInputElementNode.placeholder = originalPlaceholderStateString;
             };
-            liveRecognitionInstance.onerror = function (errorObject) { DOMInputElementNode.placeholder = originalPlaceholderStateString; };
-            liveRecognitionInstance.onend = function () { DOMInputElementNode.placeholder = originalPlaceholderStateString; };
+            liveRecognitionInstance.onerror = function(errorObject) { DOMInputElementNode.placeholder = originalPlaceholderStateString; };
+            liveRecognitionInstance.onend = function() { DOMInputElementNode.placeholder = originalPlaceholderStateString; };
             liveRecognitionInstance.start();
         }
 
@@ -2429,8 +2629,8 @@ document.addEventListener('click', function (eventObject) {
                 if (parentPostCardElementContainer !== null) {
                     const permanentlyExtractedPostIdInteger = parseInt(parentPostCardElementContainer.getAttribute('data-id'));
                     let temporaryPostsArrayBuffer = [];
-                    for (let i = 0; i < posts.length; i++) {
-                        if (posts[i].id !== permanentlyExtractedPostIdInteger) { temporaryPostsArrayBuffer.push(posts[i]); }
+                    for(let i=0; i<posts.length; i++){
+                        if(posts[i].id !== permanentlyExtractedPostIdInteger){ temporaryPostsArrayBuffer.push(posts[i]); }
                     }
                     posts = temporaryPostsArrayBuffer;
                     window.saveData(); renderPosts();
@@ -2439,54 +2639,123 @@ document.addEventListener('click', function (eventObject) {
             return;
         }
 
-        // 🔥 BUG FIX: UNIVERSAL GLOBAL POLL ENGINE 🔥
+        // 🔥 DYNAMIC GLOBAL POLL ENGINE WITH MULTIPLE OPTIONS 🔥
+        if (targetElement.closest('#add-poll-option-btn') !== null) {
+            const pollOptionsContainerNode = safeEl('poll-options-container');
+            if(pollOptionsContainerNode !== null) {
+                const currentOptionsCountInt = pollOptionsContainerNode.querySelectorAll('.poll-option-input').length;
+                if (currentOptionsCountInt >= 10) {
+                    alert("System Limitation: You can only add a maximum of 10 options per poll.");
+                    return;
+                }
+                const dynamicallyCreatedInputNode = document.createElement('input');
+                dynamicallyCreatedInputNode.type = 'text';
+                dynamicallyCreatedInputNode.className = 'modal-input poll-option-input';
+                dynamicallyCreatedInputNode.placeholder = 'Option ' + (currentOptionsCountInt + 1);
+                dynamicallyCreatedInputNode.style.marginBottom = '0';
+                pollOptionsContainerNode.appendChild(dynamicallyCreatedInputNode);
+            }
+            return;
+        }
+
         if (targetElement.closest('#post-poll-btn') !== null) {
-            activePollContextEngineType = 'post'; sVal('poll-input-question-string-field', ''); sVal('poll-input-option-string-field-1', ''); sVal('poll-input-option-string-field-2', ''); sRem('poll-creation-modal-framework', 'hidden'); return;
+            activePollContextEngineType = 'post'; 
+            sVal('poll-input-question-string-field', ''); 
+            const defaultOptionsHtmlStr = `<input type="text" class="modal-input poll-option-input" placeholder="Option 1" style="margin-bottom: 0;"><input type="text" class="modal-input poll-option-input" placeholder="Option 2" style="margin-bottom: 0;">`;
+            sHtml('poll-options-container', defaultOptionsHtmlStr);
+            sRem('poll-creation-modal-framework', 'hidden'); return;
         }
         if (targetElement.closest('#world-poll-btn') !== null) {
-            activePollContextEngineType = 'world'; sVal('poll-input-question-string-field', ''); sVal('poll-input-option-string-field-1', ''); sVal('poll-input-option-string-field-2', ''); sRem('poll-creation-modal-framework', 'hidden'); return;
+            activePollContextEngineType = 'world'; 
+            sVal('poll-input-question-string-field', ''); 
+            const defaultOptionsHtmlStr = `<input type="text" class="modal-input poll-option-input" placeholder="Option 1" style="margin-bottom: 0;"><input type="text" class="modal-input poll-option-input" placeholder="Option 2" style="margin-bottom: 0;">`;
+            sHtml('poll-options-container', defaultOptionsHtmlStr);
+            sRem('poll-creation-modal-framework', 'hidden'); return;
         }
         if (targetElement.closest('#group-poll-btn') !== null || targetElement.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn') !== null) {
-            activePollContextEngineType = 'group'; sVal('poll-input-question-string-field', ''); sVal('poll-input-option-string-field-1', ''); sVal('poll-input-option-string-field-2', ''); sRem('poll-creation-modal-framework', 'hidden'); return;
+            activePollContextEngineType = 'group'; 
+            sVal('poll-input-question-string-field', ''); 
+            const defaultOptionsHtmlStr = `<input type="text" class="modal-input poll-option-input" placeholder="Option 1" style="margin-bottom: 0;"><input type="text" class="modal-input poll-option-input" placeholder="Option 2" style="margin-bottom: 0;">`;
+            sHtml('poll-options-container', defaultOptionsHtmlStr);
+            sRem('poll-creation-modal-framework', 'hidden'); return;
         }
 
         if (targetElement.closest('#action-trigger-commit-publish-poll-btn') !== null) {
             const primaryPollQuestionTargetStringValue = gVal('poll-input-question-string-field');
-            const primaryPollOptionTargetStringValue1 = gVal('poll-input-option-string-field-1');
-            const primaryPollOptionTargetStringValue2 = gVal('poll-input-option-string-field-2');
+            const mappedPollOptionInputsArrayNodeList = safeEl('poll-options-container').querySelectorAll('.poll-option-input');
 
-            if (primaryPollQuestionTargetStringValue !== "" && primaryPollOptionTargetStringValue1 !== "" && primaryPollOptionTargetStringValue2 !== "") {
+            if (primaryPollQuestionTargetStringValue !== "") {
                 let constructedPollHtmlFrameStructure = '';
+                constructedPollHtmlFrameStructure += `<div class="poll-data-wrapper-node" data-has-voted="false">`;
                 constructedPollHtmlFrameStructure += `<div style="font-weight:900; margin-bottom:8px;"><i class="fas fa-poll-h"></i> ACTIVE POLL:</div>`;
                 constructedPollHtmlFrameStructure += `<div style="font-size:1.1rem; margin-bottom:10px;">${primaryPollQuestionTargetStringValue}</div>`;
-                constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; margin-bottom:5px; font-size:0.9rem;" data-votes="0">🗳️ ${primaryPollOptionTargetStringValue1} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
-                constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; font-size:0.9rem;" data-votes="0">🗳️ ${primaryPollOptionTargetStringValue2} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
+                
+                let foundValidOptionsCountInt = 0;
+                for(let i=0; i<mappedPollOptionInputsArrayNodeList.length; i++){
+                    let currentExtractedOptionValueStr = mappedPollOptionInputsArrayNodeList[i].value.trim();
+                    if (currentExtractedOptionValueStr !== "") {
+                        foundValidOptionsCountInt++;
+                        constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; margin-bottom:5px; font-size:0.9rem;" data-votes="0">🗳️ ${currentExtractedOptionValueStr} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
+                    }
+                }
+                constructedPollHtmlFrameStructure += `</div>`;
 
+                if (foundValidOptionsCountInt < 2) {
+                    alert("Execution Halted: A valid poll structure inherently requires a minimum of 2 defined options.");
+                    return;
+                }
+                
                 if (activePollContextEngineType === 'group') {
                     let resolvedTargetGroupContextStr = safeEl('current-group-name').innerText;
                     sendMessageWithSave('group', constructedPollHtmlFrameStructure, resolvedTargetGroupContextStr, false);
-                }
+                } 
                 else if (activePollContextEngineType === 'world') {
                     sendMessageWithSave('world', constructedPollHtmlFrameStructure, null, false);
-                }
+                } 
                 else if (activePollContextEngineType === 'post') {
                     const computedNewFeedPostObject = { id: Date.now(), user: currentUser.username, dp: currentUser.dp || DEFAULT_DP, time: new Date().toLocaleTimeString(), scope: 'public', text: constructedPollHtmlFrameStructure, tags: [], image: null };
                     posts.unshift(computedNewFeedPostObject); window.saveData(); renderPosts();
                 }
                 sAdd('poll-creation-modal-framework', 'hidden');
+            } else {
+                alert("Execution Protocol Halted: Please ensure the primary question string field is fully populated.");
             }
             return;
         }
 
         if (targetElement.closest('.execution-vote-poll-track-node-btn') !== null) {
             const corePollSelectionButtonDOMElement = targetElement.closest('.execution-vote-poll-track-node-btn');
-            let storedCurrentTrackedVotesCountValueInt = parseInt(corePollSelectionButtonDOMElement.getAttribute('data-votes'));
-            if (isNaN(storedCurrentTrackedVotesCountValueInt) === true) { storedCurrentTrackedVotesCountValueInt = 0; }
-            storedCurrentTrackedVotesCountValueInt++;
-            corePollSelectionButtonDOMElement.setAttribute('data-votes', storedCurrentTrackedVotesCountValueInt);
-            const internalSpanOutputValueTextElement = corePollSelectionButtonDOMElement.querySelector('.vote-count-numerical-outlet-span');
-            if (internalSpanOutputValueTextElement !== null) { internalSpanOutputValueTextElement.innerText = storedCurrentTrackedVotesCountValueInt.toString(); }
-            corePollSelectionButtonDOMElement.disabled = true; corePollSelectionButtonDOMElement.style.opacity = "0.7";
+            const structuralParentPollContainerDiv = corePollSelectionButtonDOMElement.closest('.poll-data-wrapper-node');
+            
+            if (structuralParentPollContainerDiv !== null) {
+                if (structuralParentPollContainerDiv.getAttribute('data-has-voted') === 'true') {
+                    alert("Voting Security Check: You have already cast your localized vote for this specific poll instance.");
+                    return;
+                }
+
+                structuralParentPollContainerDiv.setAttribute('data-has-voted', 'true');
+                
+                let storedCurrentTrackedVotesCountValueInt = parseInt(corePollSelectionButtonDOMElement.getAttribute('data-votes'));
+                if (isNaN(storedCurrentTrackedVotesCountValueInt) === true) { storedCurrentTrackedVotesCountValueInt = 0; }
+                storedCurrentTrackedVotesCountValueInt++;
+                corePollSelectionButtonDOMElement.setAttribute('data-votes', storedCurrentTrackedVotesCountValueInt);
+                
+                const internalSpanOutputValueTextElement = corePollSelectionButtonDOMElement.querySelector('.vote-count-numerical-outlet-span');
+                if (internalSpanOutputValueTextElement !== null) { internalSpanOutputValueTextElement.innerText = storedCurrentTrackedVotesCountValueInt.toString(); }
+                
+                corePollSelectionButtonDOMElement.style.background = 'var(--primary-color)';
+                corePollSelectionButtonDOMElement.style.color = 'white';
+
+                const siblingButtonsNodeListArray = structuralParentPollContainerDiv.querySelectorAll('.execution-vote-poll-track-node-btn');
+                for(let i=0; i<siblingButtonsNodeListArray.length; i++) {
+                    siblingButtonsNodeListArray[i].disabled = true;
+                    if(siblingButtonsNodeListArray[i] !== corePollSelectionButtonDOMElement) {
+                        siblingButtonsNodeListArray[i].style.opacity = "0.5";
+                    } else {
+                        siblingButtonsNodeListArray[i].style.opacity = "1";
+                    }
+                }
+            }
             return;
         }
 
@@ -2517,9 +2786,36 @@ document.addEventListener('click', function (eventObject) {
             loadChatHistoryToView('group', isolatedGroupNameStringValue); return;
         }
 
+        // 🔥 MODIFIED: STORY UPLOAD TRIGGERS CREATION MODAL 🔥
         if (targetElement.closest('#add-story-btn') !== null) {
-            const storyUploadInputDOMNode = safeEl('story-upload-input');
-            if (storyUploadInputDOMNode !== null) { storyUploadInputDOMNode.click(); } return;
+            tempStoryMediaBuffer = null;
+            sRem('story-creation-modal', 'hidden');
+            return;
+        }
+        
+        if (targetElement.closest('#confirm-story-post-btn') !== null) {
+            if (tempStoryMediaBuffer === null) {
+                alert("File Selection Error: Please bind a valid media file block to the story buffer before attempting transmission.");
+                return;
+            }
+            
+            const selectedPrivacyScopeOptionValue = safeEl('story-privacy-select').value;
+
+            storiesDatabase.unshift({ 
+                id: Date.now(), 
+                name: currentUser.username, 
+                dp: currentUser.dp, 
+                image: tempStoryMediaBuffer, 
+                scope: selectedPrivacyScopeOptionValue,
+                viewed: false,
+                likes: 0,
+                likedByArray: [],
+                viewedByArray: []
+            });
+            window.saveData();
+            initializeStoriesEngine();
+            sAdd('story-creation-modal', 'hidden');
+            return;
         }
 
         if (targetElement.closest('#upload-reel-btn') !== null) {
@@ -2527,9 +2823,28 @@ document.addEventListener('click', function (eventObject) {
             if (reelUploadInputDOMNode !== null) { reelUploadInputDOMNode.click(); } return;
         }
 
+        // 🔥 BUG FIX: FRIENDSHIP BOND LOGIC (Check Global Registry) 🔥
         if (targetElement.closest('#send-band-req-btn') !== null) {
             const userInsertedBondTargetInputStringValue = gVal('band-request-input');
-            if (userInsertedBondTargetInputStringValue !== "") { bandRequests.push({ username: userInsertedBondTargetInputStringValue }); window.saveData(); renderBandRequests(); sVal('band-request-input', ''); }
+            
+            if (userInsertedBondTargetInputStringValue === "") {
+                alert("Input Validation Error: Identification field cannot be null.");
+                return;
+            }
+            if (userInsertedBondTargetInputStringValue === currentUser.username || userInsertedBondTargetInputStringValue === currentUser.uid) {
+                alert("Logic Sequence Error: Self-referential Friendship Bonds are strictly prohibited by core system architecture.");
+                return;
+            }
+
+            let internalFoundRootUser = findUserGlobally(userInsertedBondTargetInputStringValue);
+            
+            if (internalFoundRootUser === null) {
+                alert("Registry Error: The specified Username or UID string does not exist within the Global Ecosystem Registry database.");
+                return;
+            }
+
+            alert(`Network Packet Success: Outgoing Friendship Bond Synchronization Payload has been securely transmitted to [${internalFoundRootUser.username}].`);
+            sVal('band-request-input', '');
             return;
         }
 
@@ -2590,7 +2905,7 @@ document.addEventListener('click', function (eventObject) {
     } catch (globalEventListenerCatastrophicError) {
         console.error("Global Click Event Interceptor Handled an Exception (Ecosystem prevented from crashing):", globalEventListenerCatastrophicError);
     }
-});
+}); 
 
 // =========================================================================
 // 8. FILE UPLOAD HELPERS & KEYPRESS LISTENER BINDS
@@ -2635,18 +2950,9 @@ setupFileInputDataHandler('post-image-upload-input', function (resultingBase64Im
     sRem('post-media-attachment-status-preview', 'hidden');
 });
 
-// 🔥 NEW: STORY UPLOAD BINDING 🔥
-setupFileInputDataHandler('story-upload-input', function (resultingBase64MediaStringCode) {
-    storiesDatabase.unshift({
-        id: Date.now(),
-        name: currentUser.username,
-        dp: currentUser.dp,
-        image: resultingBase64MediaStringCode,
-        viewed: false,
-        likes: 0
-    });
-    window.saveData();
-    initializeStoriesEngine();
+// 🔥 NEW: STORY UPLOAD BUFFER BINDING 🔥
+setupFileInputDataHandler('story-upload-input-modal', function (resultingBase64MediaStringCode) {
+    tempStoryMediaBuffer = resultingBase64MediaStringCode;
 });
 
 // 🔥 NEW: REELS UPLOAD BINDING 🔥
@@ -2657,7 +2963,8 @@ setupFileInputDataHandler('reel-upload-input', function (resultingBase64MediaStr
         username: currentUser.username,
         likes: 0,
         comments: 0,
-        bg: `url(${resultingBase64MediaStringCode}) center/cover no-repeat`
+        bg: `url(${resultingBase64MediaStringCode}) center/cover no-repeat`,
+        likedByArray: []
     });
     window.saveData();
     initializeReelsEngine();

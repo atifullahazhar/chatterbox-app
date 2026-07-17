@@ -228,7 +228,7 @@
     --border-color: #004400;
 }
 
-/* ================== EXCLUSIVE DEV VIP THEME ================== */
+/* ================== EXCLUSIVE DEV THEME ================== */
 [data-theme="grand-golden"] {
     --bg-main: #0a0a0a;
     --bg-panel: #141414;
@@ -572,6 +572,11 @@ button:active {
     padding: 6px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 .new-dp-wrapper img {
