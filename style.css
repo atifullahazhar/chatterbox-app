@@ -883,11 +883,13 @@ button:active {
 
 .public-profile-trigger {
     transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
 }
 
 .public-profile-trigger:hover {
     transform: scale(1.05);
     filter: brightness(1.1);
+    text-decoration: underline;
 }
 
 .contact-list {
@@ -2104,6 +2106,13 @@ button:active {
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     z-index: 10;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.reel-info:hover {
+    transform: scale(1.02);
+    text-decoration: underline;
 }
 
 /* Smart Replies Bar */
