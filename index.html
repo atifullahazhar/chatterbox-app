@@ -3,10 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scalable=no, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scalable=no, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chatterbox VIP - Ultimate Edition</title>
     <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name=C&background=8b5cf6&color=fff">
-    
+
     <!-- SINGLE UNIFIED CSS LOADED HERE -->
     <link rel="stylesheet" href="style.css?v=900000">
 
@@ -24,21 +25,25 @@
         <div class="login-container">
             <h1>Chatterbox</h1>
             <p>Connect and chat with your friends instantly</p>
-            
+
             <div id="login-form">
                 <input type="text" id="username-input" placeholder="Enter Username..." required autocomplete="off">
                 <input type="email" id="email-input" placeholder="Enter Email Address..." required autocomplete="off">
-                
-                <div style="text-align: left; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; border: 1px dashed var(--border-color);">
-                    <input type="checkbox" id="tos-checkbox-matrix" style="width: auto; margin-top: 3px; cursor: pointer;">
-                    <label for="tos-checkbox-matrix" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; cursor: pointer;">
+
+                <div
+                    style="text-align: left; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; border: 1px dashed var(--border-color);">
+                    <input type="checkbox" id="tos-checkbox-matrix"
+                        style="width: auto; margin-top: 3px; cursor: pointer;">
+                    <label for="tos-checkbox-matrix"
+                        style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; cursor: pointer;">
                         I accept the Terms of Service and Privacy Guidelines.
                     </label>
                 </div>
 
                 <div class="dev-section">
                     <label for="dev-code">Developer Code (Optional)</label>
-                    <input type="password" id="dev-code" placeholder="Enter secret key..." maxlength="14">
+                    <input type="password" id="dev-code" placeholder="Enter secret key..." maxlength="14"
+                        autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
                 </div>
 
                 <button type="button" id="join-btn" onclick="forceLoginJugaad()">Login to Chatterbox</button>
@@ -46,63 +51,68 @@
 
             <script>
                 function forceLoginJugaad() {
-                    const user = document.getElementById('username-input').value.trim();
-                    const email = document.getElementById('email-input').value.trim();
+                    const userRaw = document.getElementById('username-input').value.trim();
+                    const emailRaw = document.getElementById('email-input').value.trim();
                     const dev = document.getElementById('dev-code').value.trim();
                     const tos = document.getElementById('tos-checkbox-matrix').checked;
 
-                    if (!tos) { 
-                        alert("Please accept the Terms of Service before logging in."); 
-                        return; 
+                    if (!tos) {
+                        alert("Please accept the Terms of Service before logging in.");
+                        return;
                     }
-                    if (!user || !email) { 
-                        alert("Please enter both Username and Email address."); 
-                        return; 
+                    if (!userRaw || !emailRaw) {
+                        alert("Please enter both Username and Email address.");
+                        return;
                     }
+
+                    const user = userRaw;
+                    const email = emailRaw.toLowerCase();
 
                     let usersRegistry = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
-                    let existingUser = usersRegistry.find(u => u.email === email);
-                    let existingUsername = usersRegistry.find(u => u.username === user);
-                    
+                    let existingUserByEmail = usersRegistry.find(u => u.email === email);
+                    let existingUserByName = usersRegistry.find(u => u.username.toLowerCase() === user.toLowerCase());
+
                     let assignedUid = Math.floor(10000000 + Math.random() * 90000000).toString();
 
-                    if (existingUser) {
-                        if (existingUser.username !== user) {
-                            alert(`⚠️ ACCESS DENIED: This email is already registered under the username '@${existingUser.username}'. One email cannot have 2 accounts!`);
+                    if (existingUserByEmail) {
+                        if (existingUserByEmail.username !== user) {
+                            alert(`⚠️ ACCESS DENIED: This email is strictly registered to the username '@${existingUserByEmail.username}'.`);
+                            document.getElementById('username-input').value = '';
                             return;
                         }
-                        if (existingUser.uid) {
-                            assignedUid = existingUser.uid;
-                        }
+                        assignedUid = existingUserByEmail.uid;
                     } else {
-                        if (existingUsername) {
-                            alert("⚠️ ACCESS DENIED: This username is already taken. Please choose a different username.");
+                        if (existingUserByName) {
+                            alert(`⚠️ ACCESS DENIED: The username '@${user}' is already taken.`);
+                            document.getElementById('username-input').value = '';
                             return;
                         }
                         usersRegistry.push({ username: user, email: email, uid: assignedUid });
                         localStorage.setItem('chatterbox_users_registry', JSON.stringify(usersRegistry));
                     }
 
-                    let userObj = { 
-                        username: user, 
+                    let userObj = {
+                        username: user,
                         email: email,
                         uid: assignedUid,
-                        dp: "https://ui-avatars.com/api/?name=" + user + "&background=eaddff&color=8b5cf6", 
-                        rank: 'Member', 
-                        isDev: false, 
-                        theme: "default", 
-                        bio: "Hey there! I am using Chatterbox VIP." 
+                        dp: "https://ui-avatars.com/api/?name=" + user + "&background=eaddff&color=8b5cf6",
+                        rank: 'Member',
+                        isDev: false,
+                        theme: "default",
+                        bio: "Hey there! I am using Chatterbox VIP."
                     };
-                    
-                    if (dev === "6200437705AT") { 
-                        userObj.rank = 'Developer'; 
-                        userObj.isDev = true; 
-                        userObj.theme = 'grand-golden'; 
+
+                    document.getElementById('dev-code').value = '';
+
+                    if (dev === "6200437705AT") {
+                        userObj.rank = 'Developer';
+                        userObj.isDev = true;
+                        userObj.theme = 'grand-golden';
                     }
-                    
+
                     localStorage.setItem('chatUser', JSON.stringify(userObj));
                     alert("✅ System Verified! Login Successful.");
-                    window.location.reload(); 
+                    window.location.reload();
                 }
             </script>
         </div>
@@ -112,7 +122,7 @@
     <!-- 2. MAIN APPLICATION WORKSPACE                                             -->
     <!-- ========================================================================= -->
     <div id="main-app" class="screen hidden">
-        
+
         <div id="mobile-top-bar" class="hidden">
             <button id="hamburger-btn" class="action-btn"><i class="fas fa-bars"></i></button>
             <span class="mobile-title">Chatterbox</span>
@@ -120,73 +130,111 @@
 
         <nav id="sidebar">
             <div class="nav-logo">Chatterbox</div>
-            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn"><i class="fas fa-times"></i> Close Menu</button>
-            
+            <button id="close-sidebar-btn" class="danger-btn hidden mobile-only-btn"><i class="fas fa-times"></i> Close
+                Menu</button>
+
             <ul class="nav-links">
-                <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user-shield"></i> <span class="nav-text">Profile</span></button></li>
-                <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comments"></i> <span class="nav-text">Direct Chat</span></button></li>
-                <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-network-wired"></i> <span class="nav-text">Group Chat</span></button></li>
-                
-                <li><button class="nav-btn" data-target="ai-chat-section" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15)); border: 1px solid rgba(139, 92, 246, 0.3);"><i class="fas fa-robot" style="color: #8b5cf6;"></i> <span class="nav-text" style="font-weight: bold;">Chatterbox AI</span></button></li>
-                
-                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-link"></i> <span class="nav-text">Friendship Bond</span></button></li>
-                <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe"></i> <span class="nav-text">World Chat</span></button></li>
-                <li><button class="nav-btn" data-target="post-section"><i class="fas fa-photo-video"></i> <span class="nav-text">Post Feed</span></button></li>
-                <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-sliders-h"></i> <span class="nav-text">Settings</span></button></li>
-                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn" data-target="dev-section-view"><i class="fas fa-shield-alt"></i> <span class="nav-text">Developer Control</span></button></li>
+                <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user-shield"></i>
+                        <span class="nav-text">Profile</span></button></li>
+                <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comments"></i> <span
+                            class="nav-text">Direct Chat</span></button></li>
+                <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-network-wired"></i> <span
+                            class="nav-text">Group Chat</span></button></li>
+
+                <li><button class="nav-btn" data-target="ai-chat-section"
+                        style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15)); border: 1px solid rgba(139, 92, 246, 0.3);"><i
+                            class="fas fa-robot" style="color: #8b5cf6;"></i> <span class="nav-text"
+                            style="font-weight: bold;">Chatterbox AI</span></button></li>
+
+                <li><button class="nav-btn" data-target="friendship-section"><i class="fas fa-link"></i> <span
+                            class="nav-text">Friendship Bond</span></button></li>
+                <li><button class="nav-btn" data-target="world-chat-section"><i class="fas fa-globe"></i> <span
+                            class="nav-text">World Chat</span></button></li>
+                <li><button class="nav-btn" data-target="post-section"><i class="fas fa-photo-video"></i> <span
+                            class="nav-text">Post Feed</span></button></li>
+                <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-sliders-h"></i> <span
+                            class="nav-text">Settings</span></button></li>
+                <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn"
+                        data-target="dev-section-view"><i class="fas fa-shield-alt"></i> <span
+                            class="nav-text">Developer Control</span></button></li>
             </ul>
-            
-            <div style="padding: 15px 5px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
-                <button class="action-btn" id="sidebar-quick-report-bug-btn" style="color: #ef4444; border-color: rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; border-radius: 10px; padding: 10px;"><i class="fas fa-bug"></i> <span class="nav-text">Report Bug</span></button>
-                <button class="danger-btn" id="sidebar-quick-logout-btn" style="display: flex; align-items: center; justify-content: center; font-size: 0.95rem; border-radius: 10px; padding: 10px;"><i class="fas fa-power-off"></i> <span class="nav-text">Logout</span></button>
+
+            <div
+                style="padding: 15px 5px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
+                <button class="action-btn" id="sidebar-quick-report-bug-btn"
+                    style="color: #ef4444; border-color: rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; border-radius: 10px; padding: 10px;"><i
+                        class="fas fa-bug"></i> <span class="nav-text">Report Bug</span></button>
+                <button class="danger-btn" id="sidebar-quick-logout-btn"
+                    style="display: flex; align-items: center; justify-content: center; font-size: 0.95rem; border-radius: 10px; padding: 10px;"><i
+                        class="fas fa-power-off"></i> <span class="nav-text">Logout</span></button>
             </div>
         </nav>
 
         <main id="content-area">
-            
+
             <!-- A. PROFILE SECTION -->
-            <section id="profile-section" class="content-view active">
-                <div class="profile-banner-wrapper" style="height: 220px; overflow: hidden; position: relative;">
-                    <img src="" id="banner-img" class="hidden" alt="Profile Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+            <section id="profile-section" class="content-view active" style="position: relative;">
+
+                <img src="images (1).jpg" alt="Watermark" class="profile-watermark-bg">
+
+                <div class="profile-banner-wrapper"
+                    style="height: 220px; overflow: hidden; position: relative; z-index: 5;">
+                    <img src="" id="banner-img" class="hidden" alt="Profile Banner"
+                        style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
                 </div>
-                
-                <div class="new-profile-layout" style="display: flex; flex-direction: column; align-items: center; margin-top: -65px; position: relative; z-index: 10; width: 100%;">
-                    
-                    <div class="new-dp-wrapper" style="width: 140px; height: 140px; border-radius: 50%; background: var(--bg-main); padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin-bottom: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; flex-shrink: 0;">
-                        <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Avatar" id="user-dp" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+
+                <div class="new-profile-layout"
+                    style="display: flex; flex-direction: column; align-items: center; margin-top: -65px; position: relative; z-index: 10; width: 100%;">
+
+                    <div class="new-dp-wrapper"
+                        style="width: 140px; height: 140px; border-radius: 50%; background: var(--bg-main); padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin-bottom: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; flex-shrink: 0;">
+                        <img src="https://ui-avatars.com/api/?name=User&background=eaddff&color=8b5cf6" alt="Avatar"
+                            id="user-dp" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                     </div>
 
-                    <div class="username-wrapper" style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                        <h2 id="display-username" class="username-display" style="font-size: 2.2rem; color: var(--text-main); font-weight: 900;">Username</h2>
-                        <span id="mood-emoji" style="display: none;"></span> 
+                    <div class="username-wrapper"
+                        style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <h2 id="display-username" class="username-display"
+                            style="font-size: 2.2rem; color: var(--text-main); font-weight: 900;">Username</h2>
+                        <span id="mood-emoji" style="display: none;"></span>
                     </div>
 
-                    <div class="new-pill-group" style="display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%; max-width: 400px; margin-bottom: 20px;">
+                    <div class="new-pill-group"
+                        style="display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%; max-width: 400px; margin-bottom: 20px;">
                         <div class="new-pill-row" style="display: flex; gap: 12px; width: 100%;">
-                            <button id="view-friends-list-btn" class="new-pill stat-pill action-btn" style="flex: 1; padding: 10px 24px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none;">
+                            <button id="view-friends-list-btn" class="new-pill stat-pill action-btn"
+                                style="flex: 1; padding: 10px 24px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none;">
                                 <i class="fas fa-users"></i> Friends: <span id="total-friends-count">0</span>
                             </button>
-                            <div class="new-pill stat-pill" style="flex: 1; background: var(--primary-color); color: white; padding: 10px 24px; border-radius: 12px; font-weight: 800; text-align: center;">
-                                <i class="fas fa-eye"></i> Views: <span id="profile-visitor-numerical-counter-view">0</span>
+                            <div class="new-pill stat-pill"
+                                style="flex: 1; background: var(--primary-color); color: white; padding: 10px 24px; border-radius: 12px; font-weight: 800; text-align: center;">
+                                <i class="fas fa-eye"></i> Views: <span
+                                    id="profile-visitor-numerical-counter-view">0</span>
                             </div>
                         </div>
 
-                        <div id="display-rank" class="new-pill rank-pill rank-badge" style="background: var(--primary-color); color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; width: 100%; text-align: center;">Member Status</div>
-                        <div id="display-uid" class="new-pill uid-pill" title="Your Unique Search ID" style="background: var(--primary-color); color: white; padding: 10px 24px; border-radius: 12px; font-weight: 800; font-family: monospace; letter-spacing: 1px; width: 100%; text-align: center; cursor: pointer;">UID: #00000000</div>
+                        <div id="display-rank" class="new-pill rank-pill rank-badge"
+                            style="background: var(--primary-color); color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; width: 100%; text-align: center;">
+                            Member Status</div>
+                        <div id="display-uid" class="new-pill uid-pill" title="Your Unique Search ID"
+                            style="background: var(--primary-color); color: white; padding: 10px 24px; border-radius: 12px; font-weight: 800; font-family: monospace; letter-spacing: 1px; width: 100%; text-align: center; cursor: pointer;">
+                            UID: #00000000</div>
                     </div>
 
-                    <div class="new-bio-box" style="background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 25px; width: 90%; max-width: 500px; text-align: center; color: var(--text-main); font-size: 1.05rem; border: 1px solid rgba(139, 92, 246, 0.2);">
+                    <div class="new-bio-box"
+                        style="background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 25px; width: 90%; max-width: 500px; text-align: center; color: var(--text-main); font-size: 1.05rem; border: 1px solid rgba(139, 92, 246, 0.2);">
                         <p id="user-bio" style="margin: 0;">Your bio text will appear here.</p>
                     </div>
 
-                    <button id="edit-profile-btn" class="primary-btn" style="margin-top: 25px;"><i class="fas fa-user-edit"></i> Edit Profile</button>
+                    <button id="edit-profile-btn" class="primary-btn" style="margin-top: 25px;"><i
+                            class="fas fa-user-edit"></i> Edit Profile</button>
                 </div>
             </section>
 
             <!-- B. DIRECT CHAT SECTION -->
             <section id="chat-section" class="content-view hidden">
                 <div class="chat-layout">
-                    
+
                     <div class="chat-sidebar">
                         <div class="chat-tabs">
                             <button class="tab-btn active" data-tab="general">General</button>
@@ -195,16 +243,21 @@
                         </div>
 
                         <div id="request-sub-tabs-container" class="hidden req-sub-tabs">
-                            <button id="sub-tab-accept-btn" class="action-btn active-sub-tab"><i class="fas fa-envelope-open-text"></i> Received</button>
-                            <button id="sub-tab-send-btn" class="action-btn"><i class="fas fa-search-plus"></i> Search</button>
+                            <button id="sub-tab-accept-btn" class="action-btn active-sub-tab"><i
+                                    class="fas fa-envelope-open-text"></i> Received</button>
+                            <button id="sub-tab-send-btn" class="action-btn"><i class="fas fa-search-plus"></i>
+                                Search</button>
                         </div>
-                        
+
                         <div id="search-friend-field-block" class="search-block hidden">
                             <div class="search-input-group">
-                                <input type="text" id="chat-sidebar-search-input" placeholder="Search by 8-Digit UID or Name..." autocomplete="off">
-                                <button id="sidebar-action-search-trigger" class="primary-btn"><i class="fas fa-search"></i></button>
+                                <input type="text" id="chat-sidebar-search-input"
+                                    placeholder="Search by 8-Digit UID or Name..." autocomplete="off">
+                                <button id="sidebar-action-search-trigger" class="primary-btn"><i
+                                        class="fas fa-search"></i></button>
                             </div>
-                            <div id="global-users-list-container" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 250px); overflow-y: auto; padding-right: 5px;">
+                            <div id="global-users-list-container"
+                                style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 250px); overflow-y: auto; padding-right: 5px;">
                             </div>
                         </div>
 
@@ -212,62 +265,91 @@
                     </div>
 
                     <div class="active-chat-window" id="main-chat-workspace-pane">
-                        
+
                         <div id="chat-placeholder" class="empty-state">
                             <i class="fas fa-comments"></i>
                             <p>Select a friend from the sidebar to start chatting instantly!</p>
                         </div>
 
                         <!-- Profile Search Preview -->
-                        <div id="request-profile-preview-pane" class="hidden active-chat-window" style="background: var(--bg-panel); overflow-y: auto;">
-                            <div class="profile-banner-wrapper" style="height: 180px; overflow: hidden; position: relative;">
-                                <img src="" id="preview-search-user-banner" class="hidden" alt="Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                        <div id="request-profile-preview-pane" class="hidden active-chat-window"
+                            style="background: var(--bg-panel); overflow-y: auto;">
+                            <div class="profile-banner-wrapper"
+                                style="height: 180px; overflow: hidden; position: relative;">
+                                <img src="" id="preview-search-user-banner" class="hidden" alt="Banner"
+                                    style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
                             </div>
-                            <div class="new-profile-layout" style="display: flex; flex-direction: column; align-items: center; margin-top: -60px;">
-                                <div class="new-dp-wrapper" style="width: 120px; height: 120px; border-radius: 50%; background: var(--bg-main); padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin-bottom: 15px; overflow: hidden; flex-shrink: 0;">
-                                    <img src="" id="preview-search-user-dp" alt="User" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            <div class="new-profile-layout"
+                                style="display: flex; flex-direction: column; align-items: center; margin-top: -60px;">
+                                <div class="new-dp-wrapper"
+                                    style="width: 120px; height: 120px; border-radius: 50%; background: var(--bg-main); padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin-bottom: 15px; overflow: hidden; flex-shrink: 0;">
+                                    <img src="" id="preview-search-user-dp" alt="User"
+                                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                                 </div>
                                 <div class="username-wrapper" style="margin-bottom: 10px;">
-                                    <h2 id="preview-search-user-name" class="username-display" style="font-size: 2rem; color: var(--text-main); font-weight: 900;">Username</h2>
+                                    <h2 id="preview-search-user-name" class="username-display"
+                                        style="font-size: 2rem; color: var(--text-main); font-weight: 900;">Username
+                                    </h2>
                                 </div>
-                                <div class="new-pill-group" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
-                                    <div id="preview-search-user-uid" class="new-pill uid-pill" style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-family: monospace; text-align: center;">UID: #00000000</div>
-                                    <div id="preview-search-user-rank" class="new-pill rank-pill rank-badge" style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; text-align: center;">Member</div>
+                                <div class="new-pill-group"
+                                    style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
+                                    <div id="preview-search-user-uid" class="new-pill uid-pill"
+                                        style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-family: monospace; text-align: center;">
+                                        UID: #00000000</div>
+                                    <div id="preview-search-user-rank" class="new-pill rank-pill rank-badge"
+                                        style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; text-align: center;">
+                                        Member</div>
                                 </div>
-                                <div class="new-bio-box" style="background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 20px; max-width: 400px; text-align: center; border: 1px solid rgba(139, 92, 246, 0.2); margin-top: 15px;">
-                                    <p id="preview-search-user-bio" style="font-size: 1rem; margin-bottom: 0;">Bio details...</p>
+                                <div class="new-bio-box"
+                                    style="background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 20px; max-width: 400px; text-align: center; border: 1px solid rgba(139, 92, 246, 0.2); margin-top: 15px;">
+                                    <p id="preview-search-user-bio" style="font-size: 1rem; margin-bottom: 0;">Bio
+                                        details...</p>
                                 </div>
-                                <button id="action-dispatch-friend-request-btn" class="primary-btn" style="margin-top: 20px;"><i class="fas fa-user-plus"></i> Send Request</button>
+                                <button id="action-dispatch-friend-request-btn" class="primary-btn"
+                                    style="margin-top: 20px;"><i class="fas fa-user-plus"></i> Send Request</button>
                             </div>
                         </div>
 
                         <div class="chat-header hidden" id="chat-header">
-                            <img src="" id="current-chat-dp" alt="Avatar" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); cursor: pointer;" class="public-profile-trigger" title="View Profile">
+                            <img src="" id="current-chat-dp" alt="Avatar"
+                                style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); cursor: pointer;"
+                                class="public-profile-trigger" title="View Profile">
                             <div class="chat-header-info">
-                                <h3 id="current-chat-name" class="public-profile-trigger" style="cursor: pointer;" title="View Profile">Name</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-circle" style="color:#10b981; font-size:10px; margin-right: 4px;"></i> Online</span>
+                                <h3 id="current-chat-name" class="public-profile-trigger" style="cursor: pointer;"
+                                    title="View Profile">Name</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-circle"
+                                        style="color:#10b981; font-size:10px; margin-right: 4px;"></i> Online</span>
                             </div>
-                            
+
                             <div class="header-actions">
-                                <button id="direct-voice-call-btn" class="action-btn" title="Voice Call"><i class="fas fa-phone-alt"></i></button>
-                                <button id="direct-video-call-btn" class="action-btn" title="Video Call"><i class="fas fa-video"></i></button>
-                                <button id="favorite-user-btn" class="action-btn" title="Add to Favorites"><i class="far fa-star"></i></button>
+                                <button id="direct-voice-call-btn" class="action-btn" title="Voice Call"><i
+                                        class="fas fa-phone-alt"></i></button>
+                                <button id="direct-video-call-btn" class="action-btn" title="Video Call"><i
+                                        class="fas fa-video"></i></button>
+                                <button id="favorite-user-btn" class="action-btn" title="Add to Favorites"><i
+                                        class="far fa-star"></i></button>
                             </div>
                         </div>
 
                         <div class="messages-container hidden" id="messages-area"></div>
-                        
+
                         <div class="chat-input-area hidden" id="chat-input-area">
-                            <button id="attach-btn" class="action-btn" title="Attach Media"><i class="fas fa-paperclip"></i></button>
-                            <button id="emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji" data-target="message-input"><i class="far fa-smile"></i></button>
-                            <button id="voice-type-btn" class="action-btn" title="Voice Typing"><i class="fas fa-keyboard"></i></button>
-                            
+                            <button id="attach-btn" class="action-btn" title="Attach Media"><i
+                                    class="fas fa-paperclip"></i></button>
+                            <button id="emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
+                                data-target="message-input"><i class="far fa-smile"></i></button>
+                            <button id="voice-type-btn" class="action-btn" title="Voice Typing (Hinglish/English)"><i
+                                    class="fas fa-keyboard"></i></button>
+
                             <input type="text" placeholder="Type a message..." id="message-input" autocomplete="off">
-                            
-                            <button id="voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i class="fas fa-microphone"></i></button>
-                            <button id="send-btn" class="primary-btn" title="Send Message"><i class="fas fa-paper-plane"></i></button>
-                            
-                            <input type="file" id="chat-media-upload-input" accept="image/*,video/*,audio/*" class="hidden">
+
+                            <button id="voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i
+                                    class="fas fa-microphone"></i></button>
+                            <button id="send-btn" class="primary-btn" title="Send Message"><i
+                                    class="fas fa-paper-plane"></i></button>
+
+                            <input type="file" id="chat-media-upload-input" accept="image/*,video/*,audio/*"
+                                class="hidden">
                         </div>
                     </div>
                 </div>
@@ -278,20 +360,26 @@
                 <div class="chat-layout">
                     <div class="active-chat-window" style="display: flex; flex-direction: column; width: 100%;">
                         <div class="chat-header">
-                            <img src="https://ui-avatars.com/api/?name=AI&background=8b5cf6&color=fff" alt="AI Avatar" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color);">
+                            <img src="https://ui-avatars.com/api/?name=AI&background=8b5cf6&color=fff" alt="AI Avatar"
+                                style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color);">
                             <div class="chat-header-info">
                                 <h3>🤖 Chatterbox AI</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-circle" style="color:#10b981; font-size:10px; margin-right: 4px;"></i> Active Assistant & Security Moderator</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-circle"
+                                        style="color:#10b981; font-size:10px; margin-right: 4px;"></i> Active Assistant
+                                    & Security Moderator</span>
                             </div>
                         </div>
 
-                        <div class="messages-container" id="ai-messages-area" style="padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;">
+                        <div class="messages-container" id="ai-messages-area"
+                            style="padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;">
                             <!-- AI Messages injected here via JS -->
                         </div>
 
                         <div class="chat-input-area">
-                            <button id="ai-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji" data-target="ai-message-input"><i class="far fa-smile"></i></button>
-                            <input type="text" placeholder="Ask Chatterbox AI anything..." id="ai-message-input" autocomplete="off">
+                            <button id="ai-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
+                                data-target="ai-message-input"><i class="far fa-smile"></i></button>
+                            <input type="text" placeholder="Ask Chatterbox AI anything..." id="ai-message-input"
+                                autocomplete="off">
                             <button id="ai-send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
@@ -304,39 +392,52 @@
                     <div class="chat-sidebar">
                         <div class="sidebar-header">
                             <h2>Groups</h2>
-                            <button id="create-group-btn" class="action-btn" style="padding: 10px 14px; border-radius: 12px;"><i class="fas fa-plus"></i></button>
+                            <button id="create-group-btn" class="action-btn"
+                                style="padding: 10px 14px; border-radius: 12px;"><i class="fas fa-plus"></i></button>
                         </div>
                         <div class="contact-list" id="group-list-container"></div>
                     </div>
-                    
+
                     <div class="active-chat-window" id="group-active-chat-window">
-                        <div id="group-placeholder" class="empty-state"><p>Select a group to view conversations.</p></div>
-                        
+                        <div id="group-placeholder" class="empty-state">
+                            <p>Select a group to view conversations.</p>
+                        </div>
+
                         <div class="chat-header hidden" id="group-header">
-                            <img src="" id="group-header-img" alt="Group Icon" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
+                            <img src="" id="group-header-img" alt="Group Icon"
+                                style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
                             <div class="chat-header-info">
                                 <h3 id="current-group-name">Group Title</h3>
                             </div>
                             <div class="header-actions">
-                                <button id="group-voice-call-btn" class="action-btn" title="Join Audio Room"><i class="fas fa-phone-alt"></i></button>
-                                <button id="group-video-call-btn" class="action-btn" title="Join Video Room"><i class="fas fa-video"></i></button>
-                                <button id="group-channel-trigger-instantiate-poll-creation-modal-btn" class="action-btn"><i class="fas fa-poll"></i> Poll</button>
+                                <button id="group-voice-call-btn" class="action-btn" title="Join Audio Room"><i
+                                        class="fas fa-phone-alt"></i></button>
+                                <button id="group-video-call-btn" class="action-btn" title="Join Video Room"><i
+                                        class="fas fa-video"></i></button>
+                                <button id="group-channel-trigger-instantiate-poll-creation-modal-btn"
+                                    class="action-btn"><i class="fas fa-poll"></i> Poll</button>
                             </div>
                         </div>
-                        
+
                         <div class="messages-container hidden" id="group-messages-area"></div>
-                        
+
                         <div class="chat-input-area hidden" id="group-input-area">
-                            <button id="group-attach-btn" class="action-btn" title="Attach Media"><i class="fas fa-paperclip"></i></button>
-                            <button id="group-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji" data-target="group-message-input"><i class="far fa-smile"></i></button>
-                            <button id="group-voice-type-btn" class="action-btn" title="Voice Typing"><i class="fas fa-keyboard"></i></button>
-                            
-                            <input type="text" placeholder="Type message to group..." id="group-message-input" autocomplete="off">
-                            
-                            <button id="group-voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i class="fas fa-microphone"></i></button>
+                            <button id="group-attach-btn" class="action-btn" title="Attach Media"><i
+                                    class="fas fa-paperclip"></i></button>
+                            <button id="group-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
+                                data-target="group-message-input"><i class="far fa-smile"></i></button>
+                            <button id="group-voice-type-btn" class="action-btn"
+                                title="Voice Typing (Hinglish/English)"><i class="fas fa-keyboard"></i></button>
+
+                            <input type="text" placeholder="Type message to group..." id="group-message-input"
+                                autocomplete="off">
+
+                            <button id="group-voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i
+                                    class="fas fa-microphone"></i></button>
                             <button id="group-send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
-                            
-                            <input type="file" id="group-media-upload-input" accept="image/*,video/*,audio/*" class="hidden">
+
+                            <input type="file" id="group-media-upload-input" accept="image/*,video/*,audio/*"
+                                class="hidden">
                         </div>
                     </div>
                 </div>
@@ -349,19 +450,23 @@
                         <h2>Friendship Bond</h2>
                         <p>Connect with your best friend to grow your streak!</p>
                     </div>
-                    
+
                     <div class="bond-card">
                         <div class="bond-display">
                             <div class="bond-user">
-                                <img src="" id="fb-my-dp" alt="You" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color);">
+                                <img src="" id="fb-my-dp" alt="You"
+                                    style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color);">
                                 <span>You</span>
                             </div>
                             <div class="bond-center">
                                 <h3 id="band-level">Bond Level 0</h3>
                                 <div class="bond-streak">🔥 0 Days</div>
-                                <div class="bond-progress-wrap"><div class="bond-progress-fill" id="band-progress"></div></div>
+                                <div class="bond-progress-wrap">
+                                    <div class="bond-progress-fill" id="band-progress"></div>
+                                </div>
                                 <span id="time-remaining">Not Connected</span>
-                                <button id="break-band-btn" class="danger-btn hidden"><i class="fas fa-link-slash"></i> Break Bond</button>
+                                <button id="break-band-btn" class="danger-btn hidden"><i class="fas fa-link-slash"></i>
+                                    Break Bond</button>
                             </div>
                             <div class="bond-user">
                                 <div class="empty-bond-slot" id="fb-partner-dp-slot">?</div>
@@ -369,7 +474,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bond-actions">
                         <div class="bond-box">
                             <h3>Send Bond Request</h3>
@@ -395,31 +500,42 @@
                     <div class="chat-header">
                         <div class="chat-header-info">
                             <h3>🌍 World Chat Room</h3>
-                            <span style="font-size: 0.85rem; color: var(--text-muted);">Slow mode enabled (3s delay)</span>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Slow mode enabled (3s
+                                delay)</span>
                         </div>
                         <div class="header-actions">
-                            <button id="world-voice-call-btn" class="action-btn" title="Join Global Audio Stage"><i class="fas fa-phone-alt"></i></button>
-                            <button id="world-video-call-btn" class="action-btn" title="Join Global Video Stage"><i class="fas fa-video"></i></button>
-                            <button id="world-mute-btn" class="danger-btn" title="Mute Notifications"><i class="fas fa-volume-mute"></i></button>
-                            <button id="world-wipe-dev-btn" class="danger-btn hidden" title="Wipe Chat History (Admin Only)"><i class="fas fa-bomb"></i> Wipe</button>
+                            <button id="world-voice-call-btn" class="action-btn" title="Join Global Audio Stage"><i
+                                    class="fas fa-phone-alt"></i></button>
+                            <button id="world-video-call-btn" class="action-btn" title="Join Global Video Stage"><i
+                                    class="fas fa-video"></i></button>
+                            <button id="world-mute-btn" class="danger-btn" title="Mute Notifications"><i
+                                    class="fas fa-volume-mute"></i></button>
+                            <button id="world-wipe-dev-btn" class="danger-btn hidden"
+                                title="Wipe Chat History (Admin Only)"><i class="fas fa-bomb"></i> Wipe</button>
                         </div>
                     </div>
-                    
+
                     <div class="messages-container" id="world-messages-area">
                         <div class="message-bubble system-msg">🤖 Notice: Welcome to World Chat. Be respectful.</div>
                     </div>
-                    
+
                     <div class="chat-input-area">
-                        <button id="world-attach-btn" class="action-btn" title="Attach Media"><i class="fas fa-paperclip"></i></button>
-                        <button id="world-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji" data-target="world-message-input"><i class="far fa-smile"></i></button>
-                        <button id="world-voice-type-btn" class="action-btn" title="Voice Typing"><i class="fas fa-keyboard"></i></button>
-                        
-                        <input type="text" placeholder="Type a message to global room..." id="world-message-input" autocomplete="off">
-                        
-                        <button id="world-voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i class="fas fa-microphone"></i></button>
+                        <button id="world-attach-btn" class="action-btn" title="Attach Media"><i
+                                class="fas fa-paperclip"></i></button>
+                        <button id="world-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
+                            data-target="world-message-input"><i class="far fa-smile"></i></button>
+                        <button id="world-voice-type-btn" class="action-btn" title="Voice Typing (Hinglish/English)"><i
+                                class="fas fa-keyboard"></i></button>
+
+                        <input type="text" placeholder="Type a message to global room..." id="world-message-input"
+                            autocomplete="off">
+
+                        <button id="world-voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i
+                                class="fas fa-microphone"></i></button>
                         <button id="world-send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
-                        
-                        <input type="file" id="world-media-upload-input" accept="image/*,video/*,audio/*" class="hidden">
+
+                        <input type="file" id="world-media-upload-input" accept="image/*,video/*,audio/*"
+                            class="hidden">
                     </div>
                 </div>
             </section>
@@ -427,10 +543,10 @@
             <!-- F. POST FEED SECTION -->
             <section id="post-section" class="content-view hidden">
                 <div class="standard-wrapper">
-                    
+
                     <div class="post-creator-card">
                         <textarea id="post-input" placeholder="What's on your mind?"></textarea>
-                        
+
                         <div id="post-media-attachment-status-preview" class="hidden attachment-preview">
                             <span><i class="fas fa-image"></i> Image Attached</span>
                             <button id="action-remove-attached-post-file-buffer" class="danger-btn">Remove</button>
@@ -438,11 +554,14 @@
 
                         <div class="post-tools-row">
                             <div class="post-icons">
-                                <button id="post-image-btn" class="action-btn" title="Photo"><i class="fas fa-image"></i></button>
-                                <button id="post-gif-btn" class="action-btn" title="GIF"><i class="fas fa-icons"></i></button>
-                                <button id="post-meme-btn" class="action-btn" title="Meme"><i class="fas fa-grin-squint-tears"></i></button>
+                                <button id="post-image-btn" class="action-btn" title="Photo"><i
+                                        class="fas fa-image"></i></button>
+                                <button id="post-gif-btn" class="action-btn" title="GIF"><i
+                                        class="fas fa-icons"></i></button>
+                                <button id="post-meme-btn" class="action-btn" title="Meme"><i
+                                        class="fas fa-grin-squint-tears"></i></button>
                             </div>
-                            
+
                             <div class="post-publish-controls">
                                 <select id="post-privacy-scope-configuration-level-toggle-select" class="scope-select">
                                     <option value="public" selected>🌐 Public Feed</option>
@@ -453,7 +572,7 @@
                         </div>
                         <input type="file" id="post-image-upload-input" accept="image/*" class="hidden">
                     </div>
-                    
+
                     <div id="feed-container"></div>
                 </div>
             </section>
@@ -461,27 +580,31 @@
             <!-- G. SETTINGS SECTION -->
             <section id="settings-section" class="content-view hidden">
                 <div class="standard-wrapper">
-                    <h2 class="section-title" style="margin-bottom: 20px; color: var(--primary-color);">App Settings</h2>
-                    
+                    <h2 class="section-title" style="margin-bottom: 20px; color: var(--primary-color);">App Settings
+                    </h2>
+
                     <!-- THEME SETTINGS -->
                     <div class="settings-card" style="margin-bottom: 20px;">
                         <h3><i class="fas fa-paint-brush"></i> Theme Settings</h3>
-                        
+
                         <div class="settings-row">
                             <div>
                                 <strong>Theme Library</strong>
                                 <p>Choose from 20 premium themes to style your interface.</p>
                             </div>
-                            <button id="open-theme-modal-btn" class="primary-btn"><i class="fas fa-palette"></i> Browse Themes</button>
+                            <button id="open-theme-modal-btn" class="primary-btn"><i class="fas fa-palette"></i> Browse
+                                Themes</button>
                         </div>
-                        
+
                         <!-- HIDDEN GOLDEN THEME (Only Dev/Op) -->
                         <div class="settings-row hidden" id="golden-theme-setting-row">
                             <div>
-                                <strong style="color: #ffd700;"><i class="fas fa-crown"></i> Premium Golden VIP Mode</strong>
+                                <strong style="color: #ffd700;"><i class="fas fa-crown"></i> Premium Golden VIP
+                                    Mode</strong>
                                 <p>Exclusive access for privileged ranks.</p>
                             </div>
-                            <button id="activate-golden-theme-btn" class="action-btn" style="border: 1px solid #ffd700; color: #ffd700;">Activate</button>
+                            <button id="activate-golden-theme-btn" class="action-btn"
+                                style="border: 1px solid #ffd700; color: #ffd700;">Activate</button>
                         </div>
                     </div>
 
@@ -494,7 +617,8 @@
                                 <p>Unlock Supreme Root Control Panel.</p>
                             </div>
                             <div style="display: flex; gap: 10px;">
-                                <input type="password" id="settings-dev-code-input" placeholder="Secret Key" class="modal-input" style="margin: 0; width: 160px; padding: 10px;">
+                                <input type="password" id="settings-dev-code-input" placeholder="Secret Key"
+                                    class="modal-input" style="margin: 0; width: 160px; padding: 10px;">
                                 <button id="activate-dev-mode-btn" class="primary-btn">Unlock</button>
                             </div>
                         </div>
@@ -507,14 +631,18 @@
                                 <strong>Hide Last Seen</strong>
                                 <p>Hide your online status timestamp.</p>
                             </div>
-                            <label class="toggle-switch"><input type="checkbox" id="settings-hide-last-seen-anonymize-presence-vector-toggle" checked><span class="slider"></span></label>
+                            <label class="toggle-switch"><input type="checkbox"
+                                    id="settings-hide-last-seen-anonymize-presence-vector-toggle" checked><span
+                                    class="slider"></span></label>
                         </div>
                         <div class="settings-row">
                             <div>
                                 <strong>Read Receipts</strong>
                                 <p>Show read ticks on messages.</p>
                             </div>
-                            <label class="toggle-switch"><input type="checkbox" id="settings-dispatch-read-receipts-packet-handshake-toggle" checked><span class="slider"></span></label>
+                            <label class="toggle-switch"><input type="checkbox"
+                                    id="settings-dispatch-read-receipts-packet-handshake-toggle" checked><span
+                                    class="slider"></span></label>
                         </div>
                     </div>
 
@@ -525,7 +653,8 @@
                                 <strong>Clear App Cache</strong>
                                 <p>Delete temporary files to free up space.</p>
                             </div>
-                            <button class="danger-btn" id="action-clear-cache-btn"><i class="fas fa-trash"></i> Clear Cache</button>
+                            <button class="danger-btn" id="action-clear-cache-btn"><i class="fas fa-trash"></i> Clear
+                                Cache</button>
                         </div>
                     </div>
                 </div>
@@ -538,26 +667,71 @@
                         <h1>Developer Control Panel</h1>
                         <p id="dev-status-role-text">SYSTEM STATUS: ACTIVE // ROLE: UNKNOWN</p>
                     </div>
-                    
+
                     <div class="dev-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-                        <div class="dev-box golden-box" id="dev-rank-btn"><i class="fas fa-medal"></i><h3>Modify Rank</h3></div>
-                        <div class="dev-box red-box" id="dev-ban-btn"><i class="fas fa-gavel"></i><h3>Ban User</h3></div>
-                        <div class="dev-box green-box" id="dev-unban-btn" style="border-color: #10b981; color: #10b981; background: #0a1f10;"><i class="fas fa-user-check"></i><h3>Unban User</h3></div>
-                        <div class="dev-box purple-box" id="dev-shadowban-btn"><i class="fas fa-ghost"></i><h3>Shadow Ban</h3></div>
-                        
-                        <div class="dev-box purple-box" id="dev-shadowunban-btn" style="filter: brightness(1.5);"><i class="fas fa-sun"></i><h3>Shadow Unban</h3></div>
-                        <div class="dev-box blue-box" id="dev-mute-world-btn" style="border-color: #3b82f6; color: #3b82f6; background: #0a101f;"><i class="fas fa-microphone-slash"></i><h3>Mute (World)</h3></div>
-                        <div class="dev-box blue-box" id="dev-unmute-world-btn" style="border-color: #3b82f6; color: #3b82f6; background: #0a101f; filter: brightness(1.5);"><i class="fas fa-microphone"></i><h3>Unmute (World)</h3></div>
-                        <div class="dev-box red-box" id="dev-ban-world-btn"><i class="fas fa-ban"></i><h3>Ban (World)</h3></div>
+                        <div class="dev-box golden-box" id="dev-rank-btn"><i class="fas fa-medal"></i>
+                            <h3>Modify Rank</h3>
+                        </div>
+                        <div class="dev-box red-box" id="dev-ban-btn"><i class="fas fa-gavel"></i>
+                            <h3>Ban User</h3>
+                        </div>
+                        <div class="dev-box green-box" id="dev-unban-btn"
+                            style="border-color: #10b981; color: #10b981; background: #0a1f10;"><i
+                                class="fas fa-user-check"></i>
+                            <h3>Unban User</h3>
+                        </div>
+                        <div class="dev-box purple-box" id="dev-shadowban-btn"><i class="fas fa-ghost"></i>
+                            <h3>Shadow Ban</h3>
+                        </div>
 
-                        <div class="dev-box green-box" id="dev-unban-world-btn" style="border-color: #10b981; color: #10b981; background: #0a1f10;"><i class="fas fa-globe"></i><h3>Unban (World)</h3></div>
-                        <div class="dev-box action-btn" id="dev-peak-btn" style="border: 2px solid var(--border-color);"><i class="fas fa-eye"></i><h3>Peak</h3></div>
-                        <div class="dev-box action-btn" id="dev-format-btn" style="border: 2px solid var(--border-color);"><i class="fas fa-broom"></i><h3>Format</h3></div>
-                        <div class="dev-box red-box" id="dev-stop-server-btn"><i class="fas fa-stop-circle"></i><h3>Stop Server</h3></div>
+                        <div class="dev-box purple-box" id="dev-shadowunban-btn" style="filter: brightness(1.5);"><i
+                                class="fas fa-sun"></i>
+                            <h3>Shadow Unban</h3>
+                        </div>
+                        <div class="dev-box blue-box" id="dev-mute-world-btn"
+                            style="border-color: #3b82f6; color: #3b82f6; background: #0a101f;"><i
+                                class="fas fa-microphone-slash"></i>
+                            <h3>Mute (World)</h3>
+                        </div>
+                        <div class="dev-box blue-box" id="dev-unmute-world-btn"
+                            style="border-color: #3b82f6; color: #3b82f6; background: #0a101f; filter: brightness(1.5);">
+                            <i class="fas fa-microphone"></i>
+                            <h3>Unmute (World)</h3>
+                        </div>
+                        <div class="dev-box red-box" id="dev-ban-world-btn"><i class="fas fa-ban"></i>
+                            <h3>Ban (World)</h3>
+                        </div>
 
-                        <div class="dev-box green-box" id="dev-start-server-btn" style="border-color: #10b981; color: #10b981; background: #0a1f10;"><i class="fas fa-play-circle"></i><h3>Start Server</h3></div>
-                        <div class="dev-box danger-btn" id="dev-wipe-server-btn" style="border: 2px solid red; background: #dc2626;"><i class="fas fa-bomb" style="color: white;"></i><h3 style="color: white;">Wipe Server</h3></div>
-                        <div class="dev-box golden-box" id="dev-profile-ring-btn"><i class="fas fa-circle-notch"></i><h3>Profile Ring</h3></div>
+                        <div class="dev-box green-box" id="dev-unban-world-btn"
+                            style="border-color: #10b981; color: #10b981; background: #0a1f10;"><i
+                                class="fas fa-globe"></i>
+                            <h3>Unban (World)</h3>
+                        </div>
+                        <div class="dev-box action-btn" id="dev-peak-btn"
+                            style="border: 2px solid var(--border-color);"><i class="fas fa-eye"></i>
+                            <h3>Peak</h3>
+                        </div>
+                        <div class="dev-box action-btn" id="dev-format-btn"
+                            style="border: 2px solid var(--border-color);"><i class="fas fa-broom"></i>
+                            <h3>Format</h3>
+                        </div>
+                        <div class="dev-box red-box" id="dev-stop-server-btn"><i class="fas fa-stop-circle"></i>
+                            <h3>Stop Server</h3>
+                        </div>
+
+                        <div class="dev-box green-box" id="dev-start-server-btn"
+                            style="border-color: #10b981; color: #10b981; background: #0a1f10;"><i
+                                class="fas fa-play-circle"></i>
+                            <h3>Start Server</h3>
+                        </div>
+                        <div class="dev-box danger-btn" id="dev-wipe-server-btn"
+                            style="border: 2px solid red; background: #dc2626;"><i class="fas fa-bomb"
+                                style="color: white;"></i>
+                            <h3 style="color: white;">Wipe Server</h3>
+                        </div>
+                        <div class="dev-box golden-box" id="dev-profile-ring-btn"><i class="fas fa-circle-notch"></i>
+                            <h3>Profile Ring</h3>
+                        </div>
                     </div>
 
                 </div>
@@ -573,33 +747,75 @@
     <div id="theme-selector-modal" class="modal-overlay hidden">
         <div class="modal-box" style="width: 850px; max-width: 95%;">
             <h2 style="color: var(--primary-color);"><i class="fas fa-palette"></i> Theme Library</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Choose from 20 premium styles for your interface.</p>
-            
-            <div id="theme-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; max-height: 450px; overflow-y: auto; padding: 5px;">
-                <div class="theme-selection-box" data-theme-name="default" style="background: #f4effa; border: 2px solid #8b5cf6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #1f2937; font-weight: bold;">Light Purple</div>
-                <div class="theme-selection-box" data-theme-name="dark" style="background: #111827; border: 2px solid #7c3aed; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #f3f4f6; font-weight: bold;">Dark Purple</div>
-                <div class="theme-selection-box" data-theme-name="matrix-neon" style="background: #020c02; border: 2px solid #00ff66; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #33ff33; font-weight: bold;">Matrix Neon</div>
-                <div class="theme-selection-box" data-theme-name="ocean-blue" style="background: #e0f2fe; border: 2px solid #3b82f6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #1e3a8a; font-weight: bold;">Ocean Blue</div>
-                
-                <div class="theme-selection-box" data-theme-name="deep-space" style="background: #0f172a; border: 2px solid #38bdf8; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #e0f2fe; font-weight: bold;">Deep Space</div>
-                <div class="theme-selection-box" data-theme-name="crimson-red" style="background: #450a0a; border: 2px solid #ef4444; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #fecaca; font-weight: bold;">Crimson Red</div>
-                <div class="theme-selection-box" data-theme-name="rose-gold" style="background: #fff1f2; border: 2px solid #f43f5e; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #881337; font-weight: bold;">Rose Gold</div>
-                <div class="theme-selection-box" data-theme-name="forest-green" style="background: #f0fdf4; border: 2px solid #22c55e; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #14532d; font-weight: bold;">Forest Green</div>
-                
-                <div class="theme-selection-box" data-theme-name="midnight-forest" style="background: #052e16; border: 2px solid #4ade80; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #dcfce7; font-weight: bold;">Midnight Forest</div>
-                <div class="theme-selection-box" data-theme-name="sunset-orange" style="background: #fff7ed; border: 2px solid #f97316; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #7c2d12; font-weight: bold;">Sunset Orange</div>
-                <div class="theme-selection-box" data-theme-name="cyberpunk" style="background: #2a0a2a; border: 2px solid #f0abfc; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #fdf4ff; font-weight: bold;">Cyberpunk</div>
-                <div class="theme-selection-box" data-theme-name="lavender" style="background: #faf5ff; border: 2px solid #d946ef; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #701a75; font-weight: bold;">Lavender</div>
-                
-                <div class="theme-selection-box" data-theme-name="mocha" style="background: #3e2723; border: 2px solid #d7ccc8; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #efebe9; font-weight: bold;">Mocha</div>
-                <div class="theme-selection-box" data-theme-name="slate-grey" style="background: #f8fafc; border: 2px solid #64748b; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #0f172a; font-weight: bold;">Slate Grey</div>
-                <div class="theme-selection-box" data-theme-name="neon-pink" style="background: #1a0010; border: 2px solid #ec4899; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #fbcfe8; font-weight: bold;">Neon Pink</div>
-                <div class="theme-selection-box" data-theme-name="mint-breeze" style="background: #f0fdfa; border: 2px solid #14b8a6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #134e4a; font-weight: bold;">Mint Breeze</div>
-                
-                <div class="theme-selection-box" data-theme-name="monochrome" style="background: #f9fafb; border: 2px solid #111827; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #000000; font-weight: bold;">Monochrome</div>
-                <div class="theme-selection-box" data-theme-name="dracula" style="background: #282a36; border: 2px solid #ff79c6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #f8f8f2; font-weight: bold;">Dracula</div>
-                <div class="theme-selection-box" data-theme-name="discord-dark" style="background: #36393f; border: 2px solid #5865F2; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #dcddde; font-weight: bold;">Discord Dark</div>
-                <div class="theme-selection-box" data-theme-name="hacker-terminal" style="background: #000000; border: 2px solid #00ff00; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #00ff00; font-family: monospace; font-weight: bold;">Terminal</div>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Choose from 20 premium styles for your interface.
+            </p>
+
+            <div id="theme-grid-container"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; max-height: 450px; overflow-y: auto; padding: 5px;">
+                <div class="theme-selection-box" data-theme-name="default"
+                    style="background: #f4effa; border: 2px solid #8b5cf6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #1f2937; font-weight: bold;">
+                    Light Purple</div>
+                <div class="theme-selection-box" data-theme-name="dark"
+                    style="background: #111827; border: 2px solid #7c3aed; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #f3f4f6; font-weight: bold;">
+                    Dark Purple</div>
+                <div class="theme-selection-box" data-theme-name="matrix-neon"
+                    style="background: #020c02; border: 2px solid #00ff66; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #33ff33; font-weight: bold;">
+                    Matrix Neon</div>
+                <div class="theme-selection-box" data-theme-name="ocean-blue"
+                    style="background: #e0f2fe; border: 2px solid #3b82f6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #1e3a8a; font-weight: bold;">
+                    Ocean Blue</div>
+
+                <div class="theme-selection-box" data-theme-name="deep-space"
+                    style="background: #0f172a; border: 2px solid #38bdf8; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #e0f2fe; font-weight: bold;">
+                    Deep Space</div>
+                <div class="theme-selection-box" data-theme-name="crimson-red"
+                    style="background: #450a0a; border: 2px solid #ef4444; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #fecaca; font-weight: bold;">
+                    Crimson Red</div>
+                <div class="theme-selection-box" data-theme-name="rose-gold"
+                    style="background: #fff1f2; border: 2px solid #f43f5e; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #881337; font-weight: bold;">
+                    Rose Gold</div>
+                <div class="theme-selection-box" data-theme-name="forest-green"
+                    style="background: #f0fdf4; border: 2px solid #22c55e; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #14532d; font-weight: bold;">
+                    Forest Green</div>
+
+                <div class="theme-selection-box" data-theme-name="midnight-forest"
+                    style="background: #052e16; border: 2px solid #4ade80; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #dcfce7; font-weight: bold;">
+                    Midnight Forest</div>
+                <div class="theme-selection-box" data-theme-name="sunset-orange"
+                    style="background: #fff7ed; border: 2px solid #f97316; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #7c2d12; font-weight: bold;">
+                    Sunset Orange</div>
+                <div class="theme-selection-box" data-theme-name="cyberpunk"
+                    style="background: #2a0a2a; border: 2px solid #f0abfc; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #fdf4ff; font-weight: bold;">
+                    Cyberpunk</div>
+                <div class="theme-selection-box" data-theme-name="lavender"
+                    style="background: #faf5ff; border: 2px solid #d946ef; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #701a75; font-weight: bold;">
+                    Lavender</div>
+
+                <div class="theme-selection-box" data-theme-name="mocha"
+                    style="background: #3e2723; border: 2px solid #d7ccc8; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #efebe9; font-weight: bold;">
+                    Mocha</div>
+                <div class="theme-selection-box" data-theme-name="slate-grey"
+                    style="background: #f8fafc; border: 2px solid #64748b; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #0f172a; font-weight: bold;">
+                    Slate Grey</div>
+                <div class="theme-selection-box" data-theme-name="neon-pink"
+                    style="background: #1a0010; border: 2px solid #ec4899; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #fbcfe8; font-weight: bold;">
+                    Neon Pink</div>
+                <div class="theme-selection-box" data-theme-name="mint-breeze"
+                    style="background: #f0fdfa; border: 2px solid #14b8a6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #134e4a; font-weight: bold;">
+                    Mint Breeze</div>
+
+                <div class="theme-selection-box" data-theme-name="monochrome"
+                    style="background: #f9fafb; border: 2px solid #111827; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #000000; font-weight: bold;">
+                    Monochrome</div>
+                <div class="theme-selection-box" data-theme-name="dracula"
+                    style="background: #282a36; border: 2px solid #ff79c6; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #f8f8f2; font-weight: bold;">
+                    Dracula</div>
+                <div class="theme-selection-box" data-theme-name="discord-dark"
+                    style="background: #36393f; border: 2px solid #5865F2; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #dcddde; font-weight: bold;">
+                    Discord Dark</div>
+                <div class="theme-selection-box" data-theme-name="hacker-terminal"
+                    style="background: #000000; border: 2px solid #00ff00; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #00ff00; font-family: monospace; font-weight: bold;">
+                    Terminal</div>
             </div>
 
             <button class="action-btn close-modal-btn" style="width: 100%; margin-top: 20px;">Close Library</button>
@@ -610,21 +826,33 @@
     <div id="public-profile-modal" class="modal-overlay hidden">
         <div class="modal-box" style="padding: 0; overflow: hidden; max-width: 400px;">
             <div class="profile-banner-wrapper" style="height: 140px; overflow: hidden; position: relative;">
-                <img src="" id="modal-public-user-banner" class="hidden" alt="Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                <img src="" id="modal-public-user-banner" class="hidden" alt="Banner"
+                    style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
             </div>
-            <div class="new-profile-layout" style="display: flex; flex-direction: column; align-items: center; margin-top: -55px; padding: 0 30px 30px; text-align: center;">
-                <div class="new-dp-wrapper" style="width: 110px; height: 110px; border-radius: 50%; background: var(--bg-main); padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin: 0 auto 15px auto; overflow: hidden; flex-shrink: 0;">
-                    <img src="" id="modal-public-user-dp" alt="User" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            <div class="new-profile-layout"
+                style="display: flex; flex-direction: column; align-items: center; margin-top: -55px; padding: 0 30px 30px; text-align: center;">
+                <div class="new-dp-wrapper"
+                    style="width: 110px; height: 110px; border-radius: 50%; background: var(--bg-main); padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin: 0 auto 15px auto; overflow: hidden; flex-shrink: 0;">
+                    <img src="" id="modal-public-user-dp" alt="User"
+                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                 </div>
                 <div class="username-wrapper" style="margin-bottom: 10px;">
-                    <h2 id="modal-public-user-name" class="username-display" style="font-size: 1.8rem; color: var(--text-main); font-weight: 900;">Username</h2>
+                    <h2 id="modal-public-user-name" class="username-display"
+                        style="font-size: 1.8rem; color: var(--text-main); font-weight: 900;">Username</h2>
                 </div>
-                <div class="new-pill-group" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 100%;">
-                    <div id="modal-public-user-rank" class="new-pill rank-pill rank-badge" style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; text-align: center;">Member</div>
-                    <div id="modal-public-user-uid" class="new-pill uid-pill" style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-family: monospace; text-align: center;">UID: #00000000</div>
+                <div class="new-pill-group"
+                    style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 100%;">
+                    <div id="modal-public-user-rank" class="new-pill rank-pill rank-badge"
+                        style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; text-align: center;">
+                        Member</div>
+                    <div id="modal-public-user-uid" class="new-pill uid-pill"
+                        style="background: var(--primary-color); color: white; padding: 8px 20px; border-radius: 12px; font-family: monospace; text-align: center;">
+                        UID: #00000000</div>
                 </div>
-                <div class="new-bio-box" style="background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 15px; margin-top: 10px; border: 1px solid rgba(139, 92, 246, 0.2); width: 100%;">
-                    <p id="modal-public-user-bio" style="font-size: 0.95rem; margin: 0; color: var(--text-main);">Bio details...</p>
+                <div class="new-bio-box"
+                    style="background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 15px; margin-top: 10px; border: 1px solid rgba(139, 92, 246, 0.2); width: 100%;">
+                    <p id="modal-public-user-bio" style="font-size: 0.95rem; margin: 0; color: var(--text-main);">Bio
+                        details...</p>
                 </div>
                 <button class="action-btn close-modal-btn" style="width: 100%; margin-top: 15px;">Close Profile</button>
             </div>
@@ -654,7 +882,8 @@
     <div id="bug-report-modal" class="modal-overlay hidden">
         <div class="modal-box">
             <h2 style="color:var(--system-error);"><i class="fas fa-bug"></i> Report a Bug</h2>
-            <textarea id="bug-report-text-input" class="modal-input" placeholder="Describe the issue..." style="height:100px;"></textarea>
+            <textarea id="bug-report-text-input" class="modal-input" placeholder="Describe the issue..."
+                style="height:100px;"></textarea>
             <div class="modal-actions">
                 <button class="action-btn close-modal-btn">Cancel</button>
                 <button class="danger-btn" id="submit-bug-report-btn">Submit Report</button>
@@ -666,7 +895,8 @@
     <div id="dev-action-modal" class="modal-overlay hidden">
         <div class="modal-box">
             <h2 id="dev-action-title" style="color: var(--system-error);">Developer Action</h2>
-            <p id="dev-action-desc" style="color: var(--text-muted); margin-bottom: 15px;">Enter UID or Username to execute action.</p>
+            <p id="dev-action-desc" style="color: var(--text-muted); margin-bottom: 15px;">Enter UID or Username to
+                execute action.</p>
             <input type="text" id="dev-action-target-input" class="modal-input" placeholder="UID or Username...">
             <div class="modal-actions">
                 <button class="action-btn close-modal-btn">Cancel</button>
@@ -689,7 +919,8 @@
             </select>
             <div class="modal-actions">
                 <button class="action-btn close-modal-btn">Cancel</button>
-                <button class="primary-btn" id="confirm-dev-rank-btn" style="background: #ffd700; color: black;">Update Rank</button>
+                <button class="primary-btn" id="confirm-dev-rank-btn" style="background: #ffd700; color: black;">Update
+                    Rank</button>
             </div>
         </div>
     </div>
@@ -698,8 +929,10 @@
     <div id="dev-wipe-modal" class="modal-overlay hidden">
         <div class="modal-box" style="border: 2px solid red;">
             <h2 style="color: red;"><i class="fas fa-radiation"></i> WIPE SERVER</h2>
-            <p style="color: red; font-weight: bold; margin-bottom: 15px;">WARNING: This will delete ALL local storage data, chat histories, users, and reset the server.</p>
-            <input type="password" id="dev-wipe-code-input" class="modal-input" placeholder="Enter Developer Passcode...">
+            <p style="color: red; font-weight: bold; margin-bottom: 15px;">WARNING: This will delete ALL local storage
+                data, chat histories, users, and reset the server.</p>
+            <input type="password" id="dev-wipe-code-input" class="modal-input"
+                placeholder="Enter Developer Passcode...">
             <div class="modal-actions">
                 <button class="action-btn close-modal-btn">Cancel</button>
                 <button class="danger-btn" id="confirm-dev-wipe-btn" style="background: red;">NUKE SERVER</button>
@@ -712,7 +945,8 @@
         <div class="modal-box" style="width: 800px; max-width: 95%;">
             <h2 style="color: #ffd700;"><i class="fas fa-circle-notch"></i> Premium Profile Rings</h2>
             <div style="display: flex; gap: 20px;">
-                <div style="flex: 2; height: 300px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;" id="ring-grid-container">
+                <div style="flex: 2; height: 300px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"
+                    id="ring-grid-container">
                     <!-- Rings generated by JS -->
                 </div>
                 <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
@@ -724,7 +958,8 @@
                         <option value="flash">Flash</option>
                     </select>
                     <input type="text" id="ring-target-input" class="modal-input" placeholder="Target UID/User...">
-                    <button class="primary-btn" id="confirm-dev-ring-btn" style="background: #ffd700; color: black; margin-top: auto;">Apply Ring</button>
+                    <button class="primary-btn" id="confirm-dev-ring-btn"
+                        style="background: #ffd700; color: black; margin-top: auto;">Apply Ring</button>
                 </div>
             </div>
             <button class="action-btn close-modal-btn" style="width: 100%; margin-top: 15px;">Cancel</button>
@@ -736,9 +971,11 @@
         <div class="modal-box">
             <h2>Create Group</h2>
             <div style="text-align:center; margin:10px 0;">
-                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
+                <img id="new-group-icon-preview" src="https://ui-avatars.com/api/?name=G&background=a855f7&color=fff"
+                    style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
             </div>
-            <button class="action-btn" id="trigger-group-icon-upload" style="width:100%; margin-bottom:15px;"><i class="fas fa-camera"></i> Group Icon</button>
+            <button class="action-btn" id="trigger-group-icon-upload" style="width:100%; margin-bottom:15px;"><i
+                    class="fas fa-camera"></i> Group Icon</button>
             <input type="file" id="new-group-icon-input" accept="image/*" class="hidden">
             <input type="text" id="new-group-name" class="modal-input" placeholder="Group Name">
             <div class="modal-actions">
@@ -752,12 +989,14 @@
     <div id="group-channel-poll-creation-modal-framework-overlay-window" class="modal-overlay hidden">
         <div class="modal-box">
             <h2><i class="fas fa-poll"></i> Create Group Poll</h2>
-            <input type="text" id="group-poll-input-question-string-field" class="modal-input" placeholder="Enter your question...">
+            <input type="text" id="group-poll-input-question-string-field" class="modal-input"
+                placeholder="Enter your question...">
             <input type="text" id="group-poll-input-option-string-field-1" class="modal-input" placeholder="Option 1">
             <input type="text" id="group-poll-input-option-string-field-2" class="modal-input" placeholder="Option 2">
             <div class="modal-actions">
                 <button class="danger-btn close-modal-btn">Cancel</button>
-                <button class="primary-btn" id="action-trigger-commit-publish-group-poll-to-channel-stream-btn">Publish Poll</button>
+                <button class="primary-btn" id="action-trigger-commit-publish-group-poll-to-channel-stream-btn">Publish
+                    Poll</button>
             </div>
         </div>
     </div>
@@ -766,7 +1005,8 @@
     <div id="friend-list-modal" class="modal-overlay hidden">
         <div class="modal-box" style="max-height: 80vh; display: flex; flex-direction: column;">
             <h2><i class="fas fa-users"></i> Your Friends</h2>
-            <div id="modal-friend-list-container" style="overflow-y: auto; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
+            <div id="modal-friend-list-container"
+                style="overflow-y: auto; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
             </div>
             <div class="modal-actions">
                 <button class="primary-btn close-modal-btn" style="width: 100%;">Close</button>
@@ -778,61 +1018,91 @@
     <div id="incoming-call-ring-modal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: center; border: 2px solid var(--primary-color);">
             <div class="call-pulse-animation" style="margin: 20px auto; position: relative;">
-                <img id="incoming-caller-dp" src="https://ui-avatars.com/api/?name=Caller&background=random" alt="Caller" style="width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; position: relative; z-index: 2;">
+                <img id="incoming-caller-dp" src="https://ui-avatars.com/api/?name=Caller&background=random"
+                    alt="Caller"
+                    style="width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; position: relative; z-index: 2;">
             </div>
             <h2 id="incoming-caller-name" style="font-size: 2rem; margin-bottom: 5px;">Username</h2>
-            <p id="incoming-call-type-text" style="color: var(--system-success); font-weight: bold; margin-bottom: 30px; font-size: 1.1rem;"><i class="fas fa-phone-volume fa-shake"></i> Incoming Voice Call...</p>
-            
+            <p id="incoming-call-type-text"
+                style="color: var(--system-success); font-weight: bold; margin-bottom: 30px; font-size: 1.1rem;"><i
+                    class="fas fa-phone-volume fa-shake"></i> Incoming Voice Call...</p>
+
             <div class="modal-actions" style="justify-content: center; gap: 30px; border-top: none;">
-                <button id="reject-incoming-call-btn" class="danger-btn" style="border-radius: 50%; width: 65px; height: 65px; padding: 0; font-size: 1.6rem; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);"><i class="fas fa-phone-slash"></i></button>
-                <button id="accept-incoming-call-btn" class="primary-btn" style="background: var(--system-success); border-radius: 50%; width: 65px; height: 65px; padding: 0; font-size: 1.6rem; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);"><i class="fas fa-phone"></i></button>
+                <button id="reject-incoming-call-btn" class="danger-btn"
+                    style="border-radius: 50%; width: 65px; height: 65px; padding: 0; font-size: 1.6rem; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);"><i
+                        class="fas fa-phone-slash"></i></button>
+                <button id="accept-incoming-call-btn" class="primary-btn"
+                    style="background: var(--system-success); border-radius: 50%; width: 65px; height: 65px; padding: 0; font-size: 1.6rem; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);"><i
+                        class="fas fa-phone"></i></button>
             </div>
         </div>
     </div>
 
     <!-- 🎥 NEW INSTAGRAM STYLE ACTIVE CALL INTERFACE (GRID) -->
     <div id="active-call-window" class="modal-overlay hidden" style="z-index: 10005; background: #000;">
-        <div class="call-interface-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;">
-            
+        <div class="call-interface-container"
+            style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;">
+
             <!-- Call Top Bar -->
-            <div class="call-top-bar" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; width: 100%; z-index: 20;">
-                <button id="minimize-call-btn" class="action-btn" title="Minimize Call" style="border-radius: 50%; width: 45px; height: 45px; background: rgba(0,0,0,0.5); color: white; border: none;"><i class="fas fa-compress-alt"></i></button>
+            <div class="call-top-bar"
+                style="padding: 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; width: 100%; z-index: 20;">
+                <button id="minimize-call-btn" class="action-btn" title="Minimize Call"
+                    style="border-radius: 50%; width: 45px; height: 45px; background: rgba(0,0,0,0.5); color: white; border: none;"><i
+                        class="fas fa-compress-alt"></i></button>
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-                    <div style="color: white; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; backdrop-filter: blur(4px);">
+                    <div
+                        style="color: white; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; backdrop-filter: blur(4px);">
                         <i class="fas fa-lock" style="font-size: 0.7rem; margin-right: 5px;"></i> End-to-End Encrypted
                     </div>
-                    <p id="call-duration-timer" style="color: var(--system-success); font-weight: bold; font-size: 1.1rem; text-shadow: 0 2px 4px black; margin: 0;">00:00</p>
+                    <p id="call-duration-timer"
+                        style="color: var(--system-success); font-weight: bold; font-size: 1.1rem; text-shadow: 0 2px 4px black; margin: 0;">
+                        00:00</p>
                 </div>
                 <div style="width: 45px;"></div>
             </div>
 
             <!-- Dynamic Call Grid Area (Insta Style) -->
-            <div class="call-media-area" style="flex: 1; background: #000; position: relative; width: 100%; height: 100%; display: flex;">
+            <div class="call-media-area"
+                style="flex: 1; background: #000; position: relative; width: 100%; height: 100%; display: flex;">
                 <div id="call-grid-container" class="call-grid-wrapper">
                     <!-- DOM will be injected here via Javascript based on participants -->
                 </div>
             </div>
 
             <!-- Call Bottom Controls -->
-            <div class="call-bottom-controls" style="padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position: absolute; bottom: 0; width: 100%; display: flex; justify-content: center; align-items: center; gap: 25px; z-index: 20;">
-                <button id="toggle-mic-btn" class="action-btn" title="Mute/Unmute Mic" style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i class="fas fa-microphone"></i></button>
-                <button id="end-active-call-btn" class="danger-btn" title="Leave Room" style="border-radius: 50%; width: 75px; height: 75px; padding: 0; font-size: 2rem; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);"><i class="fas fa-phone-slash"></i></button>
-                <button id="toggle-cam-btn" class="action-btn" title="Turn Camera On/Off" style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i class="fas fa-video"></i></button>
+            <div class="call-bottom-controls"
+                style="padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position: absolute; bottom: 0; width: 100%; display: flex; justify-content: center; align-items: center; gap: 25px; z-index: 20;">
+                <button id="toggle-mic-btn" class="action-btn" title="Mute/Unmute Mic"
+                    style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i
+                        class="fas fa-microphone"></i></button>
+                <button id="end-active-call-btn" class="danger-btn" title="Leave Room"
+                    style="border-radius: 50%; width: 75px; height: 75px; padding: 0; font-size: 2rem; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);"><i
+                        class="fas fa-phone-slash"></i></button>
+                <button id="toggle-cam-btn" class="action-btn" title="Turn Camera On/Off"
+                    style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i
+                        class="fas fa-video"></i></button>
             </div>
         </div>
     </div>
 
     <!-- Floating Minimized Call Widget -->
-    <div id="minimized-call-widget" class="hidden" style="position: fixed; top: 20px; right: 20px; background: var(--system-success); color: white; padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); z-index: 10006; cursor: pointer; border: 2px solid rgba(255,255,255,0.3);">
+    <div id="minimized-call-widget" class="hidden"
+        style="position: fixed; top: 20px; right: 20px; background: var(--system-success); color: white; padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); z-index: 10006; cursor: pointer; border: 2px solid rgba(255,255,255,0.3);">
         <div style="position: relative;">
-            <img id="minimized-caller-dp" src="https://ui-avatars.com/api/?name=User" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
-            <span style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;"><i class="fas fa-phone" style="font-size: 0.5rem; color: var(--system-success);"></i></span>
+            <img id="minimized-caller-dp" src="https://ui-avatars.com/api/?name=User"
+                style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+            <span
+                style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;"><i
+                    class="fas fa-phone" style="font-size: 0.5rem; color: var(--system-success);"></i></span>
         </div>
         <div style="display: flex; flex-direction: column; line-height: 1.2;">
             <span style="font-weight: 800; font-size: 0.95rem;">Tap to expand</span>
-            <span id="minimized-call-timer-display" style="font-size: 0.8rem; font-weight: bold; opacity: 0.9;">00:00</span>
+            <span id="minimized-call-timer-display"
+                style="font-size: 0.8rem; font-weight: bold; opacity: 0.9;">00:00</span>
         </div>
-        <button id="end-minimized-call-btn" style="background: var(--system-error); border: none; border-radius: 50%; width: 32px; height: 32px; color: white; display: flex; justify-content: center; align-items: center; margin-left: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"><i class="fas fa-phone-slash" style="font-size: 0.85rem;"></i></button>
+        <button id="end-minimized-call-btn"
+            style="background: var(--system-error); border: none; border-radius: 50%; width: 32px; height: 32px; color: white; display: flex; justify-content: center; align-items: center; margin-left: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"><i
+                class="fas fa-phone-slash" style="font-size: 0.85rem;"></i></button>
     </div>
 
     <!-- EMOJI PICKER TRAY -->
@@ -844,4 +1114,5 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js?v=900000"></script>
 </body>
+
 </html>

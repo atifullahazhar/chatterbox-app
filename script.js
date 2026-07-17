@@ -1,5 +1,5 @@
 // =========================================================================
-// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V37 🔥
+// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V38 🔥
 // Privileges: SUPREME CORE ROOT OPERATOR
 // Optimization: STRICTLY DISABLED. ANTI-CRASH SHIELD ACTIVE.
 // Features: 20 Theme Library, 15 Dev Tools, Hierarchy System, AI, Rings
@@ -10,54 +10,54 @@ console.log("🔥 CHATTERBOX VIP ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥
 // =========================================================================
 // 0. CORE DOM UTILITIES (SAFE WRAPPERS TO PREVENT CRASHES)
 // =========================================================================
-function safeEl(id) { 
-    return document.getElementById(id); 
+function safeEl(id) {
+    return document.getElementById(id);
 }
 
-function sAdd(id, className) { 
-    const el = safeEl(id); 
+function sAdd(id, className) {
+    const el = safeEl(id);
     if (el) {
-        el.classList.add(className); 
+        el.classList.add(className);
     }
 }
 
-function sRem(id, className) { 
-    const el = safeEl(id); 
+function sRem(id, className) {
+    const el = safeEl(id);
     if (el) {
-        el.classList.remove(className); 
+        el.classList.remove(className);
     }
 }
 
-function sText(id, textValue) { 
-    const el = safeEl(id); 
+function sText(id, textValue) {
+    const el = safeEl(id);
     if (el) {
-        el.innerText = textValue; 
+        el.innerText = textValue;
     }
 }
 
-function sHtml(id, htmlValue) { 
-    const el = safeEl(id); 
+function sHtml(id, htmlValue) {
+    const el = safeEl(id);
     if (el) {
-        el.innerHTML = htmlValue; 
+        el.innerHTML = htmlValue;
     }
 }
 
-function sVal(id, value) { 
-    const el = safeEl(id); 
+function sVal(id, value) {
+    const el = safeEl(id);
     if (el) {
-        el.value = value; 
+        el.value = value;
     }
 }
 
-function gVal(id) { 
-    const el = safeEl(id); 
-    return el ? el.value.trim() : ''; 
+function gVal(id) {
+    const el = safeEl(id);
+    return el ? el.value.trim() : '';
 }
 
-function sSrc(id, sourceUrl) { 
-    const el = safeEl(id); 
+function sSrc(id, sourceUrl) {
+    const el = safeEl(id);
     if (el) {
-        el.src = sourceUrl; 
+        el.src = sourceUrl;
     }
 }
 
@@ -74,24 +74,24 @@ let systemBugReports = [];
 let profileViews = 0;
 
 // Persistent Chat History Database
-let chatHistory = { 
-    direct: {}, 
-    group: {}, 
-    world: [], 
-    ai: [] 
+let chatHistory = {
+    direct: {},
+    group: {},
+    world: [],
+    ai: []
 };
 
 // Security & Moderation Database (Saved in localStorage)
 let bannedUsers = [];
 let shadowBannedUsers = [];
 let worldMutedUsers = [];
-let worldBannedUsers = []; 
+let worldBannedUsers = [];
 let serverStopped = false;
 
 let activeChatUser = null;
 let currentChatTab = 'general';
 let currentRequestSubTab = 'accept';
-let currentDevActionTarget = ''; 
+let currentDevActionTarget = '';
 
 let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
 let attachedPostImage = null;
@@ -105,7 +105,7 @@ let isLocalCamOn = true;
 let isLocalMicOn = true;
 let activeEmojiTargetId = null;
 
-const emojiLibrary = ["😀","😂","🤣","😊","😍","🥰","😘","😜","😎","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾","❤️","🔥","👍","👎","👏","🙌","👐","🤲","🤝","🙏","✌️","🤞","🖖","🤘","🤙","👈","👉","👆","👇","☝️","✋","🤚","🖐","🖖","👋","🤙","💪","🖕","✍️","🤳","💅","🙇","🙋","💁","🙆","🙅","🤷","🤦","🙍","🙎","🧏"];
+const emojiLibrary = ["😀", "😂", "🤣", "😊", "😍", "🥰", "😘", "😜", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "❤️", "🔥", "👍", "👎", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✌️", "🤞", "🖖", "🤘", "🤙", "👈", "👉", "👆", "👇", "☝️", "✋", "🤚", "🖐", "🖖", "👋", "🤙", "💪", "🖕", "✍️", "🤳", "💅", "🙇", "🙋", "💁", "🙆", "🙅", "🤷", "🤦", "🙍", "🙎", "🧏"];
 
 const systemVerifiedUserDirectory = [
     { username: "Atifullah Azhar", uid: "62004377", dp: "https://ui-avatars.com/api/?name=Atifullah+Azhar&background=ffd700&color=000", bio: "Developer and Creator of Chatterbox VIP.", rank: "Developer", isDev: true },
@@ -128,8 +128,8 @@ function getSafeArray(key) {
         } else {
             return [];
         }
-    } catch(e) { 
-        return []; 
+    } catch (e) {
+        return [];
     }
 }
 
@@ -144,18 +144,18 @@ document.addEventListener('DOMContentLoaded', () => {
         posts = getSafeArray('chatPosts');
         groups = getSafeArray('chatGroups');
         systemBugReports = getSafeArray('chatBugReports');
-        
+
         bannedUsers = getSafeArray('cb_bannedUsers');
         shadowBannedUsers = getSafeArray('cb_shadowBannedUsers');
         worldMutedUsers = getSafeArray('cb_worldMutedUsers');
         worldBannedUsers = getSafeArray('cb_worldBannedUsers');
-        
+
         if (localStorage.getItem('cb_serverStopped') === 'true') {
             serverStopped = true;
         } else {
             serverStopped = false;
         }
-        
+
         let loadedHistory = JSON.parse(localStorage.getItem('chatHistory'));
         if (loadedHistory) {
             chatHistory.direct = loadedHistory.direct || {};
@@ -163,13 +163,13 @@ document.addEventListener('DOMContentLoaded', () => {
             chatHistory.world = loadedHistory.world || [];
             chatHistory.ai = loadedHistory.ai || [];
         }
-        
+
         profileViews = parseInt(localStorage.getItem('chatProfileViews')) || 0;
-        profileViews++; 
+        profileViews++;
         localStorage.setItem('chatProfileViews', profileViews);
-    } catch (error) { 
-        console.error("CRITICAL: Database corrupted! Auto-cleaning to save app.", error); 
-        localStorage.clear(); 
+    } catch (error) {
+        console.error("CRITICAL: Database corrupted! Auto-cleaning to save app.", error);
+        localStorage.clear();
     }
 
     if (currentUser && currentUser.username) {
@@ -179,38 +179,38 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        sRem('login-screen', 'active'); 
+        sRem('login-screen', 'active');
         sAdd('login-screen', 'hidden');
-        sRem('main-app', 'hidden'); 
+        sRem('main-app', 'hidden');
         sAdd('main-app', 'active');
 
-        applySystemThemePalette(); 
-        enforceHierarchyPermissions(); 
-        updateProfileUI(); 
-        renderContacts(); 
+        applySystemThemePalette();
+        enforceHierarchyPermissions();
+        updateProfileUI();
+        renderContacts();
         updateBadgesAndCounts();
-        renderPosts(); 
-        renderGroups(); 
+        renderPosts();
+        renderGroups();
         renderBandRequests();
-        
-        setTimeout(() => { 
-            loadChatHistoryToView('world'); 
+
+        setTimeout(() => {
+            loadChatHistoryToView('world');
             loadChatHistoryToView('ai');
         }, 500);
 
         socket.emit('user_connected', currentUser.username);
-        
+
         initEmojiPickerEngine();
         attachRealVoiceNoteRecordingListeners();
         setupLiveSearchFilter();
-        
+
         // Setup the 20 Theme Selectors
         setupThemeLibraryEngine();
-        
+
     } else {
-        sRem('login-screen', 'hidden'); 
+        sRem('login-screen', 'hidden');
         sAdd('login-screen', 'active');
-        sRem('main-app', 'active'); 
+        sRem('main-app', 'active');
         sAdd('main-app', 'hidden');
     }
 });
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 3. CORE FUNCTIONS AND SECURITY HIERARCHY
 // =========================================================================
 
-window.saveData = function() {
+window.saveData = function () {
     try {
         localStorage.setItem('chatUser', JSON.stringify(currentUser));
         localStorage.setItem('chatFriends', JSON.stringify(friends));
@@ -229,7 +229,7 @@ window.saveData = function() {
         localStorage.setItem('bandRequests', JSON.stringify(bandRequests));
         localStorage.setItem('chatBugReports', JSON.stringify(systemBugReports));
         localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-        
+
         localStorage.setItem('cb_bannedUsers', JSON.stringify(bannedUsers));
         localStorage.setItem('cb_shadowBannedUsers', JSON.stringify(shadowBannedUsers));
         localStorage.setItem('cb_worldMutedUsers', JSON.stringify(worldMutedUsers));
@@ -237,8 +237,8 @@ window.saveData = function() {
         localStorage.setItem('cb_serverStopped', serverStopped.toString());
 
         updateBadgesAndCounts();
-    } catch(err) { 
-        console.error("Storage Error:", err); 
+    } catch (err) {
+        console.error("Storage Error:", err);
     }
 }
 
@@ -246,15 +246,15 @@ function applySystemThemePalette() {
     if (!currentUser) {
         return;
     }
-    
+
     const btn = safeEl('activate-golden-theme-btn');
-    
+
     if (currentUser.theme) {
         document.documentElement.setAttribute('data-theme', currentUser.theme);
-        
+
         if (currentUser.theme === 'grand-golden') {
             document.body.classList.add('dev-theme-active');
-            if(btn) {
+            if (btn) {
                 btn.innerText = 'Deactivate';
                 btn.style.background = '#ef4444';
                 btn.style.color = 'white';
@@ -262,7 +262,7 @@ function applySystemThemePalette() {
             }
         } else {
             document.body.classList.remove('dev-theme-active');
-            if(btn) {
+            if (btn) {
                 btn.innerText = 'Activate';
                 btn.style.background = 'transparent';
                 btn.style.color = '#ffd700';
@@ -276,7 +276,7 @@ function applySystemThemePalette() {
 
 function setupThemeLibraryEngine() {
     document.querySelectorAll('.theme-selection-box').forEach(box => {
-        box.addEventListener('click', function() {
+        box.addEventListener('click', function () {
             const selectedTheme = this.getAttribute('data-theme-name');
             currentUser.theme = selectedTheme;
             document.documentElement.setAttribute('data-theme', selectedTheme);
@@ -293,7 +293,7 @@ function enforceHierarchyPermissions() {
     if (!currentUser) {
         return;
     }
-    
+
     let rank = currentUser.rank || 'Member';
     const devNavItem = safeEl('dev-nav-item');
     const goldenOptionRow = safeEl('golden-theme-setting-row');
@@ -304,64 +304,64 @@ function enforceHierarchyPermissions() {
     });
 
     if (rank === 'Developer') {
-        if(devNavItem) {
+        if (devNavItem) {
             devNavItem.classList.remove('hidden');
         }
-        if(goldenOptionRow) {
+        if (goldenOptionRow) {
             goldenOptionRow.classList.remove('hidden');
         }
-        if(roleText) {
+        if (roleText) {
             roleText.innerText = "SYSTEM STATUS: ACTIVE // ROLE: SUPREME DEVELOPER";
         }
         document.querySelectorAll('.dev-box').forEach(box => {
             box.style.display = 'block';
         });
-    } 
+    }
     else if (rank === 'Operator') {
-        if(devNavItem) {
+        if (devNavItem) {
             devNavItem.classList.remove('hidden');
         }
-        if(goldenOptionRow) {
+        if (goldenOptionRow) {
             goldenOptionRow.classList.remove('hidden');
         }
-        if(roleText) {
+        if (roleText) {
             roleText.innerText = "SYSTEM STATUS: ACTIVE // ROLE: OPERATOR";
         }
         ['dev-ban-btn', 'dev-unban-btn', 'dev-mute-world-btn', 'dev-unmute-world-btn', 'dev-ban-world-btn', 'dev-unban-world-btn'].forEach(id => {
-            if(safeEl(id)) {
+            if (safeEl(id)) {
                 safeEl(id).style.display = 'block';
             }
         });
     }
     else if (rank === 'Moderator') {
-        if(devNavItem) {
+        if (devNavItem) {
             devNavItem.classList.remove('hidden');
         }
-        if(goldenOptionRow) {
-            goldenOptionRow.classList.add('hidden'); 
+        if (goldenOptionRow) {
+            goldenOptionRow.classList.add('hidden');
         }
-        if(roleText) {
+        if (roleText) {
             roleText.innerText = "SYSTEM STATUS: ACTIVE // ROLE: MODERATOR";
         }
         ['dev-mute-world-btn', 'dev-unmute-world-btn', 'dev-ban-world-btn', 'dev-unban-world-btn'].forEach(id => {
-            if(safeEl(id)) {
+            if (safeEl(id)) {
                 safeEl(id).style.display = 'block';
             }
         });
     }
     else if (rank === 'Manager') {
-        if(devNavItem) {
-            devNavItem.classList.add('hidden'); 
+        if (devNavItem) {
+            devNavItem.classList.add('hidden');
         }
-        if(goldenOptionRow) {
+        if (goldenOptionRow) {
             goldenOptionRow.classList.add('hidden');
         }
     }
     else {
-        if(devNavItem) {
+        if (devNavItem) {
             devNavItem.classList.add('hidden');
         }
-        if(goldenOptionRow) {
+        if (goldenOptionRow) {
             goldenOptionRow.classList.add('hidden');
         }
     }
@@ -376,9 +376,9 @@ function renderPosts() {
         return;
     }
     postsOutputContainerElement.innerHTML = '';
-    
+
     if (posts.length === 0) {
-        postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`; 
+        postsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:40px; border:2px dashed var(--border-color); border-radius:20px; background:var(--bg-panel); margin-top:20px;">No feed content posts generated yet. Be the first to share an update!</p>`;
         return;
     }
 
@@ -415,11 +415,11 @@ function renderGroups() {
     if (!groupsOutputContainerElement) {
         return;
     }
-    
+
     groupsOutputContainerElement.innerHTML = '';
-    
+
     if (groups.length === 0) {
-        groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`; 
+        groupsOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">Zero active groups or network channels created yet.</p>`;
         return;
     }
 
@@ -439,21 +439,21 @@ function renderGroups() {
 function renderBandRequests() {
     const bandOutputContainerElement = safeEl('band-incoming-requests');
     const emptyStatePlaceholderElement = safeEl('band-incoming-requests-empty-placeholder-string-element');
-    
+
     if (!bandOutputContainerElement) {
         return;
     }
-    
+
     bandOutputContainerElement.innerHTML = '';
 
     if (bandRequests.length === 0) {
         if (emptyStatePlaceholderElement) {
             emptyStatePlaceholderElement.classList.remove('hidden');
         }
-        bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`; 
+        bandOutputContainerElement.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-weight:bold;">There are currently zero pending Friendship Bond synchronization requests.</p>`;
         return;
     }
-    
+
     if (emptyStatePlaceholderElement) {
         emptyStatePlaceholderElement.classList.add('hidden');
     }
@@ -468,24 +468,24 @@ function renderBandRequests() {
 }
 
 function renderMessageToDOM(msgObj, containerElement) {
-    if(!containerElement) {
+    if (!containerElement) {
         return;
     }
-    
+
     const div = document.createElement('div');
-    
+
     if (msgObj.isMe) {
         div.className = "message-bubble my-msg";
         div.innerHTML = `<button class="unsend-btn" data-id="${msgObj.id}" title="Unsend Message"><i class="fas fa-times"></i></button><strong>Me:</strong> ${msgObj.text}`;
     } else {
         div.className = "message-bubble other-msg";
-        if(msgObj.sender === 'SYSTEM') { 
-            div.innerHTML = `${msgObj.text}`; 
-        } else { 
-            div.innerHTML = `<strong>${msgObj.sender}:</strong> ${msgObj.text}`; 
+        if (msgObj.sender === 'SYSTEM') {
+            div.innerHTML = `${msgObj.text}`;
+        } else {
+            div.innerHTML = `<strong>${msgObj.sender}:</strong> ${msgObj.text}`;
         }
     }
-    
+
     containerElement.appendChild(div);
     containerElement.scrollTop = containerElement.scrollHeight;
 }
@@ -493,7 +493,7 @@ function renderMessageToDOM(msgObj, containerElement) {
 function loadChatHistoryToView(type, targetName = null) {
     let area;
     let messages = [];
-    
+
     try {
         if (type === 'world') {
             area = safeEl('world-messages-area');
@@ -520,46 +520,46 @@ function loadChatHistoryToView(type, targetName = null) {
             }
             messages = chatHistory.group[targetName] || [];
         }
-        
-        if (area && messages.length > 0) { 
+
+        if (area && messages.length > 0) {
             messages.forEach(msg => {
                 renderMessageToDOM(msg, area);
-            }); 
+            });
         }
-    } catch(err) { 
-        console.error("Error loading chat history:", err); 
+    } catch (err) {
+        console.error("Error loading chat history:", err);
     }
 }
 
 function sendMessageWithSave(type, htmlTextString, targetName = null) {
     try {
         // SECURITY SHIELDS
-        if (serverStopped) { 
-            alert("SYSTEM ALERT: The server has been stopped by the Administrator. Messaging is temporarily disabled."); 
-            return; 
+        if (serverStopped) {
+            alert("SYSTEM ALERT: The server has been stopped by the Administrator. Messaging is temporarily disabled.");
+            return;
         }
-        
+
         if (shadowBannedUsers.includes(currentUser.username) || shadowBannedUsers.includes(currentUser.uid)) {
             const msgObj = { id: Date.now(), text: htmlTextString, sender: currentUser.username, isMe: true };
-            if (type === 'direct') { 
-                renderMessageToDOM(msgObj, safeEl('messages-area')); 
-            } 
-            else if (type === 'group') { 
-                renderMessageToDOM(msgObj, safeEl('group-messages-area')); 
-            } 
-            else if (type === 'world') { 
-                renderMessageToDOM(msgObj, safeEl('world-messages-area')); 
+            if (type === 'direct') {
+                renderMessageToDOM(msgObj, safeEl('messages-area'));
             }
-            return; 
+            else if (type === 'group') {
+                renderMessageToDOM(msgObj, safeEl('group-messages-area'));
+            }
+            else if (type === 'world') {
+                renderMessageToDOM(msgObj, safeEl('world-messages-area'));
+            }
+            return;
         }
-        
+
         if (type === 'world') {
             if (worldMutedUsers.includes(currentUser.username) || worldMutedUsers.includes(currentUser.uid)) {
-                alert("SYSTEM MODERATION: You have been muted in World Chat. You cannot send messages."); 
+                alert("SYSTEM MODERATION: You have been muted in World Chat. You cannot send messages.");
                 return;
             }
             if (worldBannedUsers.includes(currentUser.username) || worldBannedUsers.includes(currentUser.uid)) {
-                alert("SYSTEM MODERATION: You are kicked from World Chat."); 
+                alert("SYSTEM MODERATION: You are kicked from World Chat.");
                 return;
             }
         }
@@ -591,19 +591,19 @@ function sendMessageWithSave(type, htmlTextString, targetName = null) {
             chatHistory.world.push(msgObj);
             renderMessageToDOM(msgObj, safeEl('world-messages-area'));
         }
-        
-        window.saveData(); 
-        if(type !== 'ai') {
+
+        window.saveData();
+        if (type !== 'ai') {
             socket.emit('send_message', emitData);
         }
-    } catch(err) { 
-        console.error("Error sending message:", err); 
+    } catch (err) {
+        console.error("Error sending message:", err);
     }
 }
 
 function simulateChatterboxAIResponse(userMessage) {
     const area = safeEl('ai-messages-area');
-    if(!area) {
+    if (!area) {
         return;
     }
 
@@ -641,30 +641,30 @@ socket.on('receive_message', (data) => {
         if (!currentUser) {
             return;
         }
-        
+
         const msgObj = { id: Date.now(), text: data.text, sender: data.sender, isMe: false };
 
         if (data.type === 'world') {
-            if(data.text.includes("SYSTEM_WIPE")) { 
-                chatHistory.world = []; 
-                window.saveData(); 
-                loadChatHistoryToView('world'); 
-                return; 
+            if (data.text.includes("SYSTEM_WIPE")) {
+                chatHistory.world = [];
+                window.saveData();
+                loadChatHistoryToView('world');
+                return;
             }
-            if(data.text.includes("SERVER_STOP")) { 
-                serverStopped = true; 
-                window.saveData(); 
-                return; 
+            if (data.text.includes("SERVER_STOP")) {
+                serverStopped = true;
+                window.saveData();
+                return;
             }
-            if(data.text.includes("SERVER_START")) { 
-                serverStopped = false; 
-                window.saveData(); 
-                return; 
+            if (data.text.includes("SERVER_START")) {
+                serverStopped = false;
+                window.saveData();
+                return;
             }
-            
-            chatHistory.world.push(msgObj); 
+
+            chatHistory.world.push(msgObj);
             window.saveData();
-            
+
             const area = safeEl('world-messages-area');
             if (area && data.sender !== currentUser.username) {
                 renderMessageToDOM(msgObj, area);
@@ -674,17 +674,17 @@ socket.on('receive_message', (data) => {
             if (!chatHistory.direct[data.sender]) {
                 chatHistory.direct[data.sender] = [];
             }
-            
-            chatHistory.direct[data.sender].push(msgObj); 
+
+            chatHistory.direct[data.sender].push(msgObj);
             window.saveData();
-            
+
             if (activeChatUser && activeChatUser.username === data.sender) {
                 const area = safeEl('messages-area');
                 if (area) {
                     renderMessageToDOM(msgObj, area);
                 }
-            } else { 
-                alert(`📩 New Message from ${data.sender}`); 
+            } else {
+                alert(`📩 New Message from ${data.sender}`);
             }
         }
         else if (data.type === 'group') {
@@ -693,17 +693,17 @@ socket.on('receive_message', (data) => {
                 if (!chatHistory.group[data.groupName]) {
                     chatHistory.group[data.groupName] = [];
                 }
-                chatHistory.group[data.groupName].push(msgObj); 
+                chatHistory.group[data.groupName].push(msgObj);
                 window.saveData();
-                
+
                 const area = safeEl('group-messages-area');
                 if (area && safeEl('current-group-name').innerText === data.groupName && data.sender !== currentUser.username) {
                     renderMessageToDOM(msgObj, area);
                 }
             }
         }
-    } catch(err) { 
-        console.error("Socket Receive Error:", err); 
+    } catch (err) {
+        console.error("Socket Receive Error:", err);
     }
 });
 
@@ -719,52 +719,52 @@ function formatTime(totalSeconds) {
 function updateCallTimers() {
     currentCallSeconds++;
     const timeStr = formatTime(currentCallSeconds);
-    sText('call-duration-timer', timeStr); 
+    sText('call-duration-timer', timeStr);
     sText('minimized-call-timer-display', timeStr);
 }
 
-window.initiateOutgoingCall = function(isVideo) {
-    sAdd('incoming-call-ring-modal', 'hidden'); 
+window.initiateOutgoingCall = function (isVideo) {
+    sAdd('incoming-call-ring-modal', 'hidden');
     sRem('active-call-window', 'hidden');
-    sText('call-duration-timer', 'Calling...'); 
+    sText('call-duration-timer', 'Calling...');
     initLocalCameraStream(isVideo, true, 'direct');
 }
 
 async function initLocalCameraStream(isVideoCall, isOutgoing = false, chatType = 'direct') {
     const gridContainer = safeEl('call-grid-container');
-    gridContainer.className = 'call-grid-wrapper'; 
-    gridContainer.innerHTML = ''; 
+    gridContainer.className = 'call-grid-wrapper';
+    gridContainer.innerHTML = '';
 
     try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new Error("MediaDevices blocked.");
         }
-        
+
         localMediaStreamTracker = await navigator.mediaDevices.getUserMedia({ video: isVideoCall, audio: true });
-        isLocalCamOn = isVideoCall; 
+        isLocalCamOn = isVideoCall;
         isLocalMicOn = true;
     } catch (error) {
-        console.warn("Camera/Mic Error:", error); 
-        isLocalCamOn = false; 
+        console.warn("Camera/Mic Error:", error);
+        isLocalCamOn = false;
         isLocalMicOn = false;
     }
 
-    let rName = 'Unknown Peer'; 
+    let rName = 'Unknown Peer';
     let rDp = DEFAULT_DP;
-    
-    if (chatType === 'direct') { 
-        rName = activeChatUser ? activeChatUser.username : 'Unknown Peer'; 
-        rDp = activeChatUser ? activeChatUser.dp : DEFAULT_DP; 
-    } 
-    else if (chatType === 'group') { 
-        rName = safeEl('current-group-name') ? safeEl('current-group-name').innerText : 'Group Room'; 
-        rDp = 'https://ui-avatars.com/api/?name=G&background=a855f7&color=fff'; 
-    } 
-    else if (chatType === 'world') { 
-        rName = '🌍 Global Stage'; 
-        rDp = 'https://ui-avatars.com/api/?name=W&background=8b5cf6&color=fff'; 
+
+    if (chatType === 'direct') {
+        rName = activeChatUser ? activeChatUser.username : 'Unknown Peer';
+        rDp = activeChatUser ? activeChatUser.dp : DEFAULT_DP;
     }
-    
+    else if (chatType === 'group') {
+        rName = safeEl('current-group-name') ? safeEl('current-group-name').innerText : 'Group Room';
+        rDp = 'https://ui-avatars.com/api/?name=G&background=a855f7&color=fff';
+    }
+    else if (chatType === 'world') {
+        rName = '🌍 Global Stage';
+        rDp = 'https://ui-avatars.com/api/?name=W&background=8b5cf6&color=fff';
+    }
+
     sSrc('minimized-caller-dp', rDp);
 
     // DYNAMIC INSTAGRAM GRID INJECTION
@@ -778,8 +778,8 @@ async function initLocalCameraStream(isVideoCall, isOutgoing = false, chatType =
                 </div>
             </div>
             <div class="call-video-cell">
-                <video id="local-video" autoplay muted playsinline style="transform: scaleX(-1); display:${isLocalCamOn?'block':'none'};"></video>
-                <div class="avatar-fallback" id="local-audio-fallback" style="display:${isLocalCamOn?'none':'flex'}; background:#111;">
+                <video id="local-video" autoplay muted playsinline style="transform: scaleX(-1); display:${isLocalCamOn ? 'block' : 'none'};"></video>
+                <div class="avatar-fallback" id="local-audio-fallback" style="display:${isLocalCamOn ? 'none' : 'flex'}; background:#111;">
                     <img src="${currentUser.dp}" style="width:140px; height:140px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:4px solid #10b981;">
                     <h2 style="color:white; font-size:1.8rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">You</h2>
                 </div>
@@ -791,7 +791,7 @@ async function initLocalCameraStream(isVideoCall, isOutgoing = false, chatType =
         let p1 = "https://ui-avatars.com/api/?name=User1&background=random";
         let p2 = "https://ui-avatars.com/api/?name=User2&background=random";
         let p3 = "https://ui-avatars.com/api/?name=User3&background=random";
-        
+
         gridContainer.innerHTML = `
             <div class="call-video-cell">
                 <div class="avatar-fallback">
@@ -812,8 +812,8 @@ async function initLocalCameraStream(isVideoCall, isOutgoing = false, chatType =
                 </div>
             </div>
             <div class="call-video-cell">
-                <video id="local-video" autoplay muted playsinline style="transform: scaleX(-1); display:${isLocalCamOn?'block':'none'};"></video>
-                <div class="avatar-fallback" id="local-audio-fallback" style="display:${isLocalCamOn?'none':'flex'}; background:#111;">
+                <video id="local-video" autoplay muted playsinline style="transform: scaleX(-1); display:${isLocalCamOn ? 'block' : 'none'};"></video>
+                <div class="avatar-fallback" id="local-audio-fallback" style="display:${isLocalCamOn ? 'none' : 'flex'}; background:#111;">
                     <img src="${currentUser.dp}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #10b981;">
                     <span class="call-user-label">You</span>
                 </div>
@@ -822,19 +822,19 @@ async function initLocalCameraStream(isVideoCall, isOutgoing = false, chatType =
     }
 
     const localVideoNode = safeEl('local-video');
-    if (localVideoNode && isLocalCamOn && localMediaStreamTracker) { 
-        localVideoNode.srcObject = localMediaStreamTracker; 
+    if (localVideoNode && isLocalCamOn && localMediaStreamTracker) {
+        localVideoNode.srcObject = localMediaStreamTracker;
     }
 
-    if(isOutgoing && chatType === 'direct') {
-        outgoingCallTimeout = setTimeout(() => { 
-            currentCallSeconds = 0; 
-            updateCallTimers(); 
-            activeCallTimerInterval = setInterval(updateCallTimers, 1000); 
+    if (isOutgoing && chatType === 'direct') {
+        outgoingCallTimeout = setTimeout(() => {
+            currentCallSeconds = 0;
+            updateCallTimers();
+            activeCallTimerInterval = setInterval(updateCallTimers, 1000);
         }, 3000);
     } else {
-        currentCallSeconds = 0; 
-        updateCallTimers(); 
+        currentCallSeconds = 0;
+        updateCallTimers();
         activeCallTimerInterval = setInterval(updateCallTimers, 1000);
     }
 }
@@ -846,17 +846,17 @@ function terminateActiveCall() {
     if (outgoingCallTimeout) {
         clearTimeout(outgoingCallTimeout);
     }
-    if (localMediaStreamTracker) { 
-        localMediaStreamTracker.getTracks().forEach(track => track.stop()); 
-        localMediaStreamTracker = null; 
+    if (localMediaStreamTracker) {
+        localMediaStreamTracker.getTracks().forEach(track => track.stop());
+        localMediaStreamTracker = null;
     }
     if (safeEl('local-video')) {
         safeEl('local-video').srcObject = null;
     }
-    
-    sAdd('active-call-window', 'hidden'); 
-    sAdd('minimized-call-widget', 'hidden'); 
-    sAdd('incoming-call-ring-modal', 'hidden'); 
+
+    sAdd('active-call-window', 'hidden');
+    sAdd('minimized-call-widget', 'hidden');
+    sAdd('incoming-call-ring-modal', 'hidden');
     sText('call-duration-timer', '00:00');
 }
 
@@ -865,22 +865,22 @@ function terminateActiveCall() {
 // =========================================================================
 function initEmojiPickerEngine() {
     const grid = safeEl('emoji-grid-container');
-    if(!grid) {
+    if (!grid) {
         return;
     }
-    
+
     grid.innerHTML = "";
-    
+
     emojiLibrary.forEach(emoji => {
-        const span = document.createElement('span'); 
-        span.className = 'emoji-item'; 
+        const span = document.createElement('span');
+        span.className = 'emoji-item';
         span.innerText = emoji;
         span.onclick = () => {
-            if(activeEmojiTargetId) {
+            if (activeEmojiTargetId) {
                 const inputEl = safeEl(activeEmojiTargetId);
-                if(inputEl) { 
-                    inputEl.value += emoji; 
-                    inputEl.focus(); 
+                if (inputEl) {
+                    inputEl.value += emoji;
+                    inputEl.focus();
                 }
             }
         };
@@ -890,21 +890,21 @@ function initEmojiPickerEngine() {
 
 function attachRealVoiceNoteRecordingListeners() {
     const voiceBtns = [
-        { id: 'voice-note-btn', emitType: 'direct' }, 
-        { id: 'group-voice-note-btn', emitType: 'group' }, 
+        { id: 'voice-note-btn', emitType: 'direct' },
+        { id: 'group-voice-note-btn', emitType: 'group' },
         { id: 'world-voice-note-btn', emitType: 'world' }
     ];
 
     voiceBtns.forEach(btnData => {
         const btnNode = safeEl(btnData.id);
-        if(!btnNode) {
+        if (!btnNode) {
             return;
         }
-        
+
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
-        
+
         const startRecord = async (e) => {
             e.preventDefault();
             try {
@@ -913,34 +913,34 @@ function attachRealVoiceNoteRecordingListeners() {
                 }
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start(); 
+                mediaRecorder.start();
                 isRecording = true;
                 btnNode.classList.add('recording-active');
-                
-                mediaRecorder.addEventListener("dataavailable", e => { 
-                    audioChunks.push(e.data); 
+
+                mediaRecorder.addEventListener("dataavailable", e => {
+                    audioChunks.push(e.data);
                 });
-            } catch(err) { 
-                console.error("Mic error:", err); 
+            } catch (err) {
+                console.error("Mic error:", err);
             }
         };
 
         const stopRecord = (e) => {
             e.preventDefault();
-            if(!isRecording || !mediaRecorder || mediaRecorder.state === "inactive") {
+            if (!isRecording || !mediaRecorder || mediaRecorder.state === "inactive") {
                 return;
             }
-            
-            isRecording = false; 
+
+            isRecording = false;
             btnNode.classList.remove('recording-active');
-            
+
             mediaRecorder.addEventListener("stop", () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 audioChunks = [];
-                const reader = new FileReader(); 
-                
+                const reader = new FileReader();
+
                 reader.readAsDataURL(audioBlob);
-                
+
                 reader.onloadend = () => {
                     const base64Audio = reader.result;
                     const audioHtml = `<audio src="${base64Audio}" controls style="height:35px; max-width:220px; outline:none; border-radius:20px; background:rgba(0,0,0,0.1); padding:2px;"></audio>`;
@@ -948,37 +948,37 @@ function attachRealVoiceNoteRecordingListeners() {
                     sendMessageWithSave(btnData.emitType, audioHtml, targetName);
                 };
             });
-            
+
             mediaRecorder.stop();
-            mediaRecorder.stream.getTracks().forEach(t => track.stop()); 
+            mediaRecorder.stream.getTracks().forEach(t => t.stop());
         };
 
-        btnNode.addEventListener('mousedown', startRecord); 
+        btnNode.addEventListener('mousedown', startRecord);
         btnNode.addEventListener('mouseup', stopRecord);
-        btnNode.addEventListener('mouseleave', stopRecord); 
-        btnNode.addEventListener('touchstart', startRecord, {passive: false});
+        btnNode.addEventListener('mouseleave', stopRecord);
+        btnNode.addEventListener('touchstart', startRecord, { passive: false });
         btnNode.addEventListener('touchend', stopRecord);
     });
 }
 
 function findUserGlobally(targetUsername) {
     let rootUser = systemVerifiedUserDirectory.find(x => x.username === targetUsername || x.uid === targetUsername);
-    if(rootUser) {
+    if (rootUser) {
         return rootUser;
     }
-    
+
     let localReg = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
     let lu = localReg.find(x => x.username === targetUsername || x.uid === targetUsername);
-    
-    if(lu) { 
-        return { 
-            username: lu.username, 
-            uid: lu.uid || "00000000", 
-            dp: `https://ui-avatars.com/api/?name=${lu.username}&background=random&color=fff`, 
-            rank: 'Member', 
-            bio: "Hey there! I am using Chatterbox VIP.", 
-            isDev: false 
-        }; 
+
+    if (lu) {
+        return {
+            username: lu.username,
+            uid: lu.uid || "00000000",
+            dp: `https://ui-avatars.com/api/?name=${lu.username}&background=random&color=fff`,
+            rank: 'Member',
+            bio: "Hey there! I am using Chatterbox VIP.",
+            isDev: false
+        };
     }
     return null;
 }
@@ -988,39 +988,39 @@ function renderGlobalUsersList(searchTerm = '') {
     if (!container) {
         return;
     }
-    
+
     container.innerHTML = '';
     let localRegistry = JSON.parse(localStorage.getItem('chatterbox_users_registry')) || [];
     let allUsers = [...systemVerifiedUserDirectory];
-    
+
     localRegistry.forEach(u => {
-        if(!allUsers.find(su => su.username === u.username)) {
-            allUsers.push({ 
-                username: u.username, 
-                uid: u.uid || '00000000', 
-                rank: 'Member', 
-                dp: `https://ui-avatars.com/api/?name=${u.username}&background=random&color=fff` 
+        if (!allUsers.find(su => su.username === u.username)) {
+            allUsers.push({
+                username: u.username,
+                uid: u.uid || '00000000',
+                rank: 'Member',
+                dp: `https://ui-avatars.com/api/?name=${u.username}&background=random&color=fff`
             });
         }
     });
 
-    if(currentUser) {
+    if (currentUser) {
         allUsers = allUsers.filter(u => u.username !== currentUser.username);
     }
-    
+
     if (searchTerm) {
         const term = searchTerm.toLowerCase();
         allUsers = allUsers.filter(u => u.username.toLowerCase().includes(term) || (u.uid && u.uid.includes(term)));
     }
 
-    if(allUsers.length === 0) { 
-        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 20px;">No users found.</p>`; 
-        return; 
+    if (allUsers.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 20px;">No users found.</p>`;
+        return;
     }
 
     allUsers.forEach(u => {
         let actionBtnHtml = u.username === "Chatterbox AI" ? "" : `<button class="primary-btn action-dispatch-global-req-btn" data-username="${u.username}" style="padding: 8px 14px; font-size:0.9rem; border-radius:10px;"><i class="fas fa-user-plus"></i></button>`;
-        
+
         container.innerHTML += `
             <div class="global-user-item" data-username="${u.username}" style="cursor: pointer;">
                 <img src="${u.dp}" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color);">
@@ -1035,9 +1035,9 @@ function renderGlobalUsersList(searchTerm = '') {
 
 function setupLiveSearchFilter() {
     const searchInput = safeEl('chat-sidebar-search-input');
-    if(searchInput) {
+    if (searchInput) {
         searchInput.addEventListener('input', (e) => {
-            if(currentChatTab === 'requests' && currentRequestSubTab === 'send') {
+            if (currentChatTab === 'requests' && currentRequestSubTab === 'send') {
                 renderGlobalUsersList(e.target.value);
             }
         });
@@ -1052,62 +1052,76 @@ function updateProfileUI() {
     if (!currentUser) {
         return;
     }
-    
-    sText('display-username', currentUser.username); 
+
+    sText('display-username', currentUser.username);
     sText('user-bio', currentUser.bio || "No biography details available.");
-    sSrc('user-dp', currentUser.dp || DEFAULT_DP); 
-    
+    sSrc('user-dp', currentUser.dp || DEFAULT_DP);
+
     sText('display-uid', `UID: #${currentUser.uid || '00000000'}`);
 
-    if (currentUser.banner) { 
-        sSrc('banner-img', currentUser.banner); 
-        sRem('banner-img', 'hidden'); 
-    } else { 
-        sAdd('banner-img', 'hidden'); 
+    if (currentUser.banner) {
+        sSrc('banner-img', currentUser.banner);
+        sRem('banner-img', 'hidden');
+    } else {
+        sAdd('banner-img', 'hidden');
     }
-    
+
     sText('display-rank', currentUser.rank || 'Member');
 
     const usernameTextDisplayElement = safeEl('display-username');
     const rankBadgeDisplayElement = safeEl('display-rank');
+
+    // Reset classes first
+    if (usernameTextDisplayElement) {
+        usernameTextDisplayElement.className = 'username-display';
+    }
+    if (rankBadgeDisplayElement) {
+        rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge';
+    }
 
     if (currentUser.isDev || currentUser.rank === 'Developer') {
         if (usernameTextDisplayElement) {
             usernameTextDisplayElement.classList.add('shiny-dev-text');
         }
         if (rankBadgeDisplayElement) {
-            rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge rank-developer';
+            rankBadgeDisplayElement.classList.add('rank-developer');
         }
-        sRem('dev-nav-item', 'hidden'); 
-    } 
+        sRem('dev-nav-item', 'hidden');
+    }
     else if (currentUser.rank === 'Operator') {
         if (usernameTextDisplayElement) {
-            usernameTextDisplayElement.style.textShadow = '0 0 10px silver';
+            usernameTextDisplayElement.classList.add('shiny-silver-text');
         }
         if (rankBadgeDisplayElement) {
-            rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge';
+            rankBadgeDisplayElement.classList.add('rank-member'); // Default badge style
         }
         sRem('dev-nav-item', 'hidden');
     }
     else if (currentUser.rank === 'Moderator') {
         if (usernameTextDisplayElement) {
-            usernameTextDisplayElement.style.textShadow = '0 0 10px red';
+            usernameTextDisplayElement.classList.add('shiny-red-text');
         }
         if (rankBadgeDisplayElement) {
-            rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge';
+            rankBadgeDisplayElement.classList.add('rank-member');
         }
         sRem('dev-nav-item', 'hidden');
     }
-    else {
-        if (usernameTextDisplayElement) { 
-            usernameTextDisplayElement.classList.remove('shiny-dev-text'); 
-            usernameTextDisplayElement.style.textShadow = 'none'; 
+    else if (currentUser.rank === 'Manager') {
+        if (usernameTextDisplayElement) {
+            usernameTextDisplayElement.classList.add('shiny-white-text');
         }
         if (rankBadgeDisplayElement) {
-            rankBadgeDisplayElement.className = 'new-pill rank-pill rank-badge rank-member';
+            rankBadgeDisplayElement.classList.add('rank-member');
         }
+        sAdd('dev-nav-item', 'hidden');
     }
-    
+    else {
+        if (rankBadgeDisplayElement) {
+            rankBadgeDisplayElement.classList.add('rank-member');
+        }
+        sAdd('dev-nav-item', 'hidden');
+    }
+
     sText('total-friends-count', friends.length);
     sText('profile-visitor-numerical-counter-view', profileViews);
 }
@@ -1123,13 +1137,13 @@ function renderContacts() {
     if (!contactListOutputContainerElement) {
         return;
     }
-    
+
     contactListOutputContainerElement.innerHTML = '';
-    
+
     let processedListToRenderArray = currentChatTab === 'favorite' ? friends.filter(f => f.isFavorite === true) : friends;
 
     if (processedListToRenderArray.length === 0) {
-        contactListOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.95rem; font-weight:bold; padding:25px;">No active friends found.</p>`; 
+        contactListOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.95rem; font-weight:bold; padding:25px;">No active friends found.</p>`;
         return;
     }
 
@@ -1151,12 +1165,12 @@ function renderRequestSubTabUI() {
     if (!subTabOutputContainerElement) {
         return;
     }
-    
+
     subTabOutputContainerElement.innerHTML = '';
 
-    const acceptTabSelectorBtnElement = safeEl('sub-tab-accept-btn'); 
+    const acceptTabSelectorBtnElement = safeEl('sub-tab-accept-btn');
     const sendTabSelectorBtnElement = safeEl('sub-tab-send-btn');
-    
+
     if (currentRequestSubTab === 'accept') {
         if (acceptTabSelectorBtnElement) {
             acceptTabSelectorBtnElement.classList.add('active-sub-tab');
@@ -1164,12 +1178,12 @@ function renderRequestSubTabUI() {
         if (sendTabSelectorBtnElement) {
             sendTabSelectorBtnElement.classList.remove('active-sub-tab');
         }
-        
+
         sAdd('search-friend-field-block', 'hidden');
 
-        if (friendRequests.length === 0) { 
-            subTabOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem; font-weight:bold; padding:25px;">No pending incoming requests.</p>`; 
-            return; 
+        if (friendRequests.length === 0) {
+            subTabOutputContainerElement.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem; font-weight:bold; padding:25px;">No pending incoming requests.</p>`;
+            return;
         }
 
         friendRequests.forEach(function (requestObject) {
@@ -1196,98 +1210,120 @@ function renderRequestSubTabUI() {
 }
 
 function showPublicProfileModal(userObj) {
-    sSrc('modal-public-user-dp', userObj.dp || DEFAULT_DP); 
+    sSrc('modal-public-user-dp', userObj.dp || DEFAULT_DP);
     sText('modal-public-user-name', userObj.username);
-    sText('modal-public-user-uid', `UID: #${userObj.uid || '00000000'}`); 
+    sText('modal-public-user-uid', `UID: #${userObj.uid || '00000000'}`);
     sText('modal-public-user-bio', userObj.bio || "No biography details available.");
     sText('modal-public-user-rank', userObj.rank || 'Member');
-    
-    if (userObj.banner) { 
-        sSrc('modal-public-user-banner', userObj.banner); 
-        sRem('modal-public-user-banner', 'hidden'); 
-    } else { 
-        sAdd('modal-public-user-banner', 'hidden'); 
+
+    if (userObj.banner) {
+        sSrc('modal-public-user-banner', userObj.banner);
+        sRem('modal-public-user-banner', 'hidden');
+    } else {
+        sAdd('modal-public-user-banner', 'hidden');
     }
 
-    const nameEl = safeEl('modal-public-user-name'); 
+    const nameEl = safeEl('modal-public-user-name');
     const rankEl = safeEl('modal-public-user-rank');
-    
-    if (userObj.isDev || userObj.rank === 'Developer') {
-        if(nameEl) {
-            nameEl.classList.add('shiny-dev-text');
-        }
-        if(rankEl) {
-            rankEl.className = 'new-pill rank-pill rank-badge rank-developer';
-        }
-    } else {
-        if(nameEl) {
-            nameEl.classList.remove('shiny-dev-text');
-        }
-        if(rankEl) {
-            rankEl.className = 'new-pill rank-pill rank-badge rank-member';
-        }
+
+    if (nameEl) {
+        nameEl.className = 'username-display'; // Reset
     }
-    
+    if (rankEl) {
+        rankEl.className = 'new-pill rank-pill rank-badge'; // Reset
+    }
+
+    if (userObj.isDev || userObj.rank === 'Developer') {
+        if (nameEl) nameEl.classList.add('shiny-dev-text');
+        if (rankEl) rankEl.classList.add('rank-developer');
+    }
+    else if (userObj.rank === 'Operator') {
+        if (nameEl) nameEl.classList.add('shiny-silver-text');
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+    else if (userObj.rank === 'Moderator') {
+        if (nameEl) nameEl.classList.add('shiny-red-text');
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+    else if (userObj.rank === 'Manager') {
+        if (nameEl) nameEl.classList.add('shiny-white-text');
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+    else {
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+
     sRem('public-profile-modal', 'hidden');
 }
 
 function openRightProfilePreviewPane(selectedUserObj) {
-    sAdd('chat-placeholder', 'hidden'); 
-    sAdd('chat-header', 'hidden'); 
-    sAdd('messages-area', 'hidden'); 
+    sAdd('chat-placeholder', 'hidden');
+    sAdd('chat-header', 'hidden');
+    sAdd('messages-area', 'hidden');
     sAdd('chat-input-area', 'hidden');
     sRem('request-profile-preview-pane', 'hidden');
-    
-    sSrc('preview-search-user-dp', selectedUserObj.dp || DEFAULT_DP); 
+
+    sSrc('preview-search-user-dp', selectedUserObj.dp || DEFAULT_DP);
     sText('preview-search-user-name', selectedUserObj.username);
-    sText('preview-search-user-uid', `UID: #${selectedUserObj.uid || '00000000'}`); 
-    sText('preview-search-user-bio', selectedUserObj.bio || "No biography available."); 
+    sText('preview-search-user-uid', `UID: #${selectedUserObj.uid || '00000000'}`);
+    sText('preview-search-user-bio', selectedUserObj.bio || "No biography available.");
     sText('preview-search-user-rank', selectedUserObj.rank || "Verified Member");
-    
-    if (selectedUserObj.banner) { 
-        sSrc('preview-search-user-banner', selectedUserObj.banner); 
-        sRem('preview-search-user-banner', 'hidden'); 
-    } else { 
-        sAdd('preview-search-user-banner', 'hidden'); 
+
+    if (selectedUserObj.banner) {
+        sSrc('preview-search-user-banner', selectedUserObj.banner);
+        sRem('preview-search-user-banner', 'hidden');
+    } else {
+        sAdd('preview-search-user-banner', 'hidden');
     }
 
-    const nameEl = safeEl('preview-search-user-name'); 
-    const rankEl = safeEl('preview-search-user-rank'); 
+    const nameEl = safeEl('preview-search-user-name');
+    const rankEl = safeEl('preview-search-user-rank');
     const btn = safeEl('action-dispatch-friend-request-btn');
 
-    if (selectedUserObj.isDev || selectedUserObj.rank === 'Developer') {
-        if(nameEl) {
-            nameEl.classList.add('shiny-dev-text');
-        }
-        if(rankEl) {
-            rankEl.className = 'new-pill rank-pill rank-badge rank-developer';
-        }
-    } else {
-        if(nameEl) {
-            nameEl.classList.remove('shiny-dev-text');
-        }
-        if(rankEl) {
-            rankEl.className = 'new-pill rank-pill rank-badge rank-member';
-        }
+    if (nameEl) {
+        nameEl.className = 'username-display'; // Reset
     }
-    
+    if (rankEl) {
+        rankEl.className = 'new-pill rank-pill rank-badge'; // Reset
+    }
+
+    if (selectedUserObj.isDev || selectedUserObj.rank === 'Developer') {
+        if (nameEl) nameEl.classList.add('shiny-dev-text');
+        if (rankEl) rankEl.classList.add('rank-developer');
+    }
+    else if (selectedUserObj.rank === 'Operator') {
+        if (nameEl) nameEl.classList.add('shiny-silver-text');
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+    else if (selectedUserObj.rank === 'Moderator') {
+        if (nameEl) nameEl.classList.add('shiny-red-text');
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+    else if (selectedUserObj.rank === 'Manager') {
+        if (nameEl) nameEl.classList.add('shiny-white-text');
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+    else {
+        if (rankEl) rankEl.classList.add('rank-member');
+    }
+
     if (btn) {
-        if(selectedUserObj.username === "Chatterbox AI") {
-            btn.style.display = 'none'; 
+        if (selectedUserObj.username === "Chatterbox AI") {
+            btn.style.display = 'none';
         } else {
             btn.style.display = 'inline-flex';
-            btn.onclick = () => { 
-                alert(`Handshake request dispatched to ${selectedUserObj.username}!`); 
-                resetRightWorkspacePane(); 
-            }; 
+            btn.onclick = () => {
+                alert(`Handshake request dispatched to ${selectedUserObj.username}!`);
+                resetRightWorkspacePane();
+            };
         }
     }
 }
 
 function resetRightWorkspacePane() {
-    sAdd('request-profile-preview-pane', 'hidden'); 
-    sAdd('chat-header', 'hidden'); 
-    sAdd('messages-area', 'hidden'); 
+    sAdd('request-profile-preview-pane', 'hidden');
+    sAdd('chat-header', 'hidden');
+    sAdd('messages-area', 'hidden');
     sAdd('chat-input-area', 'hidden');
     sRem('chat-placeholder', 'hidden');
 }
@@ -1306,135 +1342,143 @@ function openDevActionModal(title, actionType) {
 
 function executeDevAction() {
     const target = gVal('dev-action-target-input');
-    
-    if(!target) {
+
+    if (!target) {
         return alert("Please enter a valid UID or Username.");
     }
 
-    const isDev = currentUser.rank === 'Developer' || currentUser.isDev;
-    const isOp = currentUser.rank === 'Operator';
-    const isMod = currentUser.rank === 'Moderator';
-    
+    let rank = currentUser.rank || 'Member';
     let targetUserObj = findUserGlobally(target);
-    
-    if(targetUserObj && (targetUserObj.rank === 'Developer' || targetUserObj.isDev)) {
-        return alert("ACCESS DENIED: Supreme Developer accounts cannot be targeted by moderation tools.");
+    let targetRank = targetUserObj ? (targetUserObj.rank || 'Member') : 'Member';
+
+    // 🔥 IMMORTAL DEVELOPER & HIERARCHY PROTECTION SYSTEM 🔥
+    if (targetRank === 'Developer') {
+        return alert("⚠️ ACCESS DENIED: Supreme Developer accounts are immortal. They cannot be targeted by any moderation tools.");
     }
 
-    if(currentDevActionTarget === 'ban') {
-        if(!isDev && !isOp) {
-            return alert("Privilege Error");
+    if (targetRank === 'Operator' && rank !== 'Developer') {
+        return alert("⚠️ ACCESS DENIED: Operators can only be managed or targeted by the Supreme Developer.");
+    }
+
+    if (targetRank === 'Moderator' && rank !== 'Developer' && rank !== 'Operator') {
+        return alert("⚠️ ACCESS DENIED: Moderators can only be managed by Operators or Developers.");
+    }
+
+    // 🔥 ACTION EXECUTION ENGINE 🔥
+    if (currentDevActionTarget === 'ban') {
+        if (rank !== 'Developer' && rank !== 'Operator') {
+            return alert("Privilege Error: You do not have the clearance to ban users.");
         }
-        bannedUsers.push(target); 
-        window.saveData(); 
+        bannedUsers.push(target);
+        window.saveData();
         alert(`User [${target}] has been PERMANENTLY BANNED.`);
-    } 
-    else if(currentDevActionTarget === 'unban') {
-        if(!isDev && !isOp) {
-            return alert("Privilege Error");
+    }
+    else if (currentDevActionTarget === 'unban') {
+        if (rank !== 'Developer' && rank !== 'Operator') {
+            return alert("Privilege Error: You do not have the clearance to unban users.");
         }
-        bannedUsers = bannedUsers.filter(x => x !== target); 
-        window.saveData(); 
+        bannedUsers = bannedUsers.filter(x => x !== target);
+        window.saveData();
         alert(`User [${target}] UNBANNED.`);
     }
-    else if(currentDevActionTarget === 'shadowban') {
-        if(!isDev) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'shadowban') {
+        if (rank !== 'Developer') {
+            return alert("Privilege Error: Only Supreme Developer can shadow ban.");
         }
-        shadowBannedUsers.push(target); 
-        window.saveData(); 
+        shadowBannedUsers.push(target);
+        window.saveData();
         alert(`User [${target}] SHADOW BANNED.`);
     }
-    else if(currentDevActionTarget === 'shadowunban') {
-        if(!isDev) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'shadowunban') {
+        if (rank !== 'Developer') {
+            return alert("Privilege Error: Only Supreme Developer can shadow unban.");
         }
-        shadowBannedUsers = shadowBannedUsers.filter(x => x !== target); 
-        window.saveData(); 
+        shadowBannedUsers = shadowBannedUsers.filter(x => x !== target);
+        window.saveData();
         alert(`User [${target}] SHADOW UNBANNED.`);
     }
-    else if(currentDevActionTarget === 'mute_world') {
-        if(!isDev && !isOp && !isMod) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'mute_world') {
+        if (rank !== 'Developer' && rank !== 'Operator' && rank !== 'Moderator') {
+            return alert("Privilege Error: You do not have clearance.");
         }
-        worldMutedUsers.push(target); 
-        window.saveData(); 
+        worldMutedUsers.push(target);
+        window.saveData();
         alert(`User [${target}] MUTED in World Chat.`);
     }
-    else if(currentDevActionTarget === 'unmute_world') {
-        if(!isDev && !isOp && !isMod) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'unmute_world') {
+        if (rank !== 'Developer' && rank !== 'Operator' && rank !== 'Moderator') {
+            return alert("Privilege Error: You do not have clearance.");
         }
-        worldMutedUsers = worldMutedUsers.filter(x => x !== target); 
-        window.saveData(); 
+        worldMutedUsers = worldMutedUsers.filter(x => x !== target);
+        window.saveData();
         alert(`User [${target}] UNMUTED in World Chat.`);
     }
-    else if(currentDevActionTarget === 'ban_world') {
-        if(!isDev && !isOp && !isMod) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'ban_world') {
+        if (rank !== 'Developer' && rank !== 'Operator' && rank !== 'Moderator') {
+            return alert("Privilege Error: You do not have clearance.");
         }
-        worldBannedUsers.push(target); 
-        window.saveData(); 
+        worldBannedUsers.push(target);
+        window.saveData();
         alert(`User [${target}] KICKED/BANNED from World Chat.`);
     }
-    else if(currentDevActionTarget === 'unban_world') {
-        if(!isDev && !isOp && !isMod) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'unban_world') {
+        if (rank !== 'Developer' && rank !== 'Operator' && rank !== 'Moderator') {
+            return alert("Privilege Error: You do not have clearance.");
         }
-        worldBannedUsers = worldBannedUsers.filter(x => x !== target); 
-        window.saveData(); 
+        worldBannedUsers = worldBannedUsers.filter(x => x !== target);
+        window.saveData();
         alert(`User [${target}] ALLOWED back in World Chat.`);
     }
-    else if(currentDevActionTarget === 'peak') {
-        if(!isDev) {
-            return alert("Privilege Error");
+    else if (currentDevActionTarget === 'peak') {
+        if (rank !== 'Developer') {
+            return alert("Privilege Error: Only Supreme Developer can peak into histories.");
         }
-        if(chatHistory.direct[target]) {
+        if (chatHistory.direct[target]) {
             alert(`PEAK HISTORY for [${target}]:\n\n` + JSON.stringify(chatHistory.direct[target], null, 2));
         } else {
             alert(`No direct chat history found for [${target}].`);
         }
     }
-    
+
     sAdd('dev-action-modal', 'hidden');
 }
 
 function generateProfileRings() {
     const container = safeEl('ring-grid-container');
-    
-    if(!container) {
+
+    if (!container) {
         return;
     }
-    
+
     container.innerHTML = '';
-    
-    for(let i = 1; i <= 100; i++) {
-        let r1 = Math.floor(Math.random() * 255); 
-        let g1 = Math.floor(Math.random() * 255); 
+
+    for (let i = 1; i <= 100; i++) {
+        let r1 = Math.floor(Math.random() * 255);
+        let g1 = Math.floor(Math.random() * 255);
         let b1 = Math.floor(Math.random() * 255);
-        
-        let r2 = Math.floor(Math.random() * 255); 
-        let g2 = Math.floor(Math.random() * 255); 
+
+        let r2 = Math.floor(Math.random() * 255);
+        let g2 = Math.floor(Math.random() * 255);
         let b2 = Math.floor(Math.random() * 255);
-        
+
         let grad = `linear-gradient(45deg, rgb(${r1},${g1},${b1}), rgb(${r2},${g2},${b2}))`;
-        
+
         let ringDiv = document.createElement('div');
-        ringDiv.style.width = '100%'; 
-        ringDiv.style.aspectRatio = '1'; 
+        ringDiv.style.width = '100%';
+        ringDiv.style.aspectRatio = '1';
         ringDiv.style.borderRadius = '50%';
-        ringDiv.style.background = grad; 
-        ringDiv.style.cursor = 'pointer'; 
+        ringDiv.style.background = grad;
+        ringDiv.style.cursor = 'pointer';
         ringDiv.style.border = '2px solid transparent';
-        
-        ringDiv.onclick = function() {
+
+        ringDiv.onclick = function () {
             document.querySelectorAll('#ring-grid-container div').forEach(d => {
                 d.style.border = '2px solid transparent';
             });
             this.style.border = '3px solid white';
             localStorage.setItem('temp_selected_ring', grad);
         };
-        
+
         container.appendChild(ringDiv);
     }
 }
@@ -1447,7 +1491,7 @@ function generateProfileRings() {
 document.addEventListener('click', (eventObject) => {
     try {
         const target = eventObject.target;
-        
+
         if (!target || typeof target.closest !== 'function') {
             return;
         }
@@ -1470,101 +1514,112 @@ document.addEventListener('click', (eventObject) => {
         if (target.closest('#activate-dev-mode-btn')) {
             const secret = gVal('settings-dev-code-input');
             if (secret === '6200437705AT') {
-                currentUser.rank = 'Developer'; 
-                currentUser.isDev = true; 
-                currentUser.theme = 'grand-golden'; 
-                window.saveData(); 
-                alert("Supreme Root Access Granted! You are now a Developer. Reloading ecosystem..."); 
+                currentUser.rank = 'Developer';
+                currentUser.isDev = true;
+                currentUser.theme = 'grand-golden';
+                window.saveData();
+                alert("Supreme Root Access Granted! You are now a Developer. Reloading ecosystem...");
                 window.location.reload();
-            } else { 
-                alert("Invalid Developer Code."); 
-            } 
+            } else {
+                alert("Invalid Developer Code.");
+            }
             return;
         }
 
-        if (target.closest('#dev-rank-btn')) { 
-            sVal('dev-rank-target-input', ''); 
-            sRem('dev-rank-modal', 'hidden'); 
-            return; 
+        if (target.closest('#dev-rank-btn')) {
+            sVal('dev-rank-target-input', '');
+            sRem('dev-rank-modal', 'hidden');
+            return;
         }
-        
+
         if (target.closest('#confirm-dev-rank-btn')) {
-            let tUser = gVal('dev-rank-target-input'); 
+            let tUser = gVal('dev-rank-target-input');
             let nRank = safeEl('dev-rank-select').value;
-            
-            if(!tUser) {
+
+            if (!tUser) {
                 return alert("Enter target.");
             }
-            
-            alert(`Rank Update Dispatched: [${tUser}] is now a ${nRank}.`);
-            sAdd('dev-rank-modal', 'hidden'); 
+
+            alert(`Rank Update Dispatched: [${tUser}] is now a ${nRank}. Note: Changes will apply when user logs in.`);
+
+            // Allow dev to upgrade a loaded profile temporarily for demo
+            let targetUserObj = findUserGlobally(tUser);
+            if (targetUserObj && tUser === currentUser.username) {
+                currentUser.rank = nRank;
+                if (nRank === 'Developer') { currentUser.isDev = true; currentUser.theme = 'grand-golden'; }
+                else { currentUser.isDev = false; }
+                window.saveData();
+                window.location.reload();
+            }
+
+            sAdd('dev-rank-modal', 'hidden');
             return;
         }
 
-        if (target.closest('#dev-ban-btn')) { 
-            openDevActionModal('Ban User', 'ban'); 
-            return; 
+        if (target.closest('#dev-ban-btn')) {
+            openDevActionModal('Ban User', 'ban');
+            return;
         }
-        
-        if (target.closest('#dev-unban-btn')) { 
-            openDevActionModal('Unban User', 'unban'); 
-            return; 
+
+        if (target.closest('#dev-unban-btn')) {
+            openDevActionModal('Unban User', 'unban');
+            return;
         }
-        
-        if (target.closest('#dev-shadowban-btn')) { 
-            openDevActionModal('Shadow Ban User', 'shadowban'); 
-            return; 
+
+        if (target.closest('#dev-shadowban-btn')) {
+            openDevActionModal('Shadow Ban User', 'shadowban');
+            return;
         }
-        
-        if (target.closest('#dev-shadowunban-btn')) { 
-            openDevActionModal('Shadow Unban User', 'shadowunban'); 
-            return; 
+
+        if (target.closest('#dev-shadowunban-btn')) {
+            openDevActionModal('Shadow Unban User', 'shadowunban');
+            return;
         }
-        
-        if (target.closest('#dev-mute-world-btn')) { 
-            openDevActionModal('Mute From World', 'mute_world'); 
-            return; 
+
+        if (target.closest('#dev-mute-world-btn')) {
+            openDevActionModal('Mute From World', 'mute_world');
+            return;
         }
-        
-        if (target.closest('#dev-unmute-world-btn')) { 
-            openDevActionModal('Unmute From World', 'unmute_world'); 
-            return; 
+
+        if (target.closest('#dev-unmute-world-btn')) {
+            openDevActionModal('Unmute From World', 'unmute_world');
+            return;
         }
-        
-        if (target.closest('#dev-ban-world-btn')) { 
-            openDevActionModal('Kick From World', 'ban_world'); 
-            return; 
+
+        if (target.closest('#dev-ban-world-btn')) {
+            openDevActionModal('Kick From World', 'ban_world');
+            return;
         }
-        
-        if (target.closest('#dev-unban-world-btn')) { 
-            openDevActionModal('Allow In World', 'unban_world'); 
-            return; 
+
+        if (target.closest('#dev-unban-world-btn')) {
+            openDevActionModal('Allow In World', 'unban_world');
+            return;
         }
-        
-        if (target.closest('#dev-peak-btn')) { 
-            openDevActionModal('Peak Chat History', 'peak'); 
-            return; 
+
+        if (target.closest('#dev-peak-btn')) {
+            openDevActionModal('Peak Chat History', 'peak');
+            return;
         }
-        
-        if (target.id === 'confirm-dev-action-btn') { 
-            executeDevAction(); 
-            return; 
+
+        if (target.id === 'confirm-dev-action-btn') {
+            executeDevAction();
+            return;
         }
 
         if (target.closest('#dev-format-btn')) {
-            if(confirm("Format Server Cache? This deletes posts and temp variables but keeps users.")) {
-                localStorage.removeItem('chatPosts'); 
+            if (confirm("Format Server Cache? This deletes posts and temp variables but keeps users.")) {
+                localStorage.removeItem('chatPosts');
                 localStorage.removeItem('chatHistory');
-                alert("Format Complete. Reloading..."); 
+                alert("Format Complete. Reloading...");
                 window.location.reload();
             }
             return;
         }
 
         if (target.closest('#dev-stop-server-btn')) {
-            if(confirm("Stop Server? No one will be able to message.")) {
-                serverStopped = true; 
-                window.saveData(); 
+            if (confirm("Stop Server? No one will be able to message.")) {
+                serverStopped = true;
+                window.saveData();
                 socket.emit('send_message', { type: 'world', text: "SERVER_STOP" });
                 alert("Server Stopped.");
             }
@@ -1572,48 +1627,48 @@ document.addEventListener('click', (eventObject) => {
         }
 
         if (target.closest('#dev-start-server-btn')) {
-            serverStopped = false; 
-            window.saveData(); 
+            serverStopped = false;
+            window.saveData();
             socket.emit('send_message', { type: 'world', text: "SERVER_START" });
-            alert("Server Running normally."); 
+            alert("Server Running normally.");
             return;
         }
 
-        if (target.closest('#dev-wipe-server-btn')) { 
-            sVal('dev-wipe-code-input', ''); 
-            sRem('dev-wipe-modal', 'hidden'); 
-            return; 
+        if (target.closest('#dev-wipe-server-btn')) {
+            sVal('dev-wipe-code-input', '');
+            sRem('dev-wipe-modal', 'hidden');
+            return;
         }
-        
+
         if (target.closest('#confirm-dev-wipe-btn')) {
-            if(gVal('dev-wipe-code-input') === '6200437705AT') {
-                localStorage.clear(); 
+            if (gVal('dev-wipe-code-input') === '6200437705AT') {
+                localStorage.clear();
                 socket.emit('send_message', { type: 'world', text: "SYSTEM_WIPE" });
-                alert("SERVER COMPLETELY WIPED."); 
+                alert("SERVER COMPLETELY WIPED.");
                 window.location.reload();
-            } else { 
-                alert("Incorrect Passcode."); 
+            } else {
+                alert("Incorrect Passcode.");
             }
             return;
         }
 
-        if (target.closest('#dev-profile-ring-btn')) { 
-            generateProfileRings(); 
-            sRem('dev-ring-modal', 'hidden'); 
-            return; 
+        if (target.closest('#dev-profile-ring-btn')) {
+            generateProfileRings();
+            sRem('dev-ring-modal', 'hidden');
+            return;
         }
-        
+
         if (target.closest('#confirm-dev-ring-btn')) {
-            let t = gVal('ring-target-input'); 
+            let t = gVal('ring-target-input');
             let anim = safeEl('ring-animation-select').value;
             let selRing = localStorage.getItem('temp_selected_ring');
-            
-            if(!t || !selRing) {
+
+            if (!t || !selRing) {
                 return alert("Select a ring and enter a target.");
             }
-            
+
             alert(`Premium Ring applied to [${t}] with ${anim} animation.`);
-            sAdd('dev-ring-modal', 'hidden'); 
+            sAdd('dev-ring-modal', 'hidden');
             return;
         }
 
@@ -1623,27 +1678,27 @@ document.addEventListener('click', (eventObject) => {
 
         // World Chat Ban Block Check
         if (target.closest('.nav-btn') && target.closest('.nav-btn').getAttribute('data-target') === 'world-chat-section') {
-            if(worldBannedUsers.includes(currentUser.username) || worldBannedUsers.includes(currentUser.uid)) {
+            if (worldBannedUsers.includes(currentUser.username) || worldBannedUsers.includes(currentUser.uid)) {
                 alert("SYSTEM MODERATION: You have been permanently kicked/banned from the Global World Chat. Access Denied.");
                 return; // Blocks opening the tab
             }
         }
 
-        // SETTINGS & THEME TOGGLE (THE FIX)
+        // SETTINGS & THEME TOGGLE
         if (target.closest('#activate-golden-theme-btn')) {
             const btn = target.closest('#activate-golden-theme-btn');
             if (currentUser.theme === 'grand-golden') {
                 // Deactivate
-                currentUser.theme = 'default'; 
+                currentUser.theme = 'default';
                 document.documentElement.setAttribute('data-theme', 'default');
-                window.saveData(); 
+                window.saveData();
                 applySystemThemePalette();
                 alert("Golden VIP Mode Deactivated.");
             } else {
                 // Activate
                 currentUser.theme = 'grand-golden';
                 document.documentElement.setAttribute('data-theme', 'grand-golden');
-                window.saveData(); 
+                window.saveData();
                 applySystemThemePalette();
                 alert("Supreme Golden VIP Mode Activated!");
             }
@@ -1652,33 +1707,33 @@ document.addEventListener('click', (eventObject) => {
 
         // UNSEND (DELETE) MESSAGE LOGIC
         if (target.closest('.unsend-btn')) {
-            if(confirm("Are you sure you want to Unsend this message for yourself?")) {
+            if (confirm("Are you sure you want to Unsend this message for yourself?")) {
                 const btn = target.closest('.unsend-btn');
                 const msgId = btn.getAttribute('data-id');
                 const bubble = btn.closest('.message-bubble');
-                
-                if(!bubble) {
+
+                if (!bubble) {
                     return;
                 }
-                
-                const containerId = bubble.parentElement ? bubble.parentElement.id : null; 
+
+                const containerId = bubble.parentElement ? bubble.parentElement.id : null;
                 bubble.remove();
 
                 if (containerId === 'messages-area' && activeChatUser) {
-                    if(chatHistory.direct[activeChatUser.username]) {
+                    if (chatHistory.direct[activeChatUser.username]) {
                         chatHistory.direct[activeChatUser.username] = chatHistory.direct[activeChatUser.username].filter(m => m.id != msgId);
                     }
                 } else if (containerId === 'ai-messages-area') {
                     chatHistory.ai = chatHistory.ai.filter(m => m.id != msgId);
                 } else if (containerId === 'group-messages-area') {
                     const groupName = safeEl('current-group-name') ? safeEl('current-group-name').innerText : '';
-                    if(chatHistory.group[groupName]) {
+                    if (chatHistory.group[groupName]) {
                         chatHistory.group[groupName] = chatHistory.group[groupName].filter(m => m.id != msgId);
                     }
                 } else if (containerId === 'world-messages-area') {
                     chatHistory.world = chatHistory.world.filter(m => m.id != msgId);
                 }
-                
+
                 window.saveData();
             }
             return;
@@ -1688,7 +1743,7 @@ document.addEventListener('click', (eventObject) => {
         if (!target.closest('#emoji-picker-tray') && !target.closest('.emoji-trigger-btn') && !target.classList.contains('emoji-item')) {
             sAdd('emoji-picker-tray', 'hidden');
         }
-        
+
         if (target.closest('.emoji-trigger-btn')) {
             const btn = target.closest('.emoji-trigger-btn');
             activeEmojiTargetId = btn.getAttribute('data-target');
@@ -1698,9 +1753,9 @@ document.addEventListener('click', (eventObject) => {
 
         // Public Profile Modal Trigger
         if (target.closest('.public-profile-trigger') || target.classList.contains('public-profile-trigger')) {
-            if (activeChatUser) { 
-                showPublicProfileModal(activeChatUser); 
-            } 
+            if (activeChatUser) {
+                showPublicProfileModal(activeChatUser);
+            }
             return;
         }
 
@@ -1708,8 +1763,8 @@ document.addEventListener('click', (eventObject) => {
         if (target.closest('.global-user-item') && !target.closest('.action-dispatch-global-req-btn') && !target.closest('.req-action-btns')) {
             const targetUsernameString = target.closest('.global-user-item').getAttribute('data-username');
             const userContext = findUserGlobally(targetUsernameString);
-            
-            if(userContext) {
+
+            if (userContext) {
                 openRightProfilePreviewPane(userContext);
             }
             return;
@@ -1719,47 +1774,47 @@ document.addEventListener('click', (eventObject) => {
         if (target.id === 'hamburger-btn' || target.closest('#hamburger-btn')) {
             const mobileSidebarContainer = safeEl('sidebar');
             if (mobileSidebarContainer) {
-                mobileSidebarContainer.style.display = 'flex'; 
+                mobileSidebarContainer.style.display = 'flex';
                 mobileSidebarContainer.style.position = 'fixed';
-                mobileSidebarContainer.style.zIndex = '10000'; 
+                mobileSidebarContainer.style.zIndex = '10000';
                 mobileSidebarContainer.style.height = '100vh';
-                mobileSidebarContainer.style.width = '80%'; 
+                mobileSidebarContainer.style.width = '80%';
                 mobileSidebarContainer.style.flexDirection = 'column';
                 mobileSidebarContainer.style.justifyContent = 'flex-start';
-                
-                const closeBtn = safeEl('close-sidebar-btn'); 
+
+                const closeBtn = safeEl('close-sidebar-btn');
                 if (closeBtn) {
                     closeBtn.classList.remove('hidden');
                 }
-                
+
                 const navLinksContainer = mobileSidebarContainer.querySelector('.nav-links');
-                if (navLinksContainer) { 
-                    navLinksContainer.style.flexDirection = 'column'; 
-                    navLinksContainer.style.overflowY = 'auto'; 
+                if (navLinksContainer) {
+                    navLinksContainer.style.flexDirection = 'column';
+                    navLinksContainer.style.overflowY = 'auto';
                 }
             }
             return;
         }
-        
+
         if (target.id === 'close-sidebar-btn' || target.closest('#close-sidebar-btn')) {
             const mobileSidebarContainer = safeEl('sidebar');
             if (mobileSidebarContainer) {
-                mobileSidebarContainer.style.display = ''; 
+                mobileSidebarContainer.style.display = '';
                 mobileSidebarContainer.style.position = '';
-                mobileSidebarContainer.style.zIndex = ''; 
+                mobileSidebarContainer.style.zIndex = '';
                 mobileSidebarContainer.style.height = '';
-                mobileSidebarContainer.style.width = ''; 
+                mobileSidebarContainer.style.width = '';
                 mobileSidebarContainer.style.flexDirection = '';
-                
-                const closeBtn = safeEl('close-sidebar-btn'); 
+
+                const closeBtn = safeEl('close-sidebar-btn');
                 if (closeBtn) {
                     closeBtn.classList.add('hidden');
                 }
-                
+
                 const navLinksContainer = mobileSidebarContainer.querySelector('.nav-links');
-                if (navLinksContainer) { 
-                    navLinksContainer.style.flexDirection = ''; 
-                    navLinksContainer.style.overflowY = ''; 
+                if (navLinksContainer) {
+                    navLinksContainer.style.flexDirection = '';
+                    navLinksContainer.style.overflowY = '';
                 }
             }
             return;
@@ -1771,34 +1826,34 @@ document.addEventListener('click', (eventObject) => {
             document.querySelectorAll('.nav-links .nav-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
-            document.querySelectorAll('.content-view').forEach(view => { 
-                view.classList.remove('active'); 
-                view.classList.add('hidden'); 
+
+            document.querySelectorAll('.content-view').forEach(view => {
+                view.classList.remove('active');
+                view.classList.add('hidden');
             });
-            
+
             navigationButtonElement.classList.add('active');
-            
+
             const targetSectionDisplayId = navigationButtonElement.getAttribute('data-target');
-            sRem(targetSectionDisplayId, 'hidden'); 
+            sRem(targetSectionDisplayId, 'hidden');
             sAdd(targetSectionDisplayId, 'active');
-            
-            if(targetSectionDisplayId === 'ai-chat-section') {
+
+            if (targetSectionDisplayId === 'ai-chat-section') {
                 loadChatHistoryToView('ai');
             }
             return;
         }
 
         // Quick Actions
-        if (target.closest('#sidebar-quick-report-bug-btn')) { 
-            sVal('bug-report-text-input', ''); 
-            sRem('bug-report-modal', 'hidden'); 
-            return; 
+        if (target.closest('#sidebar-quick-report-bug-btn')) {
+            sVal('bug-report-text-input', '');
+            sRem('bug-report-modal', 'hidden');
+            return;
         }
-        
+
         if (target.closest('#sidebar-quick-logout-btn')) {
             if (confirm("Are you absolutely sure you want to log out of your secure session and terminate tracking connections?")) {
-                localStorage.removeItem('chatUser'); 
+                localStorage.removeItem('chatUser');
                 location.reload();
             }
             return;
@@ -1810,44 +1865,44 @@ document.addEventListener('click', (eventObject) => {
             document.querySelectorAll('.chat-tabs .tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             chatTabNavigationButtonElement.classList.add('active');
             currentChatTab = chatTabNavigationButtonElement.getAttribute('data-tab');
-            
-            if (currentChatTab === 'requests') { 
-                sRem('request-sub-tabs-container', 'hidden'); 
-                sAdd('search-friend-field-block', 'hidden'); 
-                renderRequestSubTabUI(); 
-            } 
-            else { 
-                sAdd('request-sub-tabs-container', 'hidden'); 
-                sRem('search-friend-field-block', 'hidden'); 
-                resetRightWorkspacePane(); 
-                renderContacts(); 
+
+            if (currentChatTab === 'requests') {
+                sRem('request-sub-tabs-container', 'hidden');
+                sAdd('search-friend-field-block', 'hidden');
+                renderRequestSubTabUI();
+            }
+            else {
+                sAdd('request-sub-tabs-container', 'hidden');
+                sRem('search-friend-field-block', 'hidden');
+                resetRightWorkspacePane();
+                renderContacts();
             }
             return;
         }
 
-        if (target.closest('#sub-tab-accept-btn')) { 
-            currentRequestSubTab = 'accept'; 
-            renderRequestSubTabUI(); 
-            resetRightWorkspacePane(); 
-            return; 
+        if (target.closest('#sub-tab-accept-btn')) {
+            currentRequestSubTab = 'accept';
+            renderRequestSubTabUI();
+            resetRightWorkspacePane();
+            return;
         }
-        
-        if (target.closest('#sub-tab-send-btn')) { 
-            currentRequestSubTab = 'send'; 
-            renderRequestSubTabUI(); 
-            return; 
+
+        if (target.closest('#sub-tab-send-btn')) {
+            currentRequestSubTab = 'send';
+            renderRequestSubTabUI();
+            return;
         }
 
         if (target.closest('.action-dispatch-global-req-btn')) {
             const btn = target.closest('.action-dispatch-global-req-btn');
             const targetUsername = btn.getAttribute('data-username');
             alert(`Network Success: Secure Friend Request has been dispatched to [${targetUsername}].`);
-            btn.innerHTML = '<i class="fas fa-check"></i>'; 
-            btn.style.background = "var(--system-success)"; 
-            btn.disabled = true; 
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.style.background = "var(--system-success)";
+            btn.disabled = true;
             return;
         }
 
@@ -1855,29 +1910,29 @@ document.addEventListener('click', (eventObject) => {
             const listRowItemElement = target.closest('.dummy-item');
             if (listRowItemElement) {
                 const targetUsernameIdentificationKey = listRowItemElement.getAttribute('data-username') || listRowItemElement.getAttribute('data-user');
-                
+
                 friendRequests = friendRequests.filter(reqObject => reqObject.username !== targetUsernameIdentificationKey);
-                
-                friends.push({ 
-                    username: targetUsernameIdentificationKey, 
-                    dp: `https://ui-avatars.com/api/?name=${targetUsernameIdentificationKey}&background=8b5cf6&color=fff`, 
-                    isFavorite: false, 
-                    bio: "My newly verified active friend connection mapping node." 
+
+                friends.push({
+                    username: targetUsernameIdentificationKey,
+                    dp: `https://ui-avatars.com/api/?name=${targetUsernameIdentificationKey}&background=8b5cf6&color=fff`,
+                    isFavorite: false,
+                    bio: "My newly verified active friend connection mapping node."
                 });
-                
-                window.saveData(); 
-                renderRequestSubTabUI(); 
+
+                window.saveData();
+                renderRequestSubTabUI();
                 alert(`Verification Protocol Complete: You are now permanently connected friends with ${targetUsernameIdentificationKey}!`);
             }
             return;
         }
-        
+
         if (target.closest('.btn-reject-friend')) {
             const listRowItemElement = target.closest('.dummy-item');
             if (listRowItemElement) {
                 const targetUsernameIdentificationKey = listRowItemElement.getAttribute('data-username') || listRowItemElement.getAttribute('data-user');
                 friendRequests = friendRequests.filter(reqObject => reqObject.username !== targetUsernameIdentificationKey);
-                window.saveData(); 
+                window.saveData();
                 renderRequestSubTabUI();
             }
             return;
@@ -1886,24 +1941,24 @@ document.addEventListener('click', (eventObject) => {
         // Open Direct Chat & LOAD HISTORY
         if (target.closest('.contact-item')) {
             const retrievedUsernameKey = target.closest('.contact-item').getAttribute('data-user');
-            
-            sAdd('request-profile-preview-pane', 'hidden'); 
+
+            sAdd('request-profile-preview-pane', 'hidden');
             sAdd('chat-placeholder', 'hidden');
-            sRem('chat-header', 'hidden'); 
-            sRem('messages-area', 'hidden'); 
+            sRem('chat-header', 'hidden');
+            sRem('messages-area', 'hidden');
             sRem('chat-input-area', 'hidden');
 
             activeChatUser = friends.find(fObj => fObj.username === retrievedUsernameKey);
-            
-            if (activeChatUser) { 
-                sText('current-chat-name', activeChatUser.username); 
-                sSrc('current-chat-dp', activeChatUser.dp); 
-                
+
+            if (activeChatUser) {
+                sText('current-chat-name', activeChatUser.username);
+                sSrc('current-chat-dp', activeChatUser.dp);
+
                 const favBtn = safeEl('favorite-user-btn');
                 if (favBtn) {
                     favBtn.innerHTML = activeChatUser.isFavorite ? '<i class="fas fa-star" style="color:#f59e0b;"></i>' : '<i class="far fa-star"></i>';
                 }
-                
+
                 loadChatHistoryToView('direct', activeChatUser.username);
             }
             return;
@@ -1914,16 +1969,16 @@ document.addEventListener('click', (eventObject) => {
                 const arrayIndexMatchFound = friends.findIndex(fObj => fObj.username === activeChatUser.username);
                 if (arrayIndexMatchFound !== -1) {
                     friends[arrayIndexMatchFound].isFavorite = !friends[arrayIndexMatchFound].isFavorite;
-                    window.saveData(); 
-                    
+                    window.saveData();
+
                     const favBtn = safeEl('favorite-user-btn');
                     if (favBtn) {
                         favBtn.innerHTML = friends[arrayIndexMatchFound].isFavorite ? '<i class="fas fa-star" style="color:#f59e0b;"></i>' : '<i class="far fa-star"></i>';
                     }
-                    
-                    if (currentChatTab === 'favorite') { 
-                        renderContacts(); 
-                        resetRightWorkspacePane(); 
+
+                    if (currentChatTab === 'favorite') {
+                        renderContacts();
+                        resetRightWorkspacePane();
                     }
                 }
             }
@@ -1931,48 +1986,48 @@ document.addEventListener('click', (eventObject) => {
         }
 
         // CALLING SYSTEM
-        if (target.closest('#direct-voice-call-btn')) { 
-            initiateOutgoingCall(false); 
-            return; 
+        if (target.closest('#direct-voice-call-btn')) {
+            initiateOutgoingCall(false);
+            return;
         }
-        
-        if (target.closest('#direct-video-call-btn')) { 
-            initiateOutgoingCall(true); 
-            return; 
+
+        if (target.closest('#direct-video-call-btn')) {
+            initiateOutgoingCall(true);
+            return;
         }
 
         if (target.closest('#group-voice-call-btn') || target.closest('#group-video-call-btn')) {
             const isVideo = !!target.closest('#group-video-call-btn');
-            sAdd('incoming-call-ring-modal', 'hidden'); 
-            sRem('active-call-window', 'hidden'); 
-            sText('call-duration-timer', 'Live Room'); 
+            sAdd('incoming-call-ring-modal', 'hidden');
+            sRem('active-call-window', 'hidden');
+            sText('call-duration-timer', 'Live Room');
             initLocalCameraStream(isVideo, false, 'group');
             return;
         }
-        
+
         if (target.closest('#world-voice-call-btn') || target.closest('#world-video-call-btn')) {
             const isVideo = !!target.closest('#world-video-call-btn');
-            sAdd('incoming-call-ring-modal', 'hidden'); 
-            sRem('active-call-window', 'hidden'); 
-            sText('call-duration-timer', 'Live Stage'); 
+            sAdd('incoming-call-ring-modal', 'hidden');
+            sRem('active-call-window', 'hidden');
+            sText('call-duration-timer', 'Live Stage');
             initLocalCameraStream(isVideo, false, 'world');
             return;
         }
 
-        if (target.closest('#end-active-call-btn') || target.closest('#end-minimized-call-btn')) { 
-            terminateActiveCall(); 
-            return; 
+        if (target.closest('#end-active-call-btn') || target.closest('#end-minimized-call-btn')) {
+            terminateActiveCall();
+            return;
         }
 
-        if (target.closest('#minimize-call-btn')) { 
-            sAdd('active-call-window', 'hidden'); 
-            sRem('minimized-call-widget', 'hidden'); 
-            return; 
+        if (target.closest('#minimize-call-btn')) {
+            sAdd('active-call-window', 'hidden');
+            sRem('minimized-call-widget', 'hidden');
+            return;
         }
-        
+
         if (target.closest('#minimized-call-widget') && !target.closest('#end-minimized-call-btn')) {
-            sAdd('minimized-call-widget', 'hidden'); 
-            sRem('active-call-window', 'hidden'); 
+            sAdd('minimized-call-widget', 'hidden');
+            sRem('active-call-window', 'hidden');
             return;
         }
 
@@ -1983,24 +2038,24 @@ document.addEventListener('click', (eventObject) => {
                     isLocalCamOn = !isLocalCamOn;
                     videoTrack.enabled = isLocalCamOn;
                     const toggleBtn = target.closest('#toggle-cam-btn');
-                    
+
                     if (isLocalCamOn) {
-                        toggleBtn.innerHTML = '<i class="fas fa-video"></i>'; 
+                        toggleBtn.innerHTML = '<i class="fas fa-video"></i>';
                         toggleBtn.style.color = "white";
-                        if(safeEl('local-video')) {
-                            safeEl('local-video').style.display = 'block'; 
+                        if (safeEl('local-video')) {
+                            safeEl('local-video').style.display = 'block';
                         }
                         sAdd('local-audio-fallback', 'hidden');
                     } else {
-                        toggleBtn.innerHTML = '<i class="fas fa-video-slash"></i>'; 
-                        toggleBtn.style.color = "#ef4444"; 
-                        if(safeEl('local-video')) {
-                            safeEl('local-video').style.display = 'none'; 
+                        toggleBtn.innerHTML = '<i class="fas fa-video-slash"></i>';
+                        toggleBtn.style.color = "#ef4444";
+                        if (safeEl('local-video')) {
+                            safeEl('local-video').style.display = 'none';
                         }
                         sRem('local-audio-fallback', 'hidden');
                     }
-                } else { 
-                    alert("Camera hardware not detected on your device."); 
+                } else {
+                    alert("Camera hardware not detected on your device.");
                 }
             }
             return;
@@ -2013,13 +2068,13 @@ document.addEventListener('click', (eventObject) => {
                     isLocalMicOn = !isLocalMicOn;
                     audioTrack.enabled = isLocalMicOn;
                     const toggleBtn = target.closest('#toggle-mic-btn');
-                    
-                    if (isLocalMicOn) { 
-                        toggleBtn.innerHTML = '<i class="fas fa-microphone"></i>'; 
-                        toggleBtn.style.color = "white"; 
-                    } else { 
-                        toggleBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>'; 
-                        toggleBtn.style.color = "#ef4444"; 
+
+                    if (isLocalMicOn) {
+                        toggleBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                        toggleBtn.style.color = "white";
+                    } else {
+                        toggleBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                        toggleBtn.style.color = "#ef4444";
                     }
                 }
             }
@@ -2035,10 +2090,10 @@ document.addEventListener('click', (eventObject) => {
             }
             return;
         }
-        
+
         if (target.closest('#ai-send-btn')) {
             let aiRawText = gVal('ai-message-input');
-            if(aiRawText !== "") {
+            if (aiRawText !== "") {
                 sendMessageWithSave('ai', aiRawText);
                 sVal('ai-message-input', '');
             }
@@ -2065,14 +2120,14 @@ document.addEventListener('click', (eventObject) => {
 
         function startVoiceTypingEngine(inputId) {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("System Info: Chrome Browser Required for Voice Typing."); 
+                alert("System Info: Chrome Browser Required for Voice Typing.");
                 return;
             }
-            
+
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
-            recognition.lang = 'en-IN'; 
-            recognition.interimResults = false; 
+            recognition.lang = 'en-IN';
+            recognition.interimResults = false;
             recognition.maxAlternatives = 1;
 
             const inputEl = safeEl(inputId);
@@ -2082,160 +2137,160 @@ document.addEventListener('click', (eventObject) => {
 
             const ogPlaceholder = inputEl.placeholder;
             inputEl.placeholder = "🎙️ Listening... Speak now!";
-            
+
             recognition.onresult = (e) => {
                 const transcript = e.results[0][0].transcript;
                 inputEl.value = inputEl.value ? (inputEl.value + " " + transcript) : transcript;
                 inputEl.placeholder = ogPlaceholder;
             };
-            
-            recognition.onerror = () => { 
-                inputEl.placeholder = ogPlaceholder; 
+
+            recognition.onerror = () => {
+                inputEl.placeholder = ogPlaceholder;
             };
-            
-            recognition.onend = () => { 
-                inputEl.placeholder = ogPlaceholder; 
+
+            recognition.onend = () => {
+                inputEl.placeholder = ogPlaceholder;
             };
-            
+
             recognition.start();
         }
 
         // OTHER MODULES
-        if (target.closest('#voice-type-btn')) { 
-            startVoiceTypingEngine('message-input'); 
-            return; 
-        }
-        
-        if (target.closest('#group-voice-type-btn')) { 
-            startVoiceTypingEngine('group-message-input'); 
-            return; 
-        }
-        
-        if (target.closest('#world-voice-type-btn')) { 
-            startVoiceTypingEngine('world-message-input'); 
-            return; 
+        if (target.closest('#voice-type-btn')) {
+            startVoiceTypingEngine('message-input');
+            return;
         }
 
-        if (target.closest('#attach-btn')) { 
-            const uploadInput = safeEl('chat-media-upload-input'); 
-            if(uploadInput) {
-                uploadInput.click(); 
-            }
-            return; 
+        if (target.closest('#group-voice-type-btn')) {
+            startVoiceTypingEngine('group-message-input');
+            return;
         }
-        
-        if (target.closest('#group-attach-btn')) { 
-            const uploadInput = safeEl('group-media-upload-input'); 
-            if(uploadInput) {
-                uploadInput.click(); 
-            }
-            return; 
+
+        if (target.closest('#world-voice-type-btn')) {
+            startVoiceTypingEngine('world-message-input');
+            return;
         }
-        
-        if (target.closest('#world-attach-btn')) { 
-            const uploadInput = safeEl('world-media-upload-input'); 
-            if(uploadInput) {
-                uploadInput.click(); 
+
+        if (target.closest('#attach-btn')) {
+            const uploadInput = safeEl('chat-media-upload-input');
+            if (uploadInput) {
+                uploadInput.click();
             }
-            return; 
+            return;
+        }
+
+        if (target.closest('#group-attach-btn')) {
+            const uploadInput = safeEl('group-media-upload-input');
+            if (uploadInput) {
+                uploadInput.click();
+            }
+            return;
+        }
+
+        if (target.closest('#world-attach-btn')) {
+            const uploadInput = safeEl('world-media-upload-input');
+            if (uploadInput) {
+                uploadInput.click();
+            }
+            return;
         }
 
         if (target.closest('#world-mute-btn')) {
             isWorldMuted = !isWorldMuted;
             const muteButtonElem = target.closest('#world-mute-btn');
-            
+
             if (isWorldMuted) {
                 muteButtonElem.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                muteButtonElem.classList.remove('danger-btn'); 
+                muteButtonElem.classList.remove('danger-btn');
                 muteButtonElem.classList.add('action-btn');
             } else {
                 muteButtonElem.innerHTML = '<i class="fas fa-volume-up"></i>';
-                muteButtonElem.classList.remove('action-btn'); 
+                muteButtonElem.classList.remove('action-btn');
                 muteButtonElem.classList.add('danger-btn');
             }
             return;
         }
 
-        if (target.closest('#trigger-dp-upload')) { 
-            const hiddenUploadInputField = safeEl('edit-dp-input'); 
+        if (target.closest('#trigger-dp-upload')) {
+            const hiddenUploadInputField = safeEl('edit-dp-input');
             if (hiddenUploadInputField) {
-                hiddenUploadInputField.click(); 
+                hiddenUploadInputField.click();
             }
-            return; 
+            return;
         }
-        
-        if (target.closest('#trigger-banner-upload')) { 
-            const hiddenUploadInputField = safeEl('edit-banner-input'); 
+
+        if (target.closest('#trigger-banner-upload')) {
+            const hiddenUploadInputField = safeEl('edit-banner-input');
             if (hiddenUploadInputField) {
-                hiddenUploadInputField.click(); 
+                hiddenUploadInputField.click();
             }
-            return; 
+            return;
         }
 
         if (target.closest('#save-profile-btn')) {
             const nicknameConfigurationInputValue = gVal('edit-username-input');
             const biographicalSummaryInputValue = gVal('edit-bio-input');
-            
+
             if (nicknameConfigurationInputValue) {
                 currentUser.username = nicknameConfigurationInputValue;
             }
-            
+
             currentUser.bio = biographicalSummaryInputValue;
-            window.saveData(); 
-            updateProfileUI(); 
-            sAdd('edit-profile-modal', 'hidden'); 
+            window.saveData();
+            updateProfileUI();
+            sAdd('edit-profile-modal', 'hidden');
             return;
         }
 
-        if (target.closest('#post-image-btn')) { 
-            const hiddenImageUploadInputField = safeEl('post-image-upload-input'); 
+        if (target.closest('#post-image-btn')) {
+            const hiddenImageUploadInputField = safeEl('post-image-upload-input');
             if (hiddenImageUploadInputField) {
-                hiddenImageUploadInputField.click(); 
+                hiddenImageUploadInputField.click();
             }
-            return; 
+            return;
         }
-        
-        if (target.closest('#action-remove-attached-post-file-buffer')) { 
-            attachedPostImage = null; 
-            sAdd('post-media-attachment-status-preview', 'hidden'); 
-            sVal('post-image-upload-input', ''); 
-            return; 
-        }
-        
-        if (target.closest('#submit-post-btn')) { 
-            const text = gVal('post-input');
-            if (!text && !attachedPostImage) { 
-                alert("Please write something or attach an image."); 
-                return; 
-            }
-            
-            const newPost = { 
-                id: Date.now(), 
-                user: currentUser.username, 
-                dp: currentUser.dp || DEFAULT_DP, 
-                time: new Date().toLocaleTimeString(), 
-                scope: safeEl('post-privacy-scope-configuration-level-toggle-select').value, 
-                text: text, 
-                tags: text.match(/#[a-zA-Z0-9_]+/g) || [], 
-                image: attachedPostImage 
-            };
-            
-            posts.unshift(newPost); 
-            window.saveData(); 
-            renderPosts(); 
-            sVal('post-input', ''); 
-            attachedPostImage = null; 
+
+        if (target.closest('#action-remove-attached-post-file-buffer')) {
+            attachedPostImage = null;
             sAdd('post-media-attachment-status-preview', 'hidden');
-            return; 
+            sVal('post-image-upload-input', '');
+            return;
         }
-        
+
+        if (target.closest('#submit-post-btn')) {
+            const text = gVal('post-input');
+            if (!text && !attachedPostImage) {
+                alert("Please write something or attach an image.");
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                user: currentUser.username,
+                dp: currentUser.dp || DEFAULT_DP,
+                time: new Date().toLocaleTimeString(),
+                scope: safeEl('post-privacy-scope-configuration-level-toggle-select').value,
+                text: text,
+                tags: text.match(/#[a-zA-Z0-9_]+/g) || [],
+                image: attachedPostImage
+            };
+
+            posts.unshift(newPost);
+            window.saveData();
+            renderPosts();
+            sVal('post-input', '');
+            attachedPostImage = null;
+            sAdd('post-media-attachment-status-preview', 'hidden');
+            return;
+        }
+
         if (target.closest('.delete-post-btn')) {
             if (confirm("Are you entirely sure you want to permanently delete this specific post from the global feed arrays?")) {
                 const postCardElement = target.closest('.feed-post');
                 if (postCardElement) {
                     const extractedPostId = parseInt(postCardElement.getAttribute('data-id'));
                     posts = posts.filter(postObj => postObj.id !== extractedPostId);
-                    window.saveData(); 
+                    window.saveData();
                     renderPosts();
                 }
             }
@@ -2243,35 +2298,35 @@ document.addEventListener('click', (eventObject) => {
         }
 
         // Group Poll & Actions
-        if (target.closest('#create-group-btn')) { 
-            sRem('create-group-modal', 'hidden'); 
-            return; 
+        if (target.closest('#create-group-btn')) {
+            sRem('create-group-modal', 'hidden');
+            return;
         }
-        
-        if (target.closest('#trigger-group-icon-upload')) { 
-            const hiddenGroupIconUploadInputField = safeEl('new-group-icon-input'); 
+
+        if (target.closest('#trigger-group-icon-upload')) {
+            const hiddenGroupIconUploadInputField = safeEl('new-group-icon-input');
             if (hiddenGroupIconUploadInputField) {
-                hiddenGroupIconUploadInputField.click(); 
+                hiddenGroupIconUploadInputField.click();
             }
-            return; 
+            return;
         }
 
         if (target.closest('#confirm-create-group-btn')) {
             const groupTitleNameInputValue = gVal('new-group-name');
             if (groupTitleNameInputValue) {
-                groups.push({ 
-                    id: Date.now(), 
-                    name: groupTitleNameInputValue, 
-                    icon: tempGroupIcon, 
-                    createdBy: currentUser.username 
+                groups.push({
+                    id: Date.now(),
+                    name: groupTitleNameInputValue,
+                    icon: tempGroupIcon,
+                    createdBy: currentUser.username
                 });
-                
-                window.saveData(); 
-                renderGroups(); 
-                sAdd('create-group-modal', 'hidden'); 
+
+                window.saveData();
+                renderGroups();
+                sAdd('create-group-modal', 'hidden');
                 sVal('new-group-name', '');
-                
-                tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff"; 
+
+                tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=fff";
                 sSrc('new-group-icon-preview', tempGroupIcon);
             }
             return;
@@ -2279,28 +2334,28 @@ document.addEventListener('click', (eventObject) => {
 
         if (target.closest('.group-item')) {
             const groupNameStringValue = target.closest('.group-item').getAttribute('data-group');
-            
-            sAdd('group-placeholder', 'hidden'); 
+
+            sAdd('group-placeholder', 'hidden');
             sRem('group-header', 'hidden');
-            sRem('group-messages-area', 'hidden'); 
+            sRem('group-messages-area', 'hidden');
             sRem('group-input-area', 'hidden');
-            
+
             sText('current-group-name', groupNameStringValue);
-            
+
             const selectedGroupObj = groups.find(x => x.name === groupNameStringValue);
-            if(selectedGroupObj) { 
-                sSrc('group-header-img', selectedGroupObj.icon || `https://ui-avatars.com/api/?name=${groupNameStringValue}&background=a855f7&color=fff`); 
+            if (selectedGroupObj) {
+                sSrc('group-header-img', selectedGroupObj.icon || `https://ui-avatars.com/api/?name=${groupNameStringValue}&background=a855f7&color=fff`);
             }
-            
-            loadChatHistoryToView('group', groupNameStringValue); 
+
+            loadChatHistoryToView('group', groupNameStringValue);
             return;
         }
 
         if (target.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn')) {
-            sVal('group-poll-input-question-string-field', ''); 
-            sVal('group-poll-input-option-string-field-1', ''); 
+            sVal('group-poll-input-question-string-field', '');
+            sVal('group-poll-input-option-string-field-1', '');
             sVal('group-poll-input-option-string-field-2', '');
-            sRem('group-channel-poll-creation-modal-framework-overlay-window', 'hidden'); 
+            sRem('group-channel-poll-creation-modal-framework-overlay-window', 'hidden');
             return;
         }
 
@@ -2318,8 +2373,8 @@ document.addEventListener('click', (eventObject) => {
                 `;
                 sendMessageWithSave('group', pollHtml, safeEl('current-group-name').innerText);
                 sAdd('group-channel-poll-creation-modal-framework-overlay-window', 'hidden');
-            } else { 
-                alert("Execution Halted: Please ensure all textual input blocks for the poll are fully complete."); 
+            } else {
+                alert("Execution Halted: Please ensure all textual input blocks for the poll are fully complete.");
             }
             return;
         }
@@ -2328,16 +2383,16 @@ document.addEventListener('click', (eventObject) => {
             const pollSelectionButtonElement = target.closest('.execution-vote-poll-track-node-btn');
             let currentTrackedVotesCountValue = parseInt(pollSelectionButtonElement.getAttribute('data-votes')) || 0;
             currentTrackedVotesCountValue++;
-            
+
             pollSelectionButtonElement.setAttribute('data-votes', currentTrackedVotesCountValue);
-            
+
             const spanOutputValueElement = pollSelectionButtonElement.querySelector('.vote-count-numerical-outlet-span');
-            if (spanOutputValueElement) { 
-                spanOutputValueElement.innerText = currentTrackedVotesCountValue; 
+            if (spanOutputValueElement) {
+                spanOutputValueElement.innerText = currentTrackedVotesCountValue;
             }
-            
-            pollSelectionButtonElement.disabled = true; 
-            pollSelectionButtonElement.style.opacity = "0.7"; 
+
+            pollSelectionButtonElement.disabled = true;
+            pollSelectionButtonElement.style.opacity = "0.7";
             return;
         }
 
@@ -2346,8 +2401,8 @@ document.addEventListener('click', (eventObject) => {
             const bondTargetInputStringValue = gVal('band-request-input');
             if (bondTargetInputStringValue !== "") {
                 bandRequests.push({ username: bondTargetInputStringValue });
-                window.saveData(); 
-                renderBandRequests(); 
+                window.saveData();
+                renderBandRequests();
                 sVal('band-request-input', '');
             }
             return;
@@ -2358,19 +2413,19 @@ document.addEventListener('click', (eventObject) => {
             if (bondRequestListItemElement) {
                 const bondSourceUsernameKey = bondRequestListItemElement.getAttribute('data-user');
                 bandRequests = bandRequests.filter(reqObj => reqObj.username !== bondSourceUsernameKey);
-                
+
                 sHtml('fb-partner-dp-slot', `<img src="https://ui-avatars.com/api/?name=${bondSourceUsernameKey}&background=random&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`);
-                sText('fb-partner-name', bondSourceUsernameKey); 
-                sText('band-level', "Bond Level 1 (Initial Handshake Verified)"); 
+                sText('fb-partner-name', bondSourceUsernameKey);
+                sText('band-level', "Bond Level 1 (Initial Handshake Verified)");
                 sText('time-remaining', "You are now bonded securely!");
-                
-                const visualProgressBarElement = safeEl('band-progress'); 
-                if (visualProgressBarElement) { 
-                    visualProgressBarElement.style.width = "45%"; 
+
+                const visualProgressBarElement = safeEl('band-progress');
+                if (visualProgressBarElement) {
+                    visualProgressBarElement.style.width = "45%";
                 }
-                
-                sRem('break-band-btn', 'hidden'); 
-                window.saveData(); 
+
+                sRem('break-band-btn', 'hidden');
+                window.saveData();
                 renderBandRequests();
             }
             return;
@@ -2378,17 +2433,17 @@ document.addEventListener('click', (eventObject) => {
 
         if (target.closest('#break-band-btn')) {
             if (confirm("SEVERE ACTION WARNING: Are you absolutely sure you want to permanently break your Friendship Bond link sequence? All synchronized streak progress counters will be completely lost and zeroed out.")) {
-                sHtml('fb-partner-dp-slot', '?'); 
+                sHtml('fb-partner-dp-slot', '?');
                 sText('fb-partner-name', "Partner Space Available");
-                sText('band-level', "Bond Level 0 (Detached)"); 
+                sText('band-level', "Bond Level 0 (Detached)");
                 sText('time-remaining', "Currently Not Connected");
-                
-                const visualProgressBarElement = safeEl('band-progress'); 
-                if (visualProgressBarElement) { 
-                    visualProgressBarElement.style.width = "0%"; 
+
+                const visualProgressBarElement = safeEl('band-progress');
+                if (visualProgressBarElement) {
+                    visualProgressBarElement.style.width = "0%";
                 }
-                
-                sAdd('break-band-btn', 'hidden'); 
+
+                sAdd('break-band-btn', 'hidden');
                 window.saveData();
             }
             return;
@@ -2397,15 +2452,15 @@ document.addEventListener('click', (eventObject) => {
         if (target.closest('#submit-bug-report-btn')) {
             const bugReportDescriptionTextValue = gVal('bug-report-text-input');
             if (bugReportDescriptionTextValue !== "") {
-                systemBugReports.push({ 
-                    id: systemBugReports.length + 1, 
-                    submittedBy: currentUser ? currentUser.username : "Unknown Entity", 
-                    traceLogContext: bugReportDescriptionTextValue, 
-                    timestamp: new Date().toLocaleTimeString() 
+                systemBugReports.push({
+                    id: systemBugReports.length + 1,
+                    submittedBy: currentUser ? currentUser.username : "Unknown Entity",
+                    traceLogContext: bugReportDescriptionTextValue,
+                    timestamp: new Date().toLocaleTimeString()
                 });
-                
-                window.saveData(); 
-                renderDeveloperBugReportsAggregationPanelList(); 
+
+                window.saveData();
+                renderDeveloperBugReportsAggregationPanelList();
                 sAdd('bug-report-modal', 'hidden');
             }
             return;
@@ -2413,41 +2468,41 @@ document.addEventListener('click', (eventObject) => {
 
         if (target.closest('.close-modal-btn') || target.classList.contains('modal-overlay')) {
             let overlayToCloseElement = target.closest('.modal-overlay');
-            if (!overlayToCloseElement) { 
-                overlayToCloseElement = target; 
+            if (!overlayToCloseElement) {
+                overlayToCloseElement = target;
             }
-            if (overlayToCloseElement.classList.contains('modal-overlay')) { 
-                overlayToCloseElement.classList.add('hidden'); 
+            if (overlayToCloseElement.classList.contains('modal-overlay')) {
+                overlayToCloseElement.classList.add('hidden');
             }
             return;
         }
 
         if (target.closest('#action-clear-cache-btn')) {
             if (confirm("Notice: Are you absolutely positive you want to completely clear the application cache blocks?")) {
-                localStorage.removeItem('chatPosts'); 
-                posts = []; 
+                localStorage.removeItem('chatPosts');
+                posts = [];
                 renderPosts();
             }
             return;
         }
 
-        if (target.closest('#view-friends-list-btn')) { 
-            renderFriendsListModal(); 
-            sRem('friend-list-modal', 'hidden'); 
-            return; 
+        if (target.closest('#view-friends-list-btn')) {
+            renderFriendsListModal();
+            sRem('friend-list-modal', 'hidden');
+            return;
         }
-        
-        if (target.closest('#edit-profile-btn')) { 
-            sVal('edit-username-input', currentUser.username); 
-            sVal('edit-bio-input', currentUser.bio || ''); 
-            sRem('edit-profile-modal', 'hidden'); 
-            return; 
+
+        if (target.closest('#edit-profile-btn')) {
+            sVal('edit-username-input', currentUser.username);
+            sVal('edit-bio-input', currentUser.bio || '');
+            sRem('edit-profile-modal', 'hidden');
+            return;
         }
 
     } catch (err) {
         console.error("Global Click Event Error Intercepted (App kept running):", err);
     }
-}); 
+});
 
 // =========================================================================
 // 8. FILE UPLOAD HELPERS & KEYPRESS LISTENERS
@@ -2469,26 +2524,26 @@ function setupFileInput(elementIdString, resultCallbackFunctionMethod) {
     }
 }
 
-setupFileInput('edit-dp-input', (resultingBase64ImageStringCode) => { 
-    currentUser.dp = resultingBase64ImageStringCode; 
-    window.saveData(); 
-    updateProfileUI(); 
+setupFileInput('edit-dp-input', (resultingBase64ImageStringCode) => {
+    currentUser.dp = resultingBase64ImageStringCode;
+    window.saveData();
+    updateProfileUI();
 });
 
-setupFileInput('edit-banner-input', (resultingBase64ImageStringCode) => { 
-    currentUser.banner = resultingBase64ImageStringCode; 
-    window.saveData(); 
-    updateProfileUI(); 
+setupFileInput('edit-banner-input', (resultingBase64ImageStringCode) => {
+    currentUser.banner = resultingBase64ImageStringCode;
+    window.saveData();
+    updateProfileUI();
 });
 
-setupFileInput('new-group-icon-input', (resultingBase64ImageStringCode) => { 
-    tempGroupIcon = resultingBase64ImageStringCode; 
-    sSrc('new-group-icon-preview', tempGroupIcon); 
+setupFileInput('new-group-icon-input', (resultingBase64ImageStringCode) => {
+    tempGroupIcon = resultingBase64ImageStringCode;
+    sSrc('new-group-icon-preview', tempGroupIcon);
 });
 
-setupFileInput('post-image-upload-input', (resultingBase64ImageStringCode) => { 
-    attachedPostImage = resultingBase64ImageStringCode; 
-    sRem('post-media-attachment-status-preview', 'hidden'); 
+setupFileInput('post-image-upload-input', (resultingBase64ImageStringCode) => {
+    attachedPostImage = resultingBase64ImageStringCode;
+    sRem('post-media-attachment-status-preview', 'hidden');
 });
 
 function renderChatMediaMessage(base64MediaString, targetMessageAreaIdString, emitType) {
@@ -2496,16 +2551,16 @@ function renderChatMediaMessage(base64MediaString, targetMessageAreaIdString, em
     sendMessageWithSave(emitType, `<br><img src="${base64MediaString}" style="max-width:220px; border-radius:12px; margin-top:8px; border:2px solid rgba(255,255,255,0.2);">`, targetName);
 }
 
-setupFileInput('chat-media-upload-input', (mediaBase64Data) => { 
-    renderChatMediaMessage(mediaBase64Data, 'messages-area', 'direct'); 
+setupFileInput('chat-media-upload-input', (mediaBase64Data) => {
+    renderChatMediaMessage(mediaBase64Data, 'messages-area', 'direct');
 });
 
-setupFileInput('group-media-upload-input', (mediaBase64Data) => { 
-    renderChatMediaMessage(mediaBase64Data, 'group-messages-area', 'group'); 
+setupFileInput('group-media-upload-input', (mediaBase64Data) => {
+    renderChatMediaMessage(mediaBase64Data, 'group-messages-area', 'group');
 });
 
-setupFileInput('world-media-upload-input', (mediaBase64Data) => { 
-    renderChatMediaMessage(mediaBase64Data, 'world-messages-area', 'world'); 
+setupFileInput('world-media-upload-input', (mediaBase64Data) => {
+    renderChatMediaMessage(mediaBase64Data, 'world-messages-area', 'world');
 });
 
 const handleEnterKeypressRoutingPortAssignmentMethod = (targetInputIdString, triggerActionBtnIdString) => {
@@ -2515,8 +2570,8 @@ const handleEnterKeypressRoutingPortAssignmentMethod = (targetInputIdString, tri
             if (keypressEventObject.key === 'Enter') {
                 keypressEventObject.preventDefault();
                 const actionButtonTargetElement = safeEl(triggerActionBtnIdString);
-                if (actionButtonTargetElement) { 
-                    actionButtonTargetElement.click(); 
+                if (actionButtonTargetElement) {
+                    actionButtonTargetElement.click();
                 }
             }
         });
