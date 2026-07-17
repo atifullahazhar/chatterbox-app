@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name=C&background=8b5cf6&color=fff">
 
     <!-- SINGLE UNIFIED CSS LOADED HERE -->
-    <link rel="stylesheet" href="style.css?v=900000">
+    <link rel="stylesheet" href="style.css?v=1000000">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
@@ -17,6 +17,12 @@
 </head>
 
 <body>
+
+    <!-- 🔥 OFFLINE MODE (PWA) BANNER 🔥 -->
+    <div id="offline-alert-banner" class="hidden"
+        style="background: var(--system-error); color: white; text-align: center; padding: 6px; font-weight: bold; font-size: 0.9rem; z-index: 999999; position: relative;">
+        <i class="fas fa-wifi"></i> You are currently offline. Showing cached messages and drafts.
+    </div>
 
     <!-- ========================================================================= -->
     <!-- 1. LOGIN SCREEN                                                           -->
@@ -136,6 +142,13 @@
             <ul class="nav-links">
                 <li><button class="nav-btn active" data-target="profile-section"><i class="fas fa-user-shield"></i>
                         <span class="nav-text">Profile</span></button></li>
+
+                <!-- 🔥 NEW: STORIES & REELS NAV LINKS 🔥 -->
+                <li><button class="nav-btn" data-target="stories-section"><i class="fas fa-circle-notch"></i> <span
+                            class="nav-text">24H Stories</span></button></li>
+                <li><button class="nav-btn" data-target="reels-section"><i class="fas fa-play-circle"></i> <span
+                            class="nav-text">Shorts & Reels</span></button></li>
+
                 <li><button class="nav-btn" data-target="chat-section"><i class="fas fa-comments"></i> <span
                             class="nav-text">Direct Chat</span></button></li>
                 <li><button class="nav-btn" data-target="group-chat-section"><i class="fas fa-network-wired"></i> <span
@@ -152,6 +165,11 @@
                             class="nav-text">World Chat</span></button></li>
                 <li><button class="nav-btn" data-target="post-section"><i class="fas fa-photo-video"></i> <span
                             class="nav-text">Post Feed</span></button></li>
+
+                <!-- 🔥 NEW: CALL LOGS NAV LINK 🔥 -->
+                <li><button class="nav-btn" data-target="call-logs-section"><i class="fas fa-history"></i> <span
+                            class="nav-text">Call History</span></button></li>
+
                 <li><button class="nav-btn" data-target="settings-section"><i class="fas fa-sliders-h"></i> <span
                             class="nav-text">Settings</span></button></li>
                 <li id="dev-nav-item" class="hidden"><button class="nav-btn dev-tab-btn"
@@ -174,7 +192,6 @@
 
             <!-- A. PROFILE SECTION -->
             <section id="profile-section" class="content-view active" style="position: relative;">
-
                 <img src="images (1).jpg" alt="Watermark" class="profile-watermark-bg">
 
                 <div class="profile-banner-wrapper"
@@ -228,6 +245,45 @@
 
                     <button id="edit-profile-btn" class="primary-btn" style="margin-top: 25px;"><i
                             class="fas fa-user-edit"></i> Edit Profile</button>
+                </div>
+            </section>
+
+            <!-- 🔥 NEW: 24H STORIES SECTION 🔥 -->
+            <section id="stories-section" class="content-view hidden">
+                <div class="standard-wrapper">
+                    <div class="section-title-box">
+                        <h2><i class="fas fa-circle-notch"></i> 24H Stories</h2>
+                        <p>Share ephemeral updates with your network.</p>
+                    </div>
+                    <div class="stories-container" id="stories-container-box"
+                        style="display: flex; gap: 15px; overflow-x: auto; padding: 20px; background: var(--bg-panel); border-radius: 20px; border: 1px solid var(--border-color);">
+                        <div class="story-item" id="add-story-btn"
+                            style="display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
+                            <div
+                                style="width: 70px; height: 70px; border-radius: 50%; border: 3px dashed var(--primary-color); display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary-color);">
+                                +</div>
+                            <span style="font-weight: bold; font-size: 0.85rem;">Add Story</span>
+                        </div>
+                        <!-- Fetched Stories will appear here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 🔥 NEW: REELS / SHORTS SECTION 🔥 -->
+            <section id="reels-section" class="content-view hidden">
+                <div class="standard-wrapper"
+                    style="height: 100vh; padding: 0; max-width: 500px; display: flex; flex-direction: column;">
+                    <div class="section-title-box"
+                        style="padding: 20px; text-align: center; background: rgba(0,0,0,0.8); color: white;">
+                        <h2 style="color: white; margin:0;"><i class="fas fa-play"></i> Shorts Feed</h2>
+                    </div>
+                    <div id="reels-feed-container"
+                        style="flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; background: #000;">
+                        <!-- Reel Video items will snap here -->
+                        <div
+                            style="height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+                            No Reels available yet.</div>
+                    </div>
                 </div>
             </section>
 
@@ -322,6 +378,9 @@
                             </div>
 
                             <div class="header-actions">
+                                <!-- 🔥 NEW: EXPORT CHAT 🔥 -->
+                                <button id="export-chat-btn" class="action-btn" title="Export Chat to File"><i
+                                        class="fas fa-download"></i></button>
                                 <button id="direct-voice-call-btn" class="action-btn" title="Voice Call"><i
                                         class="fas fa-phone-alt"></i></button>
                                 <button id="direct-video-call-btn" class="action-btn" title="Video Call"><i
@@ -331,25 +390,67 @@
                             </div>
                         </div>
 
+                        <!-- 🔥 NEW: PINNED MESSAGE CONTAINER 🔥 -->
+                        <div id="pinned-message-container" class="hidden"
+                            style="background: var(--sidebar-bg); padding: 10px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;">
+                            <div><i class="fas fa-thumbtack"
+                                    style="color: var(--primary-color); margin-right: 8px;"></i> <span
+                                    id="pinned-text-preview">No Pinned Messages</span></div>
+                            <button class="danger-btn"
+                                style="padding: 4px 8px; font-size: 0.8rem; border-radius: 6px;"><i
+                                    class="fas fa-times"></i></button>
+                        </div>
+
                         <div class="messages-container hidden" id="messages-area"></div>
 
+                        <!-- 🔥 NEW: SMART REPLIES CONTAINER 🔥 -->
+                        <div id="smart-replies-bar" class="hidden"
+                            style="padding: 10px 20px; display: flex; gap: 10px; overflow-x: auto; background: var(--bg-main);">
+                            <button class="action-btn"
+                                style="border-radius: 20px; padding: 6px 15px; font-size: 0.85rem;">Sounds
+                                good!</button>
+                            <button class="action-btn"
+                                style="border-radius: 20px; padding: 6px 15px; font-size: 0.85rem;">I am busy</button>
+                            <button class="action-btn"
+                                style="border-radius: 20px; padding: 6px 15px; font-size: 0.85rem;">Let's talk
+                                later.</button>
+                        </div>
+
                         <div class="chat-input-area hidden" id="chat-input-area">
-                            <button id="attach-btn" class="action-btn" title="Attach Media"><i
+                            <button id="attach-btn" class="action-btn" title="Attach Media/Files"><i
                                     class="fas fa-paperclip"></i></button>
+
+                            <!-- 🔥 NEW: STICKERS & GIFS 🔥 -->
+                            <button id="sticker-btn" class="action-btn" title="Send Stickers/GIFs"><i
+                                    class="fas fa-sticky-note"></i></button>
+
+                            <!-- 🔥 NEW: LOCATION SHARE 🔥 -->
+                            <button id="location-btn" class="action-btn" title="Share Live Location"><i
+                                    class="fas fa-map-marker-alt"></i></button>
+
                             <button id="emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
                                 data-target="message-input"><i class="far fa-smile"></i></button>
-                            <button id="voice-type-btn" class="action-btn" title="Voice Typing (Hinglish/English)"><i
-                                    class="fas fa-keyboard"></i></button>
 
                             <input type="text" placeholder="Type a message..." id="message-input" autocomplete="off">
+
+                            <!-- 🔥 NEW: DRAWING/WHITEBOARD 🔥 -->
+                            <button id="draw-btn" class="action-btn" title="Draw on Whiteboard"><i
+                                    class="fas fa-paint-brush"></i></button>
+
+                            <!-- 🔥 NEW: SCHEDULE & DESTRUCT BUTTONS 🔥 -->
+                            <button id="schedule-btn" class="action-btn" title="Schedule Message"><i
+                                    class="fas fa-clock"></i></button>
+                            <button id="destruct-btn" class="action-btn" title="Self-Destruct Timer"><i
+                                    class="fas fa-bomb"></i></button>
 
                             <button id="voice-note-btn" class="action-btn" title="Hold to Record Voice Note"><i
                                     class="fas fa-microphone"></i></button>
                             <button id="send-btn" class="primary-btn" title="Send Message"><i
                                     class="fas fa-paper-plane"></i></button>
 
-                            <input type="file" id="chat-media-upload-input" accept="image/*,video/*,audio/*"
-                                class="hidden">
+                            <!-- 🔥 EXPANDED FILE TYPES FOR CLOUD SHARING 🔥 -->
+                            <input type="file" id="chat-media-upload-input"
+                                accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx" class="hidden">
                         </div>
                     </div>
                 </div>
@@ -367,6 +468,11 @@
                                 <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-circle"
                                         style="color:#10b981; font-size:10px; margin-right: 4px;"></i> Active Assistant
                                     & Security Moderator</span>
+                            </div>
+                            <div class="header-actions">
+                                <!-- 🔥 NEW: CHAT SUMMARIZER 🔥 -->
+                                <button id="ai-summarize-btn" class="action-btn" title="Summarize This Chat"><i
+                                        class="fas fa-magic"></i></button>
                             </div>
                         </div>
 
@@ -410,13 +516,25 @@
                                 <h3 id="current-group-name">Group Title</h3>
                             </div>
                             <div class="header-actions">
+                                <!-- 🔥 NEW: GROUP INVITE & MEDIA GALLERY 🔥 -->
+                                <button id="group-media-gallery-btn" class="action-btn" title="Media Gallery"><i
+                                        class="fas fa-images"></i></button>
+                                <button id="group-invite-btn" class="action-btn" title="Group Invite Link/QR"><i
+                                        class="fas fa-link"></i></button>
+
                                 <button id="group-voice-call-btn" class="action-btn" title="Join Audio Room"><i
                                         class="fas fa-phone-alt"></i></button>
                                 <button id="group-video-call-btn" class="action-btn" title="Join Video Room"><i
                                         class="fas fa-video"></i></button>
                                 <button id="group-channel-trigger-instantiate-poll-creation-modal-btn"
-                                    class="action-btn"><i class="fas fa-poll"></i> Poll</button>
+                                    class="action-btn"><i class="fas fa-poll"></i></button>
                             </div>
+                        </div>
+
+                        <!-- 🔥 NEW: GROUP ANNOUNCEMENT BANNER 🔥 -->
+                        <div id="group-announcement-banner" class="hidden"
+                            style="background: var(--system-warning); color: white; text-align: center; padding: 6px; font-weight: bold; font-size: 0.9rem;">
+                            <i class="fas fa-bullhorn fa-shake"></i> <span>Important Update Here</span>
                         </div>
 
                         <div class="messages-container hidden" id="group-messages-area"></div>
@@ -426,8 +544,12 @@
                                     class="fas fa-paperclip"></i></button>
                             <button id="group-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
                                 data-target="group-message-input"><i class="far fa-smile"></i></button>
-                            <button id="group-voice-type-btn" class="action-btn"
-                                title="Voice Typing (Hinglish/English)"><i class="fas fa-keyboard"></i></button>
+                            <button id="group-voice-type-btn" class="action-btn" title="Voice Typing"><i
+                                    class="fas fa-keyboard"></i></button>
+
+                            <!-- 🔥 NEW: PING BUTTONS IN GROUP 🔥 -->
+                            <button id="group-ping-btn" class="action-btn" title="Ping @everyone or @here"><i
+                                    class="fas fa-bell"></i></button>
 
                             <input type="text" placeholder="Type message to group..." id="group-message-input"
                                 autocomplete="off">
@@ -436,8 +558,8 @@
                                     class="fas fa-microphone"></i></button>
                             <button id="group-send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
 
-                            <input type="file" id="group-media-upload-input" accept="image/*,video/*,audio/*"
-                                class="hidden">
+                            <input type="file" id="group-media-upload-input"
+                                accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx" class="hidden">
                         </div>
                     </div>
                 </div>
@@ -500,8 +622,8 @@
                     <div class="chat-header">
                         <div class="chat-header-info">
                             <h3>🌍 World Chat Room</h3>
-                            <span style="font-size: 0.85rem; color: var(--text-muted);">Slow mode enabled (3s
-                                delay)</span>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Slow mode enabled (3s delay) |
+                                Profanity Filter Active</span>
                         </div>
                         <div class="header-actions">
                             <button id="world-voice-call-btn" class="action-btn" title="Join Global Audio Stage"><i
@@ -524,7 +646,7 @@
                                 class="fas fa-paperclip"></i></button>
                         <button id="world-emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
                             data-target="world-message-input"><i class="far fa-smile"></i></button>
-                        <button id="world-voice-type-btn" class="action-btn" title="Voice Typing (Hinglish/English)"><i
+                        <button id="world-voice-type-btn" class="action-btn" title="Voice Typing"><i
                                 class="fas fa-keyboard"></i></button>
 
                         <input type="text" placeholder="Type a message to global room..." id="world-message-input"
@@ -534,8 +656,8 @@
                                 class="fas fa-microphone"></i></button>
                         <button id="world-send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
 
-                        <input type="file" id="world-media-upload-input" accept="image/*,video/*,audio/*"
-                            class="hidden">
+                        <input type="file" id="world-media-upload-input"
+                            accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx" class="hidden">
                     </div>
                 </div>
             </section>
@@ -560,6 +682,9 @@
                                         class="fas fa-icons"></i></button>
                                 <button id="post-meme-btn" class="action-btn" title="Meme"><i
                                         class="fas fa-grin-squint-tears"></i></button>
+                                <!-- 🔥 NEW: POLL BUTTON IN FEED 🔥 -->
+                                <button id="post-poll-btn" class="action-btn" title="Create Poll"><i
+                                        class="fas fa-poll-h"></i></button>
                             </div>
 
                             <div class="post-publish-controls">
@@ -570,10 +695,26 @@
                                 <button id="submit-post-btn" class="primary-btn">Publish</button>
                             </div>
                         </div>
+                        <!-- 🔥 AUTO COMPRESSION TRIGGER ADDED VIA JS LATER 🔥 -->
                         <input type="file" id="post-image-upload-input" accept="image/*" class="hidden">
                     </div>
 
                     <div id="feed-container"></div>
+                </div>
+            </section>
+
+            <!-- 🔥 NEW: CALL LOGS SECTION 🔥 -->
+            <section id="call-logs-section" class="content-view hidden">
+                <div class="standard-wrapper">
+                    <div class="section-title-box">
+                        <h2><i class="fas fa-phone-alt"></i> Call Logs</h2>
+                        <p>History of all your incoming, outgoing, and missed calls.</p>
+                    </div>
+                    <div id="call-history-container"
+                        style="background: var(--bg-panel); border-radius: 20px; padding: 15px; border: 1px solid var(--border-color);">
+                        <p style="text-align: center; color: var(--text-muted); font-weight: bold; padding: 20px;">No
+                            call records found yet.</p>
+                    </div>
                 </div>
             </section>
 
@@ -642,6 +783,15 @@
                             </div>
                             <label class="toggle-switch"><input type="checkbox"
                                     id="settings-dispatch-read-receipts-packet-handshake-toggle" checked><span
+                                    class="slider"></span></label>
+                        </div>
+                        <!-- 🔥 NEW: HIDE TYPING STATUS 🔥 -->
+                        <div class="settings-row">
+                            <div>
+                                <strong>Hide "Typing..." Status</strong>
+                                <p>Invisible typing for total privacy.</p>
+                            </div>
+                            <label class="toggle-switch"><input type="checkbox" id="settings-hide-typing-toggle"><span
                                     class="slider"></span></label>
                         </div>
                     </div>
@@ -732,6 +882,24 @@
                         <div class="dev-box golden-box" id="dev-profile-ring-btn"><i class="fas fa-circle-notch"></i>
                             <h3>Profile Ring</h3>
                         </div>
+
+                        <!-- 🔥 NEW: DEV TOOLS ADDED 🔥 -->
+                        <div class="dev-box blue-box" id="dev-analytics-btn"><i class="fas fa-chart-line"></i>
+                            <h3>Live Analytics</h3>
+                        </div>
+                        <div class="dev-box red-box" id="dev-broadcast-btn"><i class="fas fa-bullhorn"></i>
+                            <h3>Broadcast</h3>
+                        </div>
+                        <div class="dev-box purple-box" id="dev-error-log-btn"><i
+                                class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Logger</h3>
+                        </div>
+                        <div class="dev-box green-box" id="dev-css-injector-btn"><i class="fas fa-code"></i>
+                            <h3>CSS Injector</h3>
+                        </div>
+                        <div class="dev-box golden-box" id="dev-language-btn"><i class="fas fa-language"></i>
+                            <h3>Localization</h3>
+                        </div>
                     </div>
 
                 </div>
@@ -742,6 +910,86 @@
     <!-- ========================================================================= -->
     <!-- 3. MODALS, OVERLAYS & FLOATING UI                                       -->
     <!-- ========================================================================= -->
+
+    <!-- 🔥 NEW: GLOBAL MESSAGE CONTEXT MENU (Reactions, Reply, Edit, Forward, Translate) 🔥 -->
+    <div id="message-context-menu" class="hidden"
+        style="position: fixed; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100000; padding: 10px; display: flex; flex-direction: column; gap: 5px; min-width: 150px;">
+        <div
+            style="display: flex; gap: 8px; justify-content: space-around; border-bottom: 1px solid var(--bg-main); padding-bottom: 8px; margin-bottom: 5px;">
+            <span style="font-size: 1.2rem; cursor: pointer;">👍</span>
+            <span style="font-size: 1.2rem; cursor: pointer;">❤️</span>
+            <span style="font-size: 1.2rem; cursor: pointer;">😂</span>
+            <span style="font-size: 1.2rem; cursor: pointer;">😮</span>
+        </div>
+        <button class="action-btn"
+            style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
+                class="fas fa-reply"></i> Reply</button>
+        <button class="action-btn"
+            style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
+                class="fas fa-share"></i> Forward</button>
+        <button class="action-btn"
+            style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
+                class="fas fa-edit"></i> Edit</button>
+        <button class="action-btn"
+            style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
+                class="fas fa-language"></i> Translate</button>
+    </div>
+
+    <!-- 🔥 NEW: DRAWING/WHITEBOARD CANVAS MODAL 🔥 -->
+    <div id="drawing-canvas-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="width: 800px; max-width: 95%;">
+            <h2><i class="fas fa-paint-brush"></i> Whiteboard / Draw</h2>
+            <div
+                style="width: 100%; height: 400px; background: #fff; border: 2px dashed var(--primary-color); border-radius: 14px; position: relative;">
+                <!-- Canvas placeholder -->
+                <canvas id="live-drawing-canvas" style="width:100%; height:100%;"></canvas>
+            </div>
+            <div class="modal-actions">
+                <button class="danger-btn close-modal-btn">Cancel</button>
+                <button class="primary-btn" id="send-drawing-btn">Send Drawing</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 NEW: SCHEDULE MESSAGE MODAL 🔥 -->
+    <div id="schedule-message-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h2><i class="fas fa-clock"></i> Schedule Message</h2>
+            <input type="datetime-local" class="modal-input" id="schedule-time-input">
+            <textarea class="modal-input" placeholder="Type scheduled message..." id="schedule-text-input"></textarea>
+            <div class="modal-actions">
+                <button class="danger-btn close-modal-btn">Cancel</button>
+                <button class="primary-btn" id="confirm-schedule-btn">Schedule</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 NEW: CSS INJECTOR MODAL (DEV) 🔥 -->
+    <div id="dev-css-injector-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="width: 700px;">
+            <h2><i class="fas fa-code"></i> CSS Injector (Live)</h2>
+            <p>Inject custom CSS directly into the DOM.</p>
+            <textarea class="modal-input" id="css-inject-textarea"
+                style="height: 200px; font-family: monospace; background: #000; color: #0f0;"></textarea>
+            <div class="modal-actions">
+                <button class="danger-btn close-modal-btn">Close</button>
+                <button class="primary-btn" id="apply-css-inject-btn">Inject CSS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 NEW: GLOBAL BROADCAST MODAL (DEV) 🔥 -->
+    <div id="dev-broadcast-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h2 style="color: red;"><i class="fas fa-bullhorn"></i> Global Broadcast</h2>
+            <textarea class="modal-input" id="broadcast-message-input"
+                placeholder="Type alert to force on all users screens..."></textarea>
+            <div class="modal-actions">
+                <button class="action-btn close-modal-btn">Cancel</button>
+                <button class="danger-btn" id="send-broadcast-btn" style="background: red;">SEND FLASH ALERT</button>
+            </div>
+        </div>
+    </div>
 
     <!-- THEME SELECTOR MODAL (20 THEMES) -->
     <div id="theme-selector-modal" class="modal-overlay hidden">
@@ -1058,7 +1306,19 @@
                         style="color: var(--system-success); font-weight: bold; font-size: 1.1rem; text-shadow: 0 2px 4px black; margin: 0;">
                         00:00</p>
                 </div>
-                <div style="width: 45px;"></div>
+
+                <!-- 🔥 NEW: CALL ADVANCED CONTROLS 🔥 -->
+                <div style="display: flex; gap: 10px;">
+                    <button id="call-screen-share-btn" class="action-btn" title="Share Screen"
+                        style="border-radius: 50%; width: 45px; height: 45px; background: rgba(0,0,0,0.5); color: white; border: none;"><i
+                            class="fas fa-desktop"></i></button>
+                    <button id="call-watch-party-btn" class="action-btn" title="Watch Party"
+                        style="border-radius: 50%; width: 45px; height: 45px; background: rgba(0,0,0,0.5); color: white; border: none;"><i
+                            class="fas fa-youtube"></i></button>
+                    <button id="call-record-btn" class="action-btn" title="Record Call"
+                        style="border-radius: 50%; width: 45px; height: 45px; background: rgba(0,0,0,0.5); color: white; border: none;"><i
+                            class="fas fa-record-vinyl"></i></button>
+                </div>
             </div>
 
             <!-- Dynamic Call Grid Area (Insta Style) -->
@@ -1081,6 +1341,13 @@
                 <button id="toggle-cam-btn" class="action-btn" title="Turn Camera On/Off"
                     style="border-radius: 50%; width: 55px; height: 55px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1.3rem; backdrop-filter: blur(10px);"><i
                         class="fas fa-video"></i></button>
+                <!-- 🔥 NEW: VIRTUAL BACKGROUND & NOISE CANCEL 🔥 -->
+                <button id="call-bg-blur-btn" class="action-btn" title="Blur Background"
+                    style="border-radius: 50%; width: 45px; height: 45px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1rem; backdrop-filter: blur(10px);"><i
+                        class="fas fa-user-astronaut"></i></button>
+                <button id="call-noise-cancel-btn" class="action-btn" title="AI Noise Cancel"
+                    style="border-radius: 50%; width: 45px; height: 45px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 1rem; backdrop-filter: blur(10px);"><i
+                        class="fas fa-wave-square"></i></button>
             </div>
         </div>
     </div>
@@ -1112,7 +1379,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js?v=900000"></script>
+    <script src="script.js?v=1000000"></script>
 </body>
 
 </html>
