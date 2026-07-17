@@ -2125,7 +2125,7 @@ button:active {
 
 
 /* ========================================================================= */
-/* 15. MOBILE LAYOUT RESPONSIVENESS                                          */
+/* 15. MOBILE LAYOUT RESPONSIVENESS (FULLY FIXED DASHBOARD)                  */
 /* ========================================================================= */
 @media (max-width: 1024px) {
     .dev-grid {
@@ -2154,6 +2154,7 @@ button:active {
         padding-bottom: 85px;
     }
 
+    /* 🔥 MOBILE DASHBOARD FIX 🔥 */
     #sidebar {
         position: fixed;
         bottom: 0;
@@ -2164,11 +2165,20 @@ button:active {
         background: var(--bg-panel);
         border-top: 1px solid var(--border-color);
         border-right: none;
-        padding: 0 10px;
-        justify-content: space-around;
+        padding: 0;
         align-items: center;
         z-index: 9999;
+        overflow-x: auto;
+        /* Allow horizontal scrolling */
+        scrollbar-width: none;
+        /* Hide scrollbar Firefox */
     }
+
+    #sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar Chrome/Safari */
 
     .nav-logo,
     .mobile-only-btn,
@@ -2178,10 +2188,12 @@ button:active {
 
     .nav-links {
         flex-direction: row;
-        width: 100%;
-        justify-content: space-around;
-        padding: 0;
-        gap: 0;
+        width: max-content;
+        justify-content: flex-start;
+        padding: 0 15px;
+        gap: 15px;
+        align-items: center;
+        height: 100%;
     }
 
     .nav-btn {
@@ -2191,6 +2203,11 @@ button:active {
         height: 50px;
         border-radius: 50%;
         margin: 0 !important;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Center the icon perfectly */
     }
 
     .nav-btn i {

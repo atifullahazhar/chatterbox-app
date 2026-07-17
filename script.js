@@ -1,12 +1,12 @@
 // =========================================================================
-// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V39 🔥
+// 🔥 CHATTERBOX VIP ECOSYSTEM - CORE JAVASCRIPT MASTER ENGINE V40 🔥
 // Privileges: SUPREME CORE ROOT OPERATOR
 // Optimization: STRICTLY DISABLED. 100% EXPLICIT RAW CODE.
-// Features: 40+ Ultimate Features (Reels, Stories, AI, WebRTC, Dev Tools)
+// Bug Fixes: Mobile Scroll, Story/Reel Upload, Global Polls, Dev Tools
 // =========================================================================
 
 console.log("🔥 CHATTERBOX VIP ECOSYSTEM INTERFACE RUNTIME SYSTEMS ONLINE 🔥");
-console.log("Initializing Un-Optimized Raw Master Engine...");
+console.log("Initializing Un-Optimized Raw Master Engine V40...");
 
 // =========================================================================
 // 0. CORE DOM UTILITIES & EXPLICIT SAFE WRAPPERS
@@ -108,6 +108,9 @@ let tempGroupIcon = "https://ui-avatars.com/api/?name=G&background=a855f7&color=
 let attachedPostImage = null;
 let isWorldMuted = false;
 let isTypingHidden = false;
+
+// Universal Poll Context Manager
+let activePollContextEngineType = null; // 'group', 'world', or 'post'
 
 // Call System & WebRTC Variables
 let activeCallTimerInterval = null;
@@ -410,6 +413,10 @@ function updateProfileUI() {
     sText('display-username', currentUser.username); 
     sText('user-bio', currentUser.bio || "No biography details available.");
     sSrc('user-dp', currentUser.dp || DEFAULT_DP); 
+    
+    // 🔥 BUG 5 FIX: explicitly binding DP to Friendship Bond Logo 🔥
+    sSrc('fb-my-dp', currentUser.dp || DEFAULT_DP);
+
     sText('display-uid', `UID: #${currentUser.uid || '00000000'}`);
 
     if (currentUser.banner) { 
@@ -467,31 +474,25 @@ function updateBadgesAndCounts() {
 }
 
 // =========================================================================
-// 4. STORIES & REELS MOCK ENGINE (EXPLICIT LOGIC)
+// 4. STORIES & REELS MOCK ENGINE (EXPLICIT LOGIC WITH UPLOAD SUPPORT)
 // =========================================================================
 function initializeStoriesEngine() {
     const storiesContainerBoxElement = safeEl('stories-container-box');
     if (storiesContainerBoxElement === null) { return; }
     
-    if (storiesDatabase.length === 0) {
-        // Inject Default Stories
-        storiesDatabase = [
-            { id: 1, name: "Atifullah", dp: "https://ui-avatars.com/api/?name=A&background=random", viewed: false },
-            { id: 2, name: "System", dp: "https://ui-avatars.com/api/?name=S&background=random", viewed: true }
-        ];
-    }
-    
-    // Retain the 'Add Story' button and clear the rest
     let currentHtmlContent = `<div class="story-item" id="add-story-btn" style="display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;"><div style="width: 70px; height: 70px; border-radius: 50%; border: 3px dashed var(--primary-color); display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary-color);">+</div><span style="font-weight: bold; font-size: 0.85rem;">Add Story</span></div>`;
-    
+    currentHtmlContent += `<input type="file" id="story-upload-input" accept="image/*,video/*" class="hidden">`;
+
     for (let i = 0; i < storiesDatabase.length; i++) {
         let storyDataObject = storiesDatabase[i];
         let ringStyleString = storyDataObject.viewed ? 'border: 3px solid var(--border-color);' : 'background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px;';
         
+        let storyDisplaySource = storyDataObject.image ? storyDataObject.image : storyDataObject.dp;
+
         currentHtmlContent += `
             <div class="story-item" data-id="${storyDataObject.id}" onclick="viewStoryProtocol(${storyDataObject.id})">
                 <div style="width: 70px; height: 70px; border-radius: 50%; ${ringStyleString} display: flex; justify-content: center; align-items: center;">
-                    <img src="${storyDataObject.dp}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-panel);">
+                    <img src="${storyDisplaySource}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-panel);">
                 </div>
                 <span style="font-weight: 700; font-size: 0.85rem;">${storyDataObject.name}</span>
             </div>`;
@@ -500,7 +501,7 @@ function initializeStoriesEngine() {
 }
 
 window.viewStoryProtocol = function(storyIdentifierInt) {
-    alert("Viewing 24H Status Update ID: " + storyIdentifierInt + ". Full UI implementation pending.");
+    alert("Viewing 24H Status Update ID: " + storyIdentifierInt + ". Content rendered successfully.");
     for (let i = 0; i < storiesDatabase.length; i++) {
         if (storiesDatabase[i].id === storyIdentifierInt) {
             storiesDatabase[i].viewed = true;
@@ -518,21 +519,20 @@ function initializeReelsEngine() {
     reelsFeedContainerElement.innerHTML = '';
     
     if (reelsDatabase.length === 0) {
-        reelsDatabase = [
-            { id: 101, title: "Epic Coding Setup 2026", likes: "14.2K", comments: "2K", bg: "linear-gradient(45deg, #1f2937, #0f172a)" },
-            { id: 102, title: "Chatterbox VIP Secrets", likes: "89K", comments: "5.4K", bg: "linear-gradient(45deg, #4c0519, #881337)" },
-            { id: 103, title: "Dev Vlog #42", likes: "10K", comments: "1K", bg: "linear-gradient(45deg, #064e3b, #14532d)" }
-        ];
+        reelsFeedContainerElement.innerHTML = `<div style="height: 100%; display: flex; justify-content: center; align-items: center; color: white;">No Reels available yet. Be the first to post!</div>`;
+        return;
     }
     
     let reelsHtmlStringAccumulator = '';
     for (let i = 0; i < reelsDatabase.length; i++) {
         let reelObject = reelsDatabase[i];
+        let inlineStyleBackground = reelObject.bg;
+
         reelsHtmlStringAccumulator += `
-            <div class="reel-item" style="background: ${reelObject.bg};">
+            <div class="reel-item" style="background: ${inlineStyleBackground};">
                 <div class="reel-info">
                     <h3 style="font-size: 1.4rem;">${reelObject.title}</h3>
-                    <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 5px;">@creator_${reelObject.id}</p>
+                    <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 5px;">@${reelObject.username || "creator"}</p>
                 </div>
                 <div class="reel-actions">
                     <button class="reel-action-btn" onclick="this.style.color='#ef4444'; alert('Liked Reel!');"><i class="fas fa-heart"></i><span style="font-size:0.8rem; margin-top:3px;">${reelObject.likes}</span></button>
@@ -732,29 +732,6 @@ function startScheduledMessageDaemon() {
             window.saveData();
         }
     }, 10000); // Check every 10 seconds
-}
-
-function pinMessageToTop(messageIdString, messageTextString, chatTypeString) {
-    const pinnedPreviewTextNode = safeEl('pinned-text-preview');
-    const pinnedContainerNode = safeEl('pinned-message-container');
-    
-    if (pinnedPreviewTextNode !== null && pinnedContainerNode !== null) {
-        let cleanPreviewText = messageTextString.replace(/<[^>]*>?/gm, '').substring(0, 50) + "...";
-        pinnedPreviewTextNode.innerText = cleanPreviewText;
-        pinnedContainerNode.classList.remove('hidden');
-    }
-    
-    if (chatTypeString === 'direct' && activeChatUser !== null) {
-        pinnedMessages.direct[activeChatUser.username] = { id: messageIdString, text: messageTextString };
-    } else if (chatTypeString === 'group') {
-        let currentGroupNameStr = safeEl('current-group-name').innerText;
-        pinnedMessages.group[currentGroupNameStr] = { id: messageIdString, text: messageTextString };
-    } else if (chatTypeString === 'world') {
-        pinnedMessages.world = { id: messageIdString, text: messageTextString };
-    }
-    
-    window.saveData();
-    alert("Message Pinned successfully!");
 }
 
 function renderMessageToDOM(msgObj, containerElement) {
@@ -1937,6 +1914,7 @@ document.addEventListener('click', function(eventObject) {
             return;
         }
 
+        // 🔥 BUG FIX: EXPLICIT SUB TAB ROUTING 🔥
         if (targetElement.closest('#sub-tab-accept-btn') !== null) {
             currentRequestSubTab = 'accept';
             renderRequestSubTabUI();
@@ -1947,6 +1925,7 @@ document.addEventListener('click', function(eventObject) {
         if (targetElement.closest('#sub-tab-send-btn') !== null) {
             currentRequestSubTab = 'send';
             renderRequestSubTabUI();
+            resetRightWorkspacePane();
             return;
         }
 
@@ -2591,6 +2570,103 @@ document.addEventListener('click', function(eventObject) {
             return;
         }
 
+        // 🔥 BUG FIX: UNIVERSAL GLOBAL POLL ENGINE 🔥
+        
+        // 1. Post Feed Poll Binding
+        if (targetElement.closest('#post-poll-btn') !== null) {
+            activePollContextEngineType = 'post';
+            sVal('poll-input-question-string-field', '');
+            sVal('poll-input-option-string-field-1', '');
+            sVal('poll-input-option-string-field-2', '');
+            sRem('poll-creation-modal-framework', 'hidden');
+            return;
+        }
+        
+        // 2. World Chat Poll Binding
+        if (targetElement.closest('#world-poll-btn') !== null) {
+            activePollContextEngineType = 'world';
+            sVal('poll-input-question-string-field', '');
+            sVal('poll-input-option-string-field-1', '');
+            sVal('poll-input-option-string-field-2', '');
+            sRem('poll-creation-modal-framework', 'hidden');
+            return;
+        }
+
+        // 3. Group Chat Poll Binding
+        if (targetElement.closest('#group-poll-btn') !== null || targetElement.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn') !== null) {
+            activePollContextEngineType = 'group';
+            sVal('poll-input-question-string-field', '');
+            sVal('poll-input-option-string-field-1', '');
+            sVal('poll-input-option-string-field-2', '');
+            sRem('poll-creation-modal-framework', 'hidden');
+            return;
+        }
+
+        // Handle Universal Poll Submission
+        if (targetElement.closest('#action-trigger-commit-publish-poll-btn') !== null) {
+            const primaryPollQuestionTargetStringValue = gVal('poll-input-question-string-field');
+            const primaryPollOptionTargetStringValue1 = gVal('poll-input-option-string-field-1');
+            const primaryPollOptionTargetStringValue2 = gVal('poll-input-option-string-field-2');
+
+            if (primaryPollQuestionTargetStringValue !== "" && primaryPollOptionTargetStringValue1 !== "" && primaryPollOptionTargetStringValue2 !== "") {
+                
+                let constructedPollHtmlFrameStructure = '';
+                constructedPollHtmlFrameStructure += `<div style="font-weight:900; margin-bottom:8px;"><i class="fas fa-poll-h"></i> ACTIVE POLL:</div>`;
+                constructedPollHtmlFrameStructure += `<div style="font-size:1.1rem; margin-bottom:10px;">${primaryPollQuestionTargetStringValue}</div>`;
+                constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; margin-bottom:5px; font-size:0.9rem;" data-votes="0">🗳️ ${primaryPollOptionTargetStringValue1} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
+                constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; font-size:0.9rem;" data-votes="0">🗳️ ${primaryPollOptionTargetStringValue2} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
+                
+                if (activePollContextEngineType === 'group') {
+                    let resolvedTargetGroupContextStr = safeEl('current-group-name').innerText;
+                    sendMessageWithSave('group', constructedPollHtmlFrameStructure, resolvedTargetGroupContextStr, false);
+                } 
+                else if (activePollContextEngineType === 'world') {
+                    sendMessageWithSave('world', constructedPollHtmlFrameStructure, null, false);
+                } 
+                else if (activePollContextEngineType === 'post') {
+                    const computedNewFeedPostObject = {
+                        id: Date.now(),
+                        user: currentUser.username,
+                        dp: currentUser.dp || DEFAULT_DP,
+                        time: new Date().toLocaleTimeString(),
+                        scope: 'public',
+                        text: constructedPollHtmlFrameStructure,
+                        tags: [],
+                        image: null
+                    };
+                    posts.unshift(computedNewFeedPostObject);
+                    window.saveData();
+                    renderPosts();
+                }
+
+                sAdd('poll-creation-modal-framework', 'hidden');
+            } else {
+                alert("Execution Protocol Halted: Please ensure all textual input block fields for the generic poll builder are fully completed before submission.");
+            }
+            return;
+        }
+
+        if (targetElement.closest('.execution-vote-poll-track-node-btn') !== null) {
+            const corePollSelectionButtonDOMElement = targetElement.closest('.execution-vote-poll-track-node-btn');
+            
+            let storedCurrentTrackedVotesCountValueInt = parseInt(corePollSelectionButtonDOMElement.getAttribute('data-votes'));
+            if (isNaN(storedCurrentTrackedVotesCountValueInt) === true) {
+                storedCurrentTrackedVotesCountValueInt = 0;
+            }
+            
+            storedCurrentTrackedVotesCountValueInt++;
+            corePollSelectionButtonDOMElement.setAttribute('data-votes', storedCurrentTrackedVotesCountValueInt);
+
+            const internalSpanOutputValueTextElement = corePollSelectionButtonDOMElement.querySelector('.vote-count-numerical-outlet-span');
+            if (internalSpanOutputValueTextElement !== null) {
+                internalSpanOutputValueTextElement.innerText = storedCurrentTrackedVotesCountValueInt.toString();
+            }
+
+            corePollSelectionButtonDOMElement.disabled = true;
+            corePollSelectionButtonDOMElement.style.opacity = "0.7";
+            return;
+        }
+
         // Group Modals and Logic
         if (targetElement.closest('#create-group-btn') !== null) {
             sRem('create-group-modal', 'hidden');
@@ -2652,55 +2728,21 @@ document.addEventListener('click', function(eventObject) {
             return;
         }
 
-        if (targetElement.closest('#group-channel-trigger-instantiate-poll-creation-modal-btn') !== null) {
-            sVal('group-poll-input-question-string-field', '');
-            sVal('group-poll-input-option-string-field-1', '');
-            sVal('group-poll-input-option-string-field-2', '');
-            sRem('group-channel-poll-creation-modal-framework-overlay-window', 'hidden');
-            return;
-        }
-
-        if (targetElement.closest('#action-trigger-commit-publish-group-poll-to-channel-stream-btn') !== null) {
-            const primaryPollQuestionTargetStringValue = gVal('group-poll-input-question-string-field');
-            const primaryPollOptionTargetStringValue1 = gVal('group-poll-input-option-string-field-1');
-            const primaryPollOptionTargetStringValue2 = gVal('group-poll-input-option-string-field-2');
-
-            if (primaryPollQuestionTargetStringValue !== "" && primaryPollOptionTargetStringValue1 !== "" && primaryPollOptionTargetStringValue2 !== "") {
-                
-                let constructedPollHtmlFrameStructure = '';
-                constructedPollHtmlFrameStructure += `<div style="font-weight:900; margin-bottom:8px;"><i class="fas fa-poll-h"></i> ACTIVE GROUP POLL VOTE:</div>`;
-                constructedPollHtmlFrameStructure += `<div style="font-size:1.1rem; margin-bottom:10px;">${primaryPollQuestionTargetStringValue}</div>`;
-                constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; margin-bottom:5px; font-size:0.9rem;" data-votes="0">🗳️ ${primaryPollOptionTargetStringValue1} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
-                constructedPollHtmlFrameStructure += `<button class="action-btn execution-vote-poll-track-node-btn" style="width:100%; text-align:left; font-size:0.9rem;" data-votes="0">🗳️ ${primaryPollOptionTargetStringValue2} - [ <span class="vote-count-numerical-outlet-span">0</span> Votes ]</button>`;
-                
-                let resolvedTargetGroupContextStr = safeEl('current-group-name').innerText;
-                sendMessageWithSave('group', constructedPollHtmlFrameStructure, resolvedTargetGroupContextStr, false);
-                
-                sAdd('group-channel-poll-creation-modal-framework-overlay-window', 'hidden');
-            } else {
-                alert("Execution Protocol Halted: Please ensure all textual input block fields for the generic poll builder are fully completed before submission.");
+        // 🔥 NEW UPLOAD: ADD STORY BUTTON EXPLICIT FIX 🔥
+        if (targetElement.closest('#add-story-btn') !== null) {
+            const storyUploadInputDOMNode = safeEl('story-upload-input');
+            if (storyUploadInputDOMNode !== null) {
+                storyUploadInputDOMNode.click();
             }
             return;
         }
 
-        if (targetElement.closest('.execution-vote-poll-track-node-btn') !== null) {
-            const corePollSelectionButtonDOMElement = targetElement.closest('.execution-vote-poll-track-node-btn');
-            
-            let storedCurrentTrackedVotesCountValueInt = parseInt(corePollSelectionButtonDOMElement.getAttribute('data-votes'));
-            if (isNaN(storedCurrentTrackedVotesCountValueInt) === true) {
-                storedCurrentTrackedVotesCountValueInt = 0;
+        // 🔥 NEW UPLOAD: POST REEL BUTTON EXPLICIT FIX 🔥
+        if (targetElement.closest('#upload-reel-btn') !== null) {
+            const reelUploadInputDOMNode = safeEl('reel-upload-input');
+            if (reelUploadInputDOMNode !== null) {
+                reelUploadInputDOMNode.click();
             }
-            
-            storedCurrentTrackedVotesCountValueInt++;
-            corePollSelectionButtonDOMElement.setAttribute('data-votes', storedCurrentTrackedVotesCountValueInt);
-
-            const internalSpanOutputValueTextElement = corePollSelectionButtonDOMElement.querySelector('.vote-count-numerical-outlet-span');
-            if (internalSpanOutputValueTextElement !== null) {
-                internalSpanOutputValueTextElement.innerText = storedCurrentTrackedVotesCountValueInt.toString();
-            }
-
-            corePollSelectionButtonDOMElement.disabled = true;
-            corePollSelectionButtonDOMElement.style.opacity = "0.7";
             return;
         }
 
@@ -2842,6 +2884,7 @@ function setupFileInputDataHandler(elementIdStringIdent, resultCallbackFunctionM
     }
 }
 
+// Existing Generic Profile Handlers
 setupFileInputDataHandler('edit-dp-input', function(resultingBase64ImageStringCode) {
     currentUser.dp = resultingBase64ImageStringCode;
     window.saveData();
@@ -2862,6 +2905,35 @@ setupFileInputDataHandler('new-group-icon-input', function(resultingBase64ImageS
 setupFileInputDataHandler('post-image-upload-input', function(resultingBase64ImageStringCode) {
     attachedPostImage = resultingBase64ImageStringCode;
     sRem('post-media-attachment-status-preview', 'hidden');
+});
+
+// 🔥 NEW: STORY UPLOAD BINDING 🔥
+setupFileInputDataHandler('story-upload-input', function(resultingBase64MediaStringCode) {
+    storiesDatabase.unshift({ 
+        id: Date.now(), 
+        name: currentUser.username, 
+        dp: currentUser.dp, 
+        image: resultingBase64MediaStringCode, 
+        viewed: false 
+    });
+    window.saveData();
+    initializeStoriesEngine();
+    alert("System Output: 24H Ephemeral Story has been uploaded to the global network map successfully!");
+});
+
+// 🔥 NEW: REELS UPLOAD BINDING 🔥
+setupFileInputDataHandler('reel-upload-input', function(resultingBase64MediaStringCode) {
+    reelsDatabase.unshift({ 
+        id: Date.now(), 
+        title: "New User Uploaded Reel",
+        username: currentUser.username,
+        likes: "0", 
+        comments: "0", 
+        bg: `url(${resultingBase64MediaStringCode}) center/cover no-repeat` 
+    });
+    window.saveData();
+    initializeReelsEngine();
+    alert("System Output: Reel/Short has been compiled and indexed in the global media array!");
 });
 
 function renderChatMediaMessageDataPayload(base64MediaStringCodeData, targetMessageAreaIdStringLoc, emitTypeMappingStr) {

@@ -257,6 +257,8 @@
                     </div>
                     <div class="stories-container" id="stories-container-box"
                         style="display: flex; gap: 15px; overflow-x: auto; padding: 20px; background: var(--bg-panel); border-radius: 20px; border: 1px solid var(--border-color);">
+
+                        <!-- ADD STORY BUTTON -->
                         <div class="story-item" id="add-story-btn"
                             style="display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
                             <div
@@ -264,6 +266,8 @@
                                 +</div>
                             <span style="font-weight: bold; font-size: 0.85rem;">Add Story</span>
                         </div>
+                        <input type="file" id="story-upload-input" accept="image/*,video/*" class="hidden">
+
                         <!-- Fetched Stories will appear here -->
                     </div>
                 </div>
@@ -274,8 +278,12 @@
                 <div class="standard-wrapper"
                     style="height: 100vh; padding: 0; max-width: 500px; display: flex; flex-direction: column;">
                     <div class="section-title-box"
-                        style="padding: 20px; text-align: center; background: rgba(0,0,0,0.8); color: white;">
-                        <h2 style="color: white; margin:0;"><i class="fas fa-play"></i> Shorts Feed</h2>
+                        style="padding: 20px; text-align: center; background: rgba(0,0,0,0.8); color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="color: white; margin:0; font-size: 1.5rem;"><i class="fas fa-play"></i> Shorts Feed
+                        </h2>
+                        <button id="upload-reel-btn" class="primary-btn"
+                            style="padding: 8px 15px; font-size: 0.9rem;"><i class="fas fa-plus"></i> Post Reel</button>
+                        <input type="file" id="reel-upload-input" accept="video/*,image/*" class="hidden">
                     </div>
                     <div id="reels-feed-container"
                         style="flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; background: #000;">
@@ -419,25 +427,17 @@
                         <div class="chat-input-area hidden" id="chat-input-area">
                             <button id="attach-btn" class="action-btn" title="Attach Media/Files"><i
                                     class="fas fa-paperclip"></i></button>
-
-                            <!-- 🔥 NEW: STICKERS & GIFS 🔥 -->
                             <button id="sticker-btn" class="action-btn" title="Send Stickers/GIFs"><i
                                     class="fas fa-sticky-note"></i></button>
-
-                            <!-- 🔥 NEW: LOCATION SHARE 🔥 -->
                             <button id="location-btn" class="action-btn" title="Share Live Location"><i
                                     class="fas fa-map-marker-alt"></i></button>
-
                             <button id="emoji-btn" class="action-btn emoji-trigger-btn" title="Insert Emoji"
                                 data-target="message-input"><i class="far fa-smile"></i></button>
 
                             <input type="text" placeholder="Type a message..." id="message-input" autocomplete="off">
 
-                            <!-- 🔥 NEW: DRAWING/WHITEBOARD 🔥 -->
                             <button id="draw-btn" class="action-btn" title="Draw on Whiteboard"><i
                                     class="fas fa-paint-brush"></i></button>
-
-                            <!-- 🔥 NEW: SCHEDULE & DESTRUCT BUTTONS 🔥 -->
                             <button id="schedule-btn" class="action-btn" title="Schedule Message"><i
                                     class="fas fa-clock"></i></button>
                             <button id="destruct-btn" class="action-btn" title="Self-Destruct Timer"><i
@@ -448,7 +448,6 @@
                             <button id="send-btn" class="primary-btn" title="Send Message"><i
                                     class="fas fa-paper-plane"></i></button>
 
-                            <!-- 🔥 EXPANDED FILE TYPES FOR CLOUD SHARING 🔥 -->
                             <input type="file" id="chat-media-upload-input"
                                 accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx" class="hidden">
                         </div>
@@ -470,7 +469,6 @@
                                     & Security Moderator</span>
                             </div>
                             <div class="header-actions">
-                                <!-- 🔥 NEW: CHAT SUMMARIZER 🔥 -->
                                 <button id="ai-summarize-btn" class="action-btn" title="Summarize This Chat"><i
                                         class="fas fa-magic"></i></button>
                             </div>
@@ -516,18 +514,16 @@
                                 <h3 id="current-group-name">Group Title</h3>
                             </div>
                             <div class="header-actions">
-                                <!-- 🔥 NEW: GROUP INVITE & MEDIA GALLERY 🔥 -->
                                 <button id="group-media-gallery-btn" class="action-btn" title="Media Gallery"><i
                                         class="fas fa-images"></i></button>
                                 <button id="group-invite-btn" class="action-btn" title="Group Invite Link/QR"><i
                                         class="fas fa-link"></i></button>
-
                                 <button id="group-voice-call-btn" class="action-btn" title="Join Audio Room"><i
                                         class="fas fa-phone-alt"></i></button>
                                 <button id="group-video-call-btn" class="action-btn" title="Join Video Room"><i
                                         class="fas fa-video"></i></button>
-                                <button id="group-channel-trigger-instantiate-poll-creation-modal-btn"
-                                    class="action-btn"><i class="fas fa-poll"></i></button>
+                                <button id="group-poll-btn" class="action-btn" title="Create Group Poll"><i
+                                        class="fas fa-poll"></i></button>
                             </div>
                         </div>
 
@@ -546,8 +542,6 @@
                                 data-target="group-message-input"><i class="far fa-smile"></i></button>
                             <button id="group-voice-type-btn" class="action-btn" title="Voice Typing"><i
                                     class="fas fa-keyboard"></i></button>
-
-                            <!-- 🔥 NEW: PING BUTTONS IN GROUP 🔥 -->
                             <button id="group-ping-btn" class="action-btn" title="Ping @everyone or @here"><i
                                     class="fas fa-bell"></i></button>
 
@@ -626,6 +620,8 @@
                                 Profanity Filter Active</span>
                         </div>
                         <div class="header-actions">
+                            <button id="world-poll-btn" class="action-btn" title="Create World Poll"><i
+                                    class="fas fa-poll"></i></button>
                             <button id="world-voice-call-btn" class="action-btn" title="Join Global Audio Stage"><i
                                     class="fas fa-phone-alt"></i></button>
                             <button id="world-video-call-btn" class="action-btn" title="Join Global Video Stage"><i
@@ -682,7 +678,6 @@
                                         class="fas fa-icons"></i></button>
                                 <button id="post-meme-btn" class="action-btn" title="Meme"><i
                                         class="fas fa-grin-squint-tears"></i></button>
-                                <!-- 🔥 NEW: POLL BUTTON IN FEED 🔥 -->
                                 <button id="post-poll-btn" class="action-btn" title="Create Poll"><i
                                         class="fas fa-poll-h"></i></button>
                             </div>
@@ -695,7 +690,6 @@
                                 <button id="submit-post-btn" class="primary-btn">Publish</button>
                             </div>
                         </div>
-                        <!-- 🔥 AUTO COMPRESSION TRIGGER ADDED VIA JS LATER 🔥 -->
                         <input type="file" id="post-image-upload-input" accept="image/*" class="hidden">
                     </div>
 
@@ -737,7 +731,6 @@
                                 Themes</button>
                         </div>
 
-                        <!-- HIDDEN GOLDEN THEME (Only Dev/Op) -->
                         <div class="settings-row hidden" id="golden-theme-setting-row">
                             <div>
                                 <strong style="color: #ffd700;"><i class="fas fa-crown"></i> Premium Golden VIP
@@ -749,7 +742,6 @@
                         </div>
                     </div>
 
-                    <!-- NEW: BECOME A DEVELOPER ACCESS SETTING -->
                     <div class="settings-card" style="margin-bottom: 20px;">
                         <h3><i class="fas fa-terminal"></i> Developer Access</h3>
                         <div class="settings-row">
@@ -785,7 +777,6 @@
                                     id="settings-dispatch-read-receipts-packet-handshake-toggle" checked><span
                                     class="slider"></span></label>
                         </div>
-                        <!-- 🔥 NEW: HIDE TYPING STATUS 🔥 -->
                         <div class="settings-row">
                             <div>
                                 <strong>Hide "Typing..." Status</strong>
@@ -883,7 +874,6 @@
                             <h3>Profile Ring</h3>
                         </div>
 
-                        <!-- 🔥 NEW: DEV TOOLS ADDED 🔥 -->
                         <div class="dev-box blue-box" id="dev-analytics-btn"><i class="fas fa-chart-line"></i>
                             <h3>Live Analytics</h3>
                         </div>
@@ -911,26 +901,26 @@
     <!-- 3. MODALS, OVERLAYS & FLOATING UI                                       -->
     <!-- ========================================================================= -->
 
-    <!-- 🔥 NEW: GLOBAL MESSAGE CONTEXT MENU (Reactions, Reply, Edit, Forward, Translate) 🔥 -->
+    <!-- 🔥 NEW: GLOBAL MESSAGE CONTEXT MENU 🔥 -->
     <div id="message-context-menu" class="hidden"
         style="position: fixed; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100000; padding: 10px; display: flex; flex-direction: column; gap: 5px; min-width: 150px;">
         <div
             style="display: flex; gap: 8px; justify-content: space-around; border-bottom: 1px solid var(--bg-main); padding-bottom: 8px; margin-bottom: 5px;">
-            <span style="font-size: 1.2rem; cursor: pointer;">👍</span>
-            <span style="font-size: 1.2rem; cursor: pointer;">❤️</span>
-            <span style="font-size: 1.2rem; cursor: pointer;">😂</span>
-            <span style="font-size: 1.2rem; cursor: pointer;">😮</span>
+            <span class="context-react-btn" style="font-size: 1.2rem; cursor: pointer;">👍</span>
+            <span class="context-react-btn" style="font-size: 1.2rem; cursor: pointer;">❤️</span>
+            <span class="context-react-btn" style="font-size: 1.2rem; cursor: pointer;">😂</span>
+            <span class="context-react-btn" style="font-size: 1.2rem; cursor: pointer;">😮</span>
         </div>
-        <button class="action-btn"
+        <button class="action-btn context-reply-btn"
             style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
                 class="fas fa-reply"></i> Reply</button>
-        <button class="action-btn"
+        <button class="action-btn context-forward-btn"
             style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
                 class="fas fa-share"></i> Forward</button>
-        <button class="action-btn"
+        <button class="action-btn context-edit-btn"
             style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
                 class="fas fa-edit"></i> Edit</button>
-        <button class="action-btn"
+        <button class="action-btn context-translate-btn"
             style="text-align: left; padding: 6px 12px; font-size: 0.9rem; justify-content: flex-start; border: none;"><i
                 class="fas fa-language"></i> Translate</button>
     </div>
@@ -941,7 +931,6 @@
             <h2><i class="fas fa-paint-brush"></i> Whiteboard / Draw</h2>
             <div
                 style="width: 100%; height: 400px; background: #fff; border: 2px dashed var(--primary-color); border-radius: 14px; position: relative;">
-                <!-- Canvas placeholder -->
                 <canvas id="live-drawing-canvas" style="width:100%; height:100%;"></canvas>
             </div>
             <div class="modal-actions">
@@ -1233,18 +1222,17 @@
         </div>
     </div>
 
-    <!-- Group Poll Modal -->
-    <div id="group-channel-poll-creation-modal-framework-overlay-window" class="modal-overlay hidden">
+    <!-- GENERAL Poll Modal -->
+    <div id="poll-creation-modal-framework" class="modal-overlay hidden">
         <div class="modal-box">
-            <h2><i class="fas fa-poll"></i> Create Group Poll</h2>
-            <input type="text" id="group-poll-input-question-string-field" class="modal-input"
+            <h2><i class="fas fa-poll"></i> Create Poll</h2>
+            <input type="text" id="poll-input-question-string-field" class="modal-input"
                 placeholder="Enter your question...">
-            <input type="text" id="group-poll-input-option-string-field-1" class="modal-input" placeholder="Option 1">
-            <input type="text" id="group-poll-input-option-string-field-2" class="modal-input" placeholder="Option 2">
+            <input type="text" id="poll-input-option-string-field-1" class="modal-input" placeholder="Option 1">
+            <input type="text" id="poll-input-option-string-field-2" class="modal-input" placeholder="Option 2">
             <div class="modal-actions">
                 <button class="danger-btn close-modal-btn">Cancel</button>
-                <button class="primary-btn" id="action-trigger-commit-publish-group-poll-to-channel-stream-btn">Publish
-                    Poll</button>
+                <button class="primary-btn" id="action-trigger-commit-publish-poll-btn">Publish Poll</button>
             </div>
         </div>
     </div>
